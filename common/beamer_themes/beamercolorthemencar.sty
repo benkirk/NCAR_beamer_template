@@ -1,0 +1,107 @@
+% Copyright 2007 by Till Tantau
+% Copyright 2012,2015 by Vedran Mileti\'c, Joseph Wright
+%
+% This file may be distributed and/or modified
+%
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License.
+%
+% See the file doc/licenses/LICENSE for more details.
+
+\mode<presentation>
+
+%\definecolor{myNewColorA}{RGB}{0,0,100}
+%\definecolor{myNewColorB}{RGB}{0,100,100}
+%\definecolor{myNewColorC}{RGB}{0,200,100}
+%\definecolor{myNewColorD}{RGB}{0,100,200}
+\definecolor{CoolGray11}{RGB}{83,86,90}
+\definecolor{CoolGray7}{RGB}{151,153,155}
+\definecolor{CoolGray4}{RGB}{187,188,188}
+\definecolor{CoolGray1}{RGB}{217,217,214}
+\definecolor{TitleBoxGray}{RGB}{41,41,40}
+%\definecolor{FooterStripGray}{RGB}{86,87,90}
+
+\definecolor{UCARGreen}{RGB}{0,121,124}
+\definecolor{UCARLighterGreen}{RGB}{40,147,157}
+\definecolor{UCARLightestGreen}{RGB}{64,193,172}
+
+\definecolor{NCARBlue}{RGB}{26,101,143}
+\definecolor{NCARLighterBlue}{RGB}{0,127,163}
+\definecolor{NCARLightestBlue}{RGB}{0,193,213}
+
+\definecolor{DeepBlue}{RGB}{1,33,105}
+\definecolor{HilightGreen}{RGB}{168,199,0}
+
+\definecolor{BackgroundBlue1}{RGB}{192,215,238}
+\definecolor{BackgroundBlue2}{RGB}{206,217,229}
+\definecolor{BackgroundBlue3}{RGB}{219,226,233}
+
+
+
+\setbeamercolor*{normal text}{fg=CoolGray11,bg=white}
+\setbeamercolor*{alerted text}{fg=black}
+\setbeamercolor*{example text}{fg=black}
+\setbeamercolor*{structure}{fg=CoolGray11}
+
+\providecommand*{\beamer@bftext@only}{%
+  \relax
+  \ifmmode
+    \expandafter\beamer@bftext@warning
+  \else
+    \expandafter\bfseries
+  \fi
+}
+\providecommand*{\beamer@bftext@warning}{%
+  \ClassWarning{beamer}
+    {Cannot use bold for alerted text in math mode}%
+}
+
+\setbeamerfont{alerted text}{series=\beamer@bftext@only}
+
+%\setbeamercolor*{palette primary}{fg=black,bg=black!20}
+%\setbeamercolor*{palette secondary}{fg=black,bg=black!25}
+%\setbeamercolor*{palette tertiary}{fg=black,bg=black!30}
+%\setbeamercolor*{palette quaternary}{fg=black,bg=black!35}
+\setbeamercolor*{palette primary}{fg=black,bg=black!20}
+\setbeamercolor*{palette secondary}{fg=black,bg=black!25}
+\setbeamercolor*{palette tertiary}{fg=black,bg=black!30}
+\setbeamercolor*{palette quaternary}{fg=black,bg=black!35}
+
+%\setbeamercolor{sidebar}{bg=black!20}
+
+%\setbeamercolor*{palette sidebar primary}{fg=black}
+%\setbeamercolor*{palette sidebar secondary}{fg=black}
+%\setbeamercolor*{palette sidebar tertiary}{fg=black}
+%\setbeamercolor*{palette sidebar quaternary}{fg=black}
+
+%\setbeamercolor*{item projected}{fg=black,bg=black!20}
+
+\setbeamercolor*{block title}{fg=CoolGray11,bg=BackgroundBlue1}
+%\setbeamercolor*{block title alerted}{fg=black,bg=black!20}
+%\setbeamercolor*{block title example}{fg=black,bg=black!20}
+
+\setbeamercolor*{block body}{fg=CoolGray11,bg=BackgroundBlue3}
+%\setbeamercolor*{block body alerted}{fg=black,bg=black!10}
+%\setbeamercolor*{block body example}{fg=black,bg=black!10}
+
+
+%\setbeamercolor{block title}{use=structure,fg=white,bg=structure.fg!75!black}
+%\setbeamercolor{block title alerted}{use=alerted text,fg=white,bg=alerted text.fg!75!black}
+%\setbeamercolor{block title example}{use=example text,fg=white,bg=example text.fg!75!black}
+
+%\setbeamercolor{block body}{parent=normal text,use=block title,bg=block title.bg!10!bg}
+%\setbeamercolor{block body alerted}{parent=normal text,use=block title alerted,bg=block title alerted.bg!10!bg}
+%\setbeamercolor{block body example}{parent=normal text,use=block title example,bg=block title example.bg!10!bg}
+
+
+\setbeamercolor*{titlelike}{fg=CoolGray1}
+\setbeamercolor*{frametitle}{fg=CoolGray1,bg=NCARBlue}
+\setbeamercolor*{frametitle-whitetext}{fg=white,bg=NCARBlue}
+\setbeamercolor*{title}{fg=CoolGray1,bg=TitleBoxGray}
+\setbeamercolor*{subtitle}{fg=HilightGreen}
+
+%\setbeamercolor*{separation line}{}
+%\setbeamercolor*{fine separation line}{}
+
+\mode
+<all>

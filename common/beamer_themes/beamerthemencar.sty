@@ -1,0 +1,29 @@
+\mode<presentation>
+
+\useinnertheme[shadow=true]{ncarrounded}
+\usecolortheme{ncar}
+\useoutertheme{ncarinfolines}
+%% \setbeamertemplate{frametitle}{%
+%%     \nointerlineskip%
+%%     \begin{beamercolorbox}[wd=\paperwidth,ht=2.0ex,dp=0.6ex]{frametitle}
+%%       %\hspace*{1ex}\insertframetitle%
+%%       \centerline{\insertframetitle}%
+%%     \end{beamercolorbox}%
+%% }
+\setbeamertemplate{frametitle}[default][center]
+
+% Remove navigation bar
+\setbeamertemplate{navigation symbols}{}
+
+\setbeamertemplate{title page}[default][rounded=false]
+\makeatletter
+\patchcmd{\beamer@calculateheadfoot}{\advance\footheight by 4pt}{\advance\footheight by 60pt}{}{}
+\makeatother
+
+\newcommand{\nobackground}{\setbeamertemplate{background}{}}
+\newcommand{\titlebackground}{\setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight]{common/images/wallpaper/NCAR_Clouds}}}
+%\newcommand{\titlebackground}{\setbeamertemplate{background}{}}
+\newcommand{\defaultbackground}{\setbeamertemplate{background}{}}
+
+\mode
+<all>

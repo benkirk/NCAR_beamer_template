@@ -1,0 +1,213 @@
+\documentclass[aspectratio=1610,professionalfonts]{beamer}
+
+\usepackage{layout}
+% requires building with 'xelatex'
+\usepackage{fontspec}% Latin Modern will be the default
+
+% fonts can be downloaded from https://fonts.google.com/ and installed under OSX with 'Font Book'
+\setmainfont{Cormorant}
+\setsansfont{Poppins}
+\newcommand{\tinyfont}[1]{{\fontsize{4}{6}\normalfont #1}}
+
+\usefonttheme[onlymath]{serif}
+%\usefonttheme{serif}
+
+\usetheme{ncar}
+
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{This is my title}
+\subtitle{and I might have a subtitle too!}
+\author{Author One, Author Two}
+\titlebackground
+{
+  %% \setbeamertemplate{headline}
+  %% {%
+  %%   \leavevmode%
+  %%   \hbox{%
+  %%     \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,center]{frametitle-whitetext}%
+  %%       \vbox to2.25ex{\vfil\hbox{\tinyfont{This material is based upon work supported by the National Center for Atmospheric Research, which is a major facility sponsored by the National Science Foundation under Cooperative Agreement No. 1852977.}}\vfil}%
+  %%     \end{beamercolorbox}}%
+  %%   \vskip0pt%
+  %% }
+  \setbeamertemplate{footline}
+  {%
+    \leavevmode%
+    \hbox{%
+      \begin{beamercolorbox}[wd=0.5\paperwidth,ht=16ex,sep=1ex,left]{}%
+        \vbox to16ex{\vfil\hbox{\hspace*{1ex}\includegraphics[height=16ex]{common/images/NCAR-legacy-spellout-logo-blue.pdf}}\vfil}%
+      \end{beamercolorbox}%
+      \begin{beamercolorbox}[wd=0.5\paperwidth,ht=16ex,,sep=1ex,right]{}%
+        \vbox to16ex{\vfil\hbox{\includegraphics[height=16ex]{common/images/NSF4colorVector.pdf}\hspace*{1ex}}\vfil}%
+    \end{beamercolorbox}}%
+
+    \hbox{%
+      \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,center]{frametitle-whitetext}%
+        \vbox to2.25ex{\vfil\hbox{\tinyfont{This material is based upon work supported by the National Center for Atmospheric Research, which is a major facility sponsored by the National Science Foundation under Cooperative Agreement No. 1852977.}}\vfil}%
+    \end{beamercolorbox}}%
+    %\leavevmode%
+    \vskip0pt%
+  }
+\begin{frame}
+  %\pgfsetfillopacity{0.85}
+  \vspace{6em}
+  \maketitle
+\end{frame}
+}
+\defaultbackground
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{A Basic Frame}
+
+  \begin{itemize}
+  \item \textbf{Bold bullet}
+    \begin{itemize}
+    \item Subbullet
+    \end{itemize}
+  \item Enumerated List:
+    \begin{enumerate}
+    \item item one
+    \item item two
+    \end{enumerate}
+  \end{itemize}
+  %% \pause
+  \begin{equation}
+    \frac{\partial \rho}{\partial t} +
+    \frac{\partial}{\partial x_{j}} (\rho u_{j}) = 0
+  \end{equation}
+  \begin{equation}
+    \frac{\partial}{\partial t} (\rho u_{i}) +
+    \frac{\partial}{\partial x_{j}} (\rho u_{i} u_{j} + p \delta_{ij} - \tau_{ji} )
+    = 0
+  \end{equation}
+  \begin{equation}
+    \frac{\partial}{\partial t} ( \rho e_{0} ) +
+    \frac{\partial}{\partial x_{j}}
+    ( \rho u_{j} e_{0} + u_{j} p + q_{j} - u_{i} \tau_{ij} ) = 0
+  \end{equation}
+\end{frame}
+
+\section{Section 1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{A Frame With a Block}
+  \begin{block}{Block Title}
+  \begin{itemize}
+  \item First bullet
+  \item Second bullet
+    \begin{itemize}
+    \item Subbullet
+    \end{itemize}
+  \item List:
+    \begin{enumerate}
+    \item item one
+    \item item two
+    \item item three
+    \end{enumerate}
+  \end{itemize}
+  \end{block}
+\end{frame}
+
+
+
+\subsection{Subsection}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Columns in beamer}
+    \begin{columns}
+    \column{0.5\textwidth}
+        \centering
+        This is column one with 0.5 text width.
+    \column{0.4\textwidth}
+        \centering
+        This is column two with 0.4 text width.
+    \end{columns}
+\end{frame}
+
+
+
+\section{Section 2}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[t]
+  \frametitle{Columns With Blocks Too!}
+
+  \textbf{Flush top [t] option}
+
+  \begin{columns}[t]
+    \column{0.45\textwidth}
+    \begin{block}{Left Block Title}
+    \begin{itemize}
+    \item First bullet
+    \item Second bullet
+      \begin{itemize}
+      \item Subbullet
+      \end{itemize}
+    \item List:
+      \begin{enumerate}
+      \item item one
+      \item item two
+      \item item three
+      \end{enumerate}
+    \end{itemize}
+    \end{block}
+    \column{0.45\textwidth}
+    \begin{block}{Right Block Title}
+    \begin{itemize}
+    \item First bullet
+    \item Second bullet
+      \begin{itemize}
+      \item Subbullet
+      \end{itemize}
+    \item List:
+      \begin{enumerate}
+      \item item one
+      \item item two
+      \item item three
+      \item item four
+      \end{enumerate}
+    \end{itemize}
+    \end{block}
+  \end{columns}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\nobackground
+\begin{frame}[plain,c,shrink]
+  \vspace{3em}
+  \hspace{1em}\layout{}
+\end{frame}
+\defaultbackground
+
+
+
+\end{document}
