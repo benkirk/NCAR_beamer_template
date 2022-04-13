@@ -1,13 +1,20 @@
-\documentclass[aspectratio=1610,professionalfonts]{beamer}
+\documentclass[aspectratio=1610]{beamer}
 
 \usepackage{layout}
 % requires building with 'xelatex'
-\usepackage{fontspec}% Latin Modern will be the default
+\usepackage{iftex}
 
+\ifXeTeX
+\usepackage{fontspec}% Latin Modern will be the default
 % fonts can be downloaded from https://fonts.google.com/ and installed under OSX with 'Font Book'
 \setmainfont{Cormorant}
 \setsansfont{Poppins}
 \newcommand{\tinyfont}[1]{{\fontsize{4}{6}\normalfont #1}}
+\else
+\usepackage{mathptmx}
+\usepackage{helvet}
+\newcommand{\tinyfont}[1]{{ }}
+\fi
 
 \usefonttheme[onlymath]{serif}
 %\usefonttheme{serif}
