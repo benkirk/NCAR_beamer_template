@@ -1,7 +1,9 @@
 \mode<presentation>
+\RequirePackage{environ}
 
 \usecolortheme{ncar}
 \useoutertheme{ncarinfolines}
+
 %% \setbeamertemplate{frametitle}{%
 %%     \nointerlineskip%
 %%     \begin{beamercolorbox}[wd=\paperwidth,ht=2.0ex,dp=0.6ex]{frametitle}
@@ -15,6 +17,8 @@
 \setbeamertemplate{navigation symbols}{}
 
 \setbeamertemplate{title page}[default][rounded=false]
+\setbeamertemplate{itemize items}[circle]
+
 \makeatletter
 \patchcmd{\beamer@calculateheadfoot}{\advance\footheight by 4pt}{\advance\footheight by 60pt}{}{}
 \makeatother
@@ -23,6 +27,42 @@
 \newcommand{\titlebackground}{\setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight]{common/images/wallpaper/NCAR_Clouds}}}
 %\newcommand{\titlebackground}{\setbeamertemplate{background}{}}
 \newcommand{\defaultbackground}{\setbeamertemplate{background}{}}
+
+
+\NewEnviron{NCARtitleframe}[1][]{%
+  %% \setbeamertemplate{headline}
+  %% {%
+  %%   \leavevmode%
+  %%   \hbox{%
+  %%     \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,center]{frametitle-whitetext}%
+  %%       \vbox to2.25ex{\vfil\hbox{\supertinyfont{This material is based upon work supported by the National Center for Atmospheric Research, which is a major facility sponsored by the National Science Foundation under Cooperative Agreement No. 1852977.}}\vfil}%
+  %%     \end{beamercolorbox}}%
+  %%   \vskip0pt%
+  %% }
+  \setbeamertemplate{footline}
+  {%
+    \leavevmode%
+    \hbox{%
+      \begin{beamercolorbox}[wd=0.5\paperwidth,ht=16ex,sep=1ex,left]{}%
+        \vbox to16ex{\vfil\hbox{\hspace*{1ex}\includegraphics[height=16ex]{common/images/NCAR-legacy-spellout-logo-blue.pdf}}\vfil}%
+      \end{beamercolorbox}%
+      \begin{beamercolorbox}[wd=0.5\paperwidth,ht=16ex,,sep=1ex,right]{}%
+        \vbox to16ex{\vfil\hbox{\includegraphics[height=16ex]{common/images/NSF4colorVector.pdf}\hspace*{1ex}}\vfil}%
+    \end{beamercolorbox}}%
+
+    \hbox{%
+      \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,center]{frametitle-whitetext}%
+        \vbox to2.25ex{\vfil\hbox{\supertinyfont{This material is based upon work supported by the National Center for Atmospheric Research, which is a major facility sponsored by the National Science Foundation under Cooperative Agreement No. 1852977.}}\vfil}%
+    \end{beamercolorbox}}%
+    %\leavevmode%
+    \vskip0pt%
+  }
+  \titlebackground
+  \begin{frame}{#1}
+    \BODY
+  \end{frame}
+  \defaultbackground
+}
 
 \mode
 <all>

@@ -1,13 +1,17 @@
 \documentclass[aspectratio=1610]{beamer}
 
+% LaTeX Packages
 \usepackage{layout}
-\usepackage[brandedfonts]{ncar_branding}
+\usepackage{relsize}
+\usepackage[brandedfonts]{ncar_branding} % initialize ncar_branded package here, perhaps with options, or beamer will do it later
+
+% Beamer Specfics
+%\useinnertheme[shadow=true]{ncarrounded} % if you prefer rounded boxes, with or without shadows
+\usetheme{ncar}
 
 \usefonttheme[onlymath]{serif}
 %\usefonttheme{serif}
 
-\useinnertheme[shadow=true]{ncarrounded}
-\usetheme{ncar}
 
 
 \begin{document}
@@ -16,42 +20,11 @@
 \title{This is my title}
 \subtitle{and I might have a subtitle too!}
 \author{Author One, Author Two}
-\titlebackground
-{
-  %% \setbeamertemplate{headline}
-  %% {%
-  %%   \leavevmode%
-  %%   \hbox{%
-  %%     \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,center]{frametitle-whitetext}%
-  %%       \vbox to2.25ex{\vfil\hbox{\supertinyfont{This material is based upon work supported by the National Center for Atmospheric Research, which is a major facility sponsored by the National Science Foundation under Cooperative Agreement No. 1852977.}}\vfil}%
-  %%     \end{beamercolorbox}}%
-  %%   \vskip0pt%
-  %% }
-  \setbeamertemplate{footline}
-  {%
-    \leavevmode%
-    \hbox{%
-      \begin{beamercolorbox}[wd=0.5\paperwidth,ht=16ex,sep=1ex,left]{}%
-        \vbox to16ex{\vfil\hbox{\hspace*{1ex}\includegraphics[height=16ex]{common/images/NCAR-legacy-spellout-logo-blue.pdf}}\vfil}%
-      \end{beamercolorbox}%
-      \begin{beamercolorbox}[wd=0.5\paperwidth,ht=16ex,,sep=1ex,right]{}%
-        \vbox to16ex{\vfil\hbox{\includegraphics[height=16ex]{common/images/NSF4colorVector.pdf}\hspace*{1ex}}\vfil}%
-    \end{beamercolorbox}}%
-
-    \hbox{%
-      \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,center]{frametitle-whitetext}%
-        \vbox to2.25ex{\vfil\hbox{\supertinyfont{This material is based upon work supported by the National Center for Atmospheric Research, which is a major facility sponsored by the National Science Foundation under Cooperative Agreement No. 1852977.}}\vfil}%
-    \end{beamercolorbox}}%
-    %\leavevmode%
-    \vskip0pt%
-  }
-\begin{frame}
+\begin{NCARtitleframe}
   %\pgfsetfillopacity{0.85}
   \vspace{6em}
   \maketitle
-\end{frame}
-}
-\defaultbackground
+\end{NCARtitleframe}
 
 
 
@@ -178,20 +151,11 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-\end{frame}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-\end{frame}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-\end{frame}
+\begin{NCARtitleframe}
+  %\pgfsetfillopacity{0.85}
+  \centering
+  \Huge{Backup}
+\end{NCARtitleframe}
 
 
 
