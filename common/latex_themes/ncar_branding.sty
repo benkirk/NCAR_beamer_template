@@ -1,0 +1,71 @@
+
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{ncarbranding}[2022/04/13 NCAR Branding Package]
+
+% sample from https://en.wikibooks.org/wiki/LaTeX/Creating_Packages
+
+%% %\RequirePackage{lmodern}
+
+%% %% 'sans serif' option
+%% \DeclareOption{sans}{
+%%   \renewcommand{\familydefault}{\sfdefault}
+%% }
+
+%% %% 'roman' option
+%% \DeclareOption{roman}{
+%%   \renewcommand{\familydefault}{\rmdefault}
+%% }
+
+%% %% Global indentation option
+%% \newif\if@neverindent\@neverindentfalse
+%% \DeclareOption{neverindent}{
+%%   \@neverindenttrue
+%% }
+
+%% \ExecuteOptions{roman}
+
+%% \ProcessOptions\relax
+
+%% %% Traditional LaTeX or TeX follows...
+%% % ...
+
+%% \newlength{\pardefault}
+%% \setlength{\pardefault}{\parindent}
+%% \newcommand{\neverindent}{ \setlength{\parindent}{0pt} }
+%% \newcommand{\autoindent}{ \setlength{\parindent}{\pardefault} }
+
+%% \if@neverindent
+%% \neverindent
+%% \fi
+
+%% % ...
+
+
+\usepackage{mathptmx}
+\usepackage{helvet}
+\newcommand{\supertinyfont}[1]{{\tiny #1 }}
+\usepackage{iftex}
+\ifXeTeX
+  \usepackage{fontspec}
+  % fonts can be downloaded from https://fonts.google.com/ and installed under OSX with 'Font Book'
+  %\setmainfont{Cormorant}
+  %\setsansfont{Poppins}
+  \renewcommand{\supertinyfont}[1]{{\fontsize{4}{6}\normalfont #1}}
+\fi
+
+
+
+%% 'branded fonts' option
+\DeclareOption{brandedfonts}{
+\ifXeTeX
+  \setmainfont{Cormorant}
+  \setsansfont{Poppins}
+\fi
+}
+
+\ExecuteOptions{brandedfonts}
+
+\ProcessOptions\relax
+
+
+\endinput

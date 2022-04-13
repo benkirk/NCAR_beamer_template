@@ -8,18 +8,18 @@
 %
 % See the file doc/licenses/LICENSE for more details.
 
-\DeclareOptionBeamer{shadow}[true]{\def\beamer@themerounded@shadow{#1}}
+\DeclareOptionBeamer{shadow}[true]{\def\beamer@themencarrounded@shadow{#1}}
 \ExecuteOptionsBeamer{shadow=false}
 \ProcessOptionsBeamer
 
 \mode<presentation>
 
-\setbeamertemplate{blocks}[rounded][shadow=\beamer@themerounded@shadow]
+\setbeamertemplate{blocks}[rounded][shadow=\beamer@themencarrounded@shadow]
 \setbeamertemplate{itemize items}[circle]
 \setbeamertemplate{sections/subsections in toc}[ball]
-\setbeamertemplate{title page}[default][colsep=-4bp,rounded=true,shadow=\beamer@themerounded@shadow]
-\setbeamertemplate{part page}[default][colsep=-4bp,rounded=true,shadow=\beamer@themerounded@shadow]
-\setbeamertemplate{section page}[default][colsep=-4bp,rounded=true,shadow=\beamer@themerounded@shadow]
-\setbeamertemplate{subsection page}[default][colsep=-4bp,rounded=true,shadow=\beamer@themerounded@shadow]
+\setbeamertemplate{title page}[default][colsep=-4bp,rounded=true,shadow=\beamer@themencarrounded@shadow]
+\setbeamertemplate{part page}[default][colsep=-4bp,rounded=true,shadow=\beamer@themencarrounded@shadow]
+\setbeamertemplate{section page}[default][colsep=-4bp,rounded=true,shadow=\beamer@themencarrounded@shadow]
+\setbeamertemplate{subsection page}[default][colsep=-4bp,rounded=true,shadow=\beamer@themencarrounded@shadow]
 
 \mode<all>
