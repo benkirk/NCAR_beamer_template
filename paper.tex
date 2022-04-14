@@ -6,7 +6,7 @@
 \usepackage{layout}
 \usepackage{relsize}
 \usepackage{lipsum}
-\usepackage[brandedfonts]{ncar_branding} % initialize ncar_branded package here, perhaps with options, or beamer will do it later
+\usepackage{ncar_branding} % initialize ncar_branded package here, perhaps with options, or beamer will do it later
 
 \renewcommand{\familydefault}{\sfdefault} % prefer sans-serif fonts (yuck, I think)
 
@@ -31,14 +31,29 @@
 Reference my pretty picture (Figure~\ref{fig:pretty}).
 
 \subsection{Subsection}
-\lipsum[2-3]
+\lipsum[2]
+\begin{equation}
+  \frac{\partial \rho}{\partial t} +
+  \frac{\partial}{\partial x_{j}} (\rho u_{j}) = 0
+\end{equation}
+\begin{equation}
+  \frac{\partial}{\partial t} (\rho u_{i}) +
+  \frac{\partial}{\partial x_{j}} (\rho u_{i} u_{j} + p \delta_{ij} - \tau_{ji} )
+  = 0
+\end{equation}
+\begin{equation}
+  \frac{\partial}{\partial t} ( \rho e_{0} ) +
+  \frac{\partial}{\partial x_{j}}
+  ( \rho u_{j} e_{0} + u_{j} p + q_{j} - u_{i} \tau_{ij} ) = 0
+\end{equation}
+\lipsum[3]
 
 \section{Second Section}
 \lipsum[4]
 \subsection{Sample Code}
 
 \subsubsection{Sample Python Code}
-\lstinputlisting[language=Python]{snippets/hello_world.py}
+\lstinputlisting[language=Python]{snippets/hello_world_mpi4py.py}
 
 \subsubsection{Sample C++ Code}
 \lstinputlisting[language=C++]{snippets/hello_world.cxx}
