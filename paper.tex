@@ -1,0 +1,51 @@
+\documentclass{article}
+
+% LaTeX Packages
+\usepackage[letterpaper, total={6.5in, 9in}]{geometry}
+\usepackage{graphicx}
+\usepackage{layout}
+\usepackage{relsize}
+\usepackage{lipsum}
+\usepackage[brandedfonts]{ncar_branding} % initialize ncar_branded package here, perhaps with options, or beamer will do it later
+
+\renewcommand{\familydefault}{\sfdefault} % prefer sans-serif fonts (yuck, I think)
+
+
+\begin{document}
+
+\title{This is my title}
+%\subtitle{and I might have a subtitle too!}
+\author{Author One, Author Two}
+\maketitle
+
+\begin{abstract}
+  \lipsum[1]
+\end{abstract}
+
+\section{First Section}
+\lipsum[1]
+\begin{figure}
+  \centerline{\includegraphics[width=0.5\textwidth]{common/images/wallpaper/mesa_lab_sunset}}
+  \caption{Pretty Picure.\label{fig:pretty}}
+\end{figure}
+Reference my pretty picture (Figure~\ref{fig:pretty}).
+
+\subsection{Subsection}
+\lipsum[2-3]
+
+\section{Second Section}
+\lipsum[4]
+\subsection{Sample Code}
+
+\subsubsection{Sample Python Code}
+\lstinputlisting[language=Python]{snippets/hello_world.py}
+
+\subsubsection{Sample C++ Code}
+\lstinputlisting[language=C++]{snippets/hello_world.cxx}
+
+\section{Conclusion}
+\lipsum[5-6]
+\clearpage
+\layout
+
+\end{document}

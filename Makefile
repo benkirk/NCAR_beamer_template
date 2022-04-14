@@ -3,7 +3,7 @@ latexprog := $(shell which xelatex 2>/dev/null || which pdflatex)
 
 default: template.pdf
 
-template.pdf: template.tex Makefile $(template_sources)
+%.pdf: %.tex Makefile $(template_sources)
 	echo "Foo"
 	TEXINPUTS=common//:$$TEXINPUTS $(latexprog) $< && \
 	  TEXINPUTS=common//:$$TEXINPUTS $(latexprog) $<
