@@ -38,9 +38,14 @@
   % Footline on title-like page
   \setbeamertemplate{footline}{}
 
-  \addtobeamertemplate{block begin}{\pgfsetfillopacity{0.5}}{\pgfsetfillopacity{1}}
-  \addtobeamertemplate{block alerted begin}{\pgfsetfillopacity{0.5}}{\pgfsetfillopacity{1}}
-  \addtobeamertemplate{block example begin}{\pgfsetfillopacity{0.5}}{\pgfsetfillopacity{1}}
+  \setbeamercolor*{block title}{fg=DeepBlue,bg=}
+  \setbeamercolor*{block title example}{fg=HilightGreen,bg=}
+  \setbeamercolor*{block body}{fg=white,bg=black}
+  \setbeamercolor*{block body example}{fg=black,bg=white}
+
+  \addtobeamertemplate{block begin}{\pgfsetfillopacity{0.8}}{\pgfsetfillopacity{1}}
+  %\addtobeamertemplate{block alerted begin}{\pgfsetfillopacity{0.5}}{\pgfsetfillopacity{1}}
+  \addtobeamertemplate{block example begin}{\pgfsetfillopacity{0.8}}{\pgfsetfillopacity{1}}
 
   \begin{frame}
     \BODY
