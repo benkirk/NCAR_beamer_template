@@ -15,7 +15,7 @@ It is unlikely these fonts are ncluded on your system by default, but they can b
 % otherwise 'Helvetica' will be used.
 \usepackage[brandedfonts]{ncar_branding}
 ```
-If you are on a system without XeTeX, or prefer pdfLaTeX, the package falls back to the ['helvet'](https://ctan.org/pkg/helvet) package, (see `ncar_branding.sty`, even this package can be removed if not included your system does not include this package).
+If you are on a system without XeTeX, or prefer pdfLaTeX, the package falls back to the ['helvet'](https://ctan.org/pkg/helvet) package, (see `ncar_branding.sty`, even this package can be removed if not included on your system).
 
 
 ## External Resources
