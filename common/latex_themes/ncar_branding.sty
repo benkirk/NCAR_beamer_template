@@ -41,37 +41,11 @@
 %% % ...
 
 
-\RequirePackage{mathptmx}
-\RequirePackage{iftex}
-\IfFileExists{helvet.sty}{
-  \RequirePackage{helvet}
-  %\ClassError{ncar_branding}{Stop Here}{Forced Stop}
-}{}
-\newcommand{\supertinyfont}[1]{{\tiny #1 }}
 
-\ifXeTeX
-  \RequirePackage{fontspec}
-  % fonts can be downloaded from https://fonts.google.com/ and installed under OSX with 'Font Book'
-  %\setmainfont{Cormorant}
-  %\setsansfont{Poppins}
-  \renewcommand{\supertinyfont}[1]{{\fontsize{4}{6}\normalfont #1}}
-\fi
-
-
-
-%% 'branded fonts' option
-\DeclareOption{brandedfonts}{
-\ifXeTeX
-  \setmainfont{Cormorant}
-  \setsansfont{Poppins}
-\fi
-}
-
-%\ExecuteOptions{brandedfonts}
-
-\ProcessOptions\relax
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Colors
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{xcolor}
 
 \definecolor{CoolGray11}{RGB}{83,86,90}
 \definecolor{CoolGray7}{RGB}{151,153,155}
@@ -93,6 +67,84 @@
 \definecolor{BackgroundBlue1}{RGB}{192,215,238}
 \definecolor{BackgroundBlue2}{RGB}{206,217,229}
 \definecolor{BackgroundBlue3}{RGB}{219,226,233}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fonts
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{mathptmx}
+\RequirePackage{iftex}
+\IfFileExists{helvet.sty}{
+  \RequirePackage{helvet}
+  %\ClassError{ncar_branding}{Stop Here}{Forced Stop}
+}{}
+\newcommand{\supertinyfont}[1]{{\tiny #1 }}
+
+\ifXeTeX
+  \RequirePackage{fontspec}
+  \renewcommand{\supertinyfont}[1]{{\fontsize{4}{6}\normalfont #1}}
+\fi
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Code Listing
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\IfFileExists{listings.sty}{
+  \RequirePackage{listings}
+  %\ClassError{ncar_branding}{Stop Here}{Forced Stop}
+
+  \lstset{
+    backgroundcolor=\color{BackgroundBlue3},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
+    basicstyle=\footnotesize\ttfamily,        % the size of the fonts that are used for the code
+    %breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+    %breaklines=true,                 % sets automatic line breaking
+    captionpos=b,                    % sets the caption-position to bottom
+    commentstyle=\color{CoolGray7},      % comment style
+    %deletekeywords={...},            % if you want to delete keywords from the given language
+    %escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+    %extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+    %firstnumber=1000,                % start line enumeration with line 1000
+    frame=shadowbox,	             % adds a frame around the code (frame=< none|leftline|topline|bottomline|lines|single|shadowbox >)
+    keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+    keywordstyle=\color{NCARBlue},       % keyword style
+    %language=Octave,                 % the language of the code
+    %morekeywords={*,...},            % if you want to add more keywords to the set
+    numbers=none,                    % where to put the line-numbers; possible values are (none, left, right)
+    numbersep=5pt,                   % how far the line-numbers are from the code
+    numberstyle=\tiny\color{gray},   % the style that is used for the line-numbers
+    %rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+    %showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+    showstringspaces=false,          % underline spaces within strings only
+    %showtabs=false,                  % show tabs within strings adding particular underscores
+    stepnumber=5,                    % the step between two line-numbers. If it's 1, each line will be numbered
+    %stringstyle=\color{teal},        % string literal style
+    %tabsize=2,	                     % sets default tabsize to 2 spaces
+    title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+  }
+}{}
+
+
+
+%---------------------------------------------
+% Options Processig
+%---------------------------------------------
+% 'branded fonts' option
+\DeclareOption{brandedfonts}{
+\ifXeTeX
+  % fonts can be downloaded from https://fonts.google.com/ and installed under OSX with 'Font Book'
+  \setmainfont{Cormorant}
+  \setsansfont{Poppins}
+  \setmonofont{Roboto}
+\fi
+}
+%\ExecuteOptions{brandedfonts}
+
+\ProcessOptions\relax
+
+
+
 
 
 
