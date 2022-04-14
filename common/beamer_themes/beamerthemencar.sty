@@ -29,16 +29,46 @@
 \newcommand{\defaultbackground}{\setbeamertemplate{background}{}}
 
 
-\NewEnviron{NCARtitleframe}[1][]{%
-  %% \setbeamertemplate{headline}
-  %% {%
-  %%   \leavevmode%
-  %%   \hbox{%
-  %%     \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,center]{frametitle-whitetext}%
-  %%       \vbox to2.25ex{\vfil\hbox{\supertinyfont{This material is based upon work supported by the National Center for Atmospheric Research, which is a major facility sponsored by the National Science Foundation under Cooperative Agreement No. 1852977.}}\vfil}%
-  %%     \end{beamercolorbox}}%
-  %%   \vskip0pt%
-  %% }
+\NewEnviron{NCARprettyframe}[1][common/images/wallpaper/NCAR_Clouds]{%
+
+  \setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight]{#1}}
+
+  % Headline on title-like page
+  \setbeamertemplate{headline}{}
+  % Footline on title-like page
+  \setbeamertemplate{footline}{}
+
+  \addtobeamertemplate{block begin}{\pgfsetfillopacity{0.5}}{\pgfsetfillopacity{1}}
+  \addtobeamertemplate{block alerted begin}{\pgfsetfillopacity{0.5}}{\pgfsetfillopacity{1}}
+  \addtobeamertemplate{block example begin}{\pgfsetfillopacity{0.5}}{\pgfsetfillopacity{1}}
+
+  \begin{frame}
+    \BODY
+  \end{frame}
+
+  %\addtobeamertemplate{block begin}{\pgfsetfillopacity{1}}{\pgfsetfillopacity{1}}
+  %\addtobeamertemplate{block alerted begin}{\pgfsetfillopacity{1}}{\pgfsetfillopacity{1}}
+  %\addtobeamertemplate{block example begin}{\pgfsetfillopacity{1}}{\pgfsetfillopacity{1}}
+}
+
+
+
+\NewEnviron{NCARtitleframe}[1][common/images/wallpaper/NCAR_Clouds]{%
+
+  \setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight]{#1}}
+
+  % Headline on title-like page
+  \setbeamertemplate{headline}
+  {%
+    %% \leavevmode%
+    %% \hbox{%
+    %%   \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,center]{frametitle-whitetext}%
+    %%     \vbox to2.25ex{\vfil\hbox{\supertinyfont{This material is based upon work supported by the National Center for Atmospheric Research, which is a major facility sponsored by the National Science Foundation under Cooperative Agreement No. 1852977.}}\vfil}%
+    %%   \end{beamercolorbox}}%
+    %% \vskip0pt%
+  }
+
+  % Footline on title-like page
   \setbeamertemplate{footline}
   {%
     \leavevmode%
@@ -57,11 +87,11 @@
     %\leavevmode%
     \vskip0pt%
   }
-  \titlebackground
-  \begin{frame}{#1}
+
+  \begin{frame}
     \BODY
   \end{frame}
-  \defaultbackground
+  %\defaultbackground
 }
 
 \mode

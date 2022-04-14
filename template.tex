@@ -3,6 +3,7 @@
 % LaTeX Packages
 \usepackage{layout}
 \usepackage{relsize}
+\usepackage{lipsum}
 \usepackage[brandedfonts]{ncar_branding} % initialize ncar_branded package here, perhaps with options, or beamer will do it later
 
 % Beamer Specfics
@@ -20,7 +21,7 @@
 \title{This is my title}
 \subtitle{and I might have a subtitle too!}
 \author{Author One, Author Two}
-\begin{NCARtitleframe}
+\begin{NCARtitleframe}%[common/images/wallpaper/NCAR_Clouds.jpg]
   %\pgfsetfillopacity{0.85}
   \vspace{6em}
   \maketitle
@@ -35,7 +36,7 @@
   \begin{itemize}
   \item \textbf{Bold bullet}
     \begin{itemize}
-    \item Subbullet
+    \item Sub-bullet
     \end{itemize}
   \item Enumerated List:
     \begin{enumerate}
@@ -69,7 +70,7 @@
   \item First bullet
   \item Second bullet
     \begin{itemize}
-    \item Subbullet
+    \item Sub-bullet
     \end{itemize}
   \item List:
     \begin{enumerate}
@@ -98,27 +99,41 @@
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{NCARprettyframe}[common/images/wallpaper/mesa_lab_sunset.jpg]
+  %\pgfsetfillopacity{0.85}
+  \vspace{3em}
+  \begin{beamercolorbox}[sep=8pt,center]{title}
+    \usebeamerfont{title}
+    \Huge{\textcolor{HilightGreen}{Questions?}}
+  \end{beamercolorbox}
+  \begin{exampleblock}{\emph{\textbf{An Example Block, hijacked to make transparent, with optional title}}}
+    \centering
+    \Huge{\textcolor{UCARGreen}{More Questions?}}
+  \end{exampleblock}{}
+\end{NCARprettyframe}
+
+
+
 \section{Section 2}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t]
   \frametitle{Columns With Blocks Too!}
 
-  \textbf{Flush top [t] option}
+  \textbf{Flush top [t] option in this frame}
 
   \begin{columns}[t]
     \column{0.45\textwidth}
     \begin{block}{Left Block Title}
     \begin{itemize}
     \item First bullet
-    \item Second bullet
       \begin{itemize}
-      \item Subbullet
+      \item Sub-bullet
       \end{itemize}
     \item List:
       \begin{enumerate}
       \item item one
       \item item two
-      \item item three
       \end{enumerate}
     \end{itemize}
     \end{block}
@@ -126,9 +141,8 @@
     \begin{block}{Right Block Title}
     \begin{itemize}
     \item First bullet
-    \item Second bullet
       \begin{itemize}
-      \item Subbullet
+      \item Sub-bullet
       \end{itemize}
     \item List:
       \begin{enumerate}
@@ -140,32 +154,57 @@
     \end{itemize}
     \end{block}
   \end{columns}
+
+  \begin{exampleblock}{Example Block Title}
+    This should be a restored example block, importantly not messed up with transparency after our \texttt{NCARprettyframe} tomfoolery.
+  \end{exampleblock}
 \end{frame}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
-\end{frame}
-
-
-
+% Backup
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{NCARtitleframe}
+\begin{NCARprettyframe}[common/images/wallpaper/mesa_lab.jpg]
   %\pgfsetfillopacity{0.85}
-  \centering
-  \Huge{Backup}
-\end{NCARtitleframe}
+  \begin{beamercolorbox}[sep=8pt,center]{title}
+    \usebeamerfont{title}
+    \Huge{Backup}
+  \end{beamercolorbox}
+    \begin{exampleblock}{}
+      \centering
+      \relsize{+4}
+      \textbf{Backup}
+  \end{exampleblock}{}
+
+\end{NCARprettyframe}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\nobackground
+\begin{frame}{Plain Text}
+  \relsize{-1}
+  \lipsum[1]
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Quoting Environment}
+  \relsize{-1}
+  \lipsum[3]
+  \begin{quote}
+    \lipsum[4]
+  \end{quote}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[plain,c,shrink]
   \vspace{3em}
   \hspace{1em}\layout{}
 \end{frame}
-\defaultbackground
 
 
 
