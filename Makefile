@@ -9,7 +9,7 @@ template.pdf: template.tex Makefile $(template_sources)
 	  TEXINPUTS=common//:$$TEXINPUTS $(latexprog) $<
 
 clean:
-	rm *~
+	rm -f *~
 
 echo:
 	echo "template_sources: " && echo $(template_sources) && echo
