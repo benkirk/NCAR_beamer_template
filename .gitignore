@@ -7,3 +7,4 @@ paper.pdf
 *.snm
 *.toc
 *~
+_minted-template/
