@@ -133,6 +133,7 @@
 
 
 \section{Section 2}
+\subsection{Blocks}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[t]
   \frametitle{Columns With Blocks Too!}
@@ -179,6 +180,7 @@
 
 
 
+\subsection{More Blocks}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
   \frametitle{A Frame With Types of Blocks}
@@ -210,6 +212,7 @@
 
 
 
+\section{Backup}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Backup
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -242,14 +245,7 @@
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Plain Text}
-  \relsize{-1}
-  \lipsum[1]
-\end{frame}
-
-
-
+\subsection{Quoting}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Quoting Environment}
   \relsize{-1}
@@ -261,6 +257,16 @@
 
 
 
+\subsection{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Plain Text}
+  \relsize{-1}
+  \lipsum[1]
+\end{frame}
+
+
+
+\subsection*{Code}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
   \frametitle{Sample Code}
@@ -278,16 +284,24 @@
 \begin{frame}
   \frametitle{Sample mpi4py Code}
   Here is some sample MPI/Python code:
-  \lstinputlisting[language=Python]{snippets/nb.py}
+  \only<1>{(lstinputlisting) \lstinputlisting[language=Python]{snippets/nb.py}}
+  \only<2>{(minted) \inputminted{Python}{snippets/nb.py}}
 \end{frame}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}
+\begin{frame}%[shrink]
   \frametitle{Sample PBS Shell Script}
-  Here is some sample MPI/Python code:
+  Here is some sample PBS scripts: (lstinputlisting)
+  \relsize{-2}
   \lstinputlisting[language=bash]{snippets/PBS/hello_world_PBS.sh}
+\end{frame}
+\begin{frame}%[shrink]
+  \frametitle{Sample PBS Shell Script}
+  Here is some sample PBS scripts: (minted)
+  \relsize{-2}
+  \inputminted[bgcolor=BackgroundBlue3]{bash}{snippets/PBS/hello_world_PBS.sh}
 \end{frame}
 
 
