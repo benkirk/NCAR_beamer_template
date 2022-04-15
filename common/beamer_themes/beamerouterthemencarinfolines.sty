@@ -29,20 +29,22 @@
 \setbeamercolor*{section in foot}{fg=white,bg=CoolGray11}
 \setbeamercolor*{subsection in foot}{fg=white,bg=CoolGray11}
 
+\setbeamerfont{section in head/foot}{size=\small}
+\setbeamerfont{subsection in head/foot}{size=\footnotesize, shape=\itshape}
 \setbeamertemplate{page number in head/foot}[totalframenumber]%
 
 \defbeamertemplate*{footline}{ncarinfolines theme}
 {%
   \leavevmode%
   \hbox{%
-    \begin{beamercolorbox}[wd=.5\paperwidth,ht=7ex,left]{section in foot}%
+    \begin{beamercolorbox}[wd=.7\paperwidth,ht=7ex,left]{section in foot}%
       \vbox to7ex{\vfil\hbox{\hspace*{1ex}\includegraphics[height=5ex]{common/images/ncarucar-stacked-white-bar.pdf}}\vfil}%
-      \vbox to7ex{\vfil\hbox{\hspace*{1ex}\usebeamerfont{section in head/foot}\expandafter\ifstrempty\expandafter{\insertsubsection}{\insertsection}{{\insertsectionhead}:\hspace{0.5em}{\it\insertsubsectionhead}}}\vfil}%
+      \vbox to7ex{\vfil\hbox{\hspace*{1ex}\usebeamerfont{section in head/foot}\expandafter\ifstrempty\expandafter{\insertsubsection}{\insertsectionhead}{{\insertsectionhead}\hspace{1ex}{\usebeamerfont{subsection in head/foot}\insertsubsectionhead}}}\vfil}%
     \end{beamercolorbox}%
-    \begin{beamercolorbox}[wd=.4\paperwidth,ht=7ex,right]{page number in foot}%
+    \begin{beamercolorbox}[wd=.24\paperwidth,ht=7ex,right]{page number in foot}%
       \vbox to7ex{\vfil\hbox{\includegraphics[height=7ex,trim=0ex 1in 0ex 2in,clip]{common/images/NCAR-Waves.pdf}}\vfil}%
     \end{beamercolorbox}%
-    \begin{beamercolorbox}[wd=.1\paperwidth,ht=7ex,right]{page number in foot}%
+    \begin{beamercolorbox}[wd=.06\paperwidth,ht=7ex,right]{page number in foot}%
       \vbox to7ex{\vfil\hbox{\hspace*{1ex}\usebeamerfont{page number in head/foot}\usebeamertemplate{page number in head/foot}\hspace*{1ex}}\vfil}%
     \end{beamercolorbox}}%
   \vskip0pt%
