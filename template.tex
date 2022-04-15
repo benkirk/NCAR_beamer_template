@@ -22,7 +22,6 @@
 \subtitle{and I might have a subtitle too!}
 \author{Author One, Author Two}
 \begin{NCARtitleframe}%[common/images/wallpaper/NCAR_Clouds.jpg]
-  %\pgfsetfillopacity{0.85}
   \vspace{6em}
   \maketitle
 \end{NCARtitleframe}
@@ -66,14 +65,18 @@
 \section{Section 1}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-  \frametitle{A Frame With a Block}
-  \begin{block}{Block Title}
+  \frametitle{A Frame With Types of Blocks}
+  \begin{block}{Regular Block}
   \begin{itemize}
   \item First bullet
   \item Second bullet
     \begin{itemize}
     \item Sub-bullet
     \end{itemize}
+  \end{itemize}
+  \end{block}
+  \begin{exampleblock}{Example Block}
+  \begin{itemize}
   \item List:
     \begin{enumerate}
     \item item one
@@ -81,7 +84,12 @@
     \item item three
     \end{enumerate}
   \end{itemize}
-  \end{block}
+  \end{exampleblock}
+  \begin{alertblock}{Alert Block}
+    \begin{itemize}
+    \item I have a very important point here\ldots
+    \end{itemize}
+  \end{alertblock}
 \end{frame}
 
 
@@ -116,6 +124,10 @@
     \centering
     \Huge{More Questions?}
   \end{exampleblock}
+  \begin{alertblock}{\emph{\textbf{An Alert Block, colors unchanged but a little transparency}}}
+    \centering
+    \Huge{More Questions?}
+  \end{alertblock}
 \end{NCARprettyframe}
 
 
@@ -168,9 +180,41 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \frametitle{A Frame With Types of Blocks}
+  \begin{block}{Regular Block}
+  \begin{itemize}
+  \item First bullet
+  \item Second bullet
+    \begin{itemize}
+    \item Sub-bullet
+    \end{itemize}
+  \end{itemize}
+  \end{block}
+  \begin{exampleblock}{Example Block}
+  \begin{itemize}
+  \item List:
+    \begin{enumerate}
+    \item item one
+    \item item two
+    \item item three
+    \end{enumerate}
+  \end{itemize}
+  \end{exampleblock}
+  \begin{alertblock}{Alert Block}
+    \begin{itemize}
+    \item I have a very important point here\ldots
+    \end{itemize}
+  \end{alertblock}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Backup
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{NCARprettyframe}[common/images/wallpaper/mesa_lab.jpg]
+  \vspace{3em}
   \begin{beamercolorbox}[sep=8pt,center]{title}
     \usebeamerfont{title}
     \Huge{Backup}
@@ -187,6 +231,12 @@
     \relsize{+4}
     \textbf{Backup}
   \end{block}
+  \begin{alertblock}{}
+    \centering
+    %\usebeamerfont{title}
+    \relsize{+1}
+    Alert Box Backup
+  \end{alertblock}
 
 \end{NCARprettyframe}
 
