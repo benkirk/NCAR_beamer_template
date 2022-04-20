@@ -1,0 +1,11 @@
+(base) benkirk@cisl-montague(212)$ whoami
+benkirk
+(base) benkirk@cisl-montague(213)$ pwd
+/Users/benkirk/Documents/NCAR_beamer_template
+(base) benkirk@cisl-montague(214)$ echo $HOME
+/Users/benkirk
+(base) benkirk@cisl-montague(215)$ hostname
+cisl-montague
+(base) benkirk@cisl-montague(216)$ uptime
+13:13  up 8 days, 23:31, 2 users, load averages: 1.38 1.65 1.70
+(base) benkirk@cisl-montague(217)$

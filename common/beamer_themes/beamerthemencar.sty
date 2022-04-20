@@ -19,9 +19,9 @@
 \setbeamertemplate{title page}[default][rounded=false]
 \setbeamertemplate{itemize items}[circle]
 
-\makeatletter
-\patchcmd{\beamer@calculateheadfoot}{\advance\footheight by 4pt}{\advance\footheight by 60pt}{}{}
-\makeatother
+%\makeatletter
+%\patchcmd{\beamer@calculateheadfoot}{\advance\footheight by 4pt}{\advance\footheight by 60pt}{}{}
+%\makeatother
 
 \newcommand{\nobackground}{\setbeamertemplate{background}{}}
 \newcommand{\titlebackground}{\setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight]{common/images/wallpaper/NCAR_Clouds}}}
@@ -40,11 +40,37 @@
 
   \setbeamercolor*{block title}{fg=DeepBlue,bg=}
   \setbeamercolor*{block title example}{fg=HilightGreen,bg=}
-  \setbeamercolor*{block body}{fg=white,bg=black}
-  \setbeamercolor*{block body example}{fg=black,bg=white}
+  \setbeamercolor*{block body}{fg=CoolGray1,bg=black}
+  \setbeamercolor*{block body example}{fg=black!90,bg=CoolGray1}
 
-  \addtobeamertemplate{block begin}{\pgfsetfillopacity{0.8}}{\pgfsetfillopacity{1}}
-  \addtobeamertemplate{block example begin}{\pgfsetfillopacity{0.8}}{\pgfsetfillopacity{1}}
+%  \setbeamertemplate{block begin}{%
+%    %
+%    \setbeamercolor{itemize subitem}{fg=white}%
+%    \setbeamercolor{itemize subsubitem}{fg=white}%
+%    \setbeamercolor{enumerate item}{fg=white}%
+%    \setbeamercolor{enumerate subitem}{fg=white}%
+%    \setbeamercolor{enumerate subsubitem}{fg=white}%
+%  }
+
+  \addtobeamertemplate{block begin}{%
+    \setbeamercolor{itemize item}{fg=CoolGray1}%
+    \setbeamercolor{itemize subitem}{fg=CoolGray1}%
+    \setbeamercolor{itemize subsubitem}{fg=CoolGray1}%
+    \setbeamercolor{enumerate item}{fg=CoolGray1}%
+    \setbeamercolor{enumerate subitem}{fg=CoolGray1}%
+    \setbeamercolor{enumerate subsubitem}{fg=CoolGray1}%
+    \pgfsetfillopacity{0.9}}{\pgfsetfillopacity{1}%
+  }
+  \addtobeamertemplate{block example begin}{%
+    \setbeamercolor*{normal text}{fg=black!90}%
+    \setbeamercolor{itemize item}{fg=black!90}%
+    \setbeamercolor{itemize subitem}{fg=black!90}%
+    \setbeamercolor{itemize subsubitem}{fg=black!90}%
+    \setbeamercolor{enumerate item}{fg=black!90}%
+    \setbeamercolor{enumerate subitem}{fg=black!90}%
+    \setbeamercolor{enumerate subsubitem}{fg=black!90}%
+    \pgfsetfillopacity{0.9}}{\pgfsetfillopacity{1}%
+  }
   \addtobeamertemplate{block alerted begin}{\pgfsetfillopacity{0.9}}{\pgfsetfillopacity{1}}
 
   \begin{frame}
@@ -73,13 +99,13 @@
   \setbeamertemplate{footline}
   {%
     \leavevmode%
-    \hbox{%
-      \begin{beamercolorbox}[wd=0.5\paperwidth,ht=18ex,sep=1ex,left]{}%
-        \vbox to18ex{\vfil\hbox{\hspace*{1ex}\includegraphics[height=18ex]{common/images/NCAR-legacy-spellout-logo-blue.pdf}}\vfil}%
-      \end{beamercolorbox}%
-      \begin{beamercolorbox}[wd=0.5\paperwidth,ht=18ex,,sep=1ex,right]{}%
-        \vbox to18ex{\vfil\hbox{\includegraphics[height=18ex]{common/images/NSF4colorVector.pdf}\hspace*{1ex}}\vfil}%
-    \end{beamercolorbox}}%
+    %% \hbox{%
+    %%   \begin{beamercolorbox}[wd=0.5\paperwidth,ht=18ex,sep=1ex,left]{}%
+    %%     \vbox to18ex{\vfil\hbox{\hspace*{1ex}\includegraphics[height=18ex]{common/images/NCAR-legacy-spellout-logo-blue.pdf}}\vfil}%
+    %%   \end{beamercolorbox}%
+    %%   \begin{beamercolorbox}[wd=0.5\paperwidth,ht=18ex,,sep=1ex,right]{}%
+    %%     \vbox to18ex{\vfil\hbox{\includegraphics[height=18ex]{common/images/NSF4colorVector.pdf}\hspace*{1ex}}\vfil}%
+    %% \end{beamercolorbox}}%
 
     \hbox{%
       \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,center]{frametitle-whitetext}%
@@ -89,11 +115,23 @@
     \vskip0pt%
   }
 
+  %\logo{\centerline{\includegraphics[height=0.2\textheight]{common/images/NCAR-legacy-spellout-logo-blue.pdf} \includegraphics[height=0.2\textheight]{common/images/NSF4colorVector.pdf}}}
+  \logo{%
+    \hbox{%
+      \begin{beamercolorbox}[wd=0.5\paperwidth,ht=0.2\textheight,sep=1ex,left]{}%
+        \includegraphics[height=0.2\textheight]{common/images/NCAR-legacy-spellout-logo-blue.pdf}
+      \end{beamercolorbox}%
+      \begin{beamercolorbox}[wd=0.5\paperwidth,ht=0.2\textheight,sep=1ex,right]{}%
+        \includegraphics[height=0.2\textheight]{common/images/NSF4colorVector.pdf}
+    \end{beamercolorbox}}%
+  }
   \begin{frame}
     \BODY
   \end{frame}
+  \logo{}
   %\defaultbackground
 }
+
 
 \mode
 <all>
