@@ -125,30 +125,18 @@ function Span(el)
   end
 end
 
--- Text width (inches) per beamer aspect ratio: paper width minus the theme's
--- 6% side margins.  Used to cap images with absolute widths, e.g. mermaid
--- diagrams, which Quarto includes at their natural size.
-local paper_width_cm = {
-  ["169"] = 16, ["1610"] = 16, ["149"] = 14, ["141"] = 14.85,
-  ["54"] = 12.5, ["43"] = 12.8, ["32"] = 13.5,
-}
-local to_inches = { ["in"] = 1, cm = 1 / 2.54, mm = 1 / 25.4, pt = 1 / 72.27, px = 1 / 96 }
-
-local function cap_image_widths(doc)
-  local ar = doc.meta["aspectratio"] and pandoc.utils.stringify(doc.meta["aspectratio"]) or "169"
-  local max_in = (paper_width_cm[ar] or 16) * 0.88 / 2.54
+-- Images with an absolute size (e.g. mermaid diagrams, which Quarto includes
+-- at their natural size and so ignore fig-width) can run off the slide or
+-- into the neighbouring column.  Wrap them in pandoc's \pandocbounded, which
+-- scales the image down to the current \linewidth / \textheight if needed.
+local function bound_sized_images(doc)
   return doc:walk({
     Image = function(img)
-      local w = img.attributes["width"]
-      if not w then return nil end
-      local num, unit = w:match("^([%d%.]+)%s*(%a*)$")
-      if not num then return nil end -- e.g. percentages: already relative
-      local inches = tonumber(num) * (to_inches[unit ~= "" and unit or "px"] or 0)
-      if inches > max_in then
-        img.attributes["width"] = "100%"
-        img.attributes["height"] = nil
-        return img
-      end
+      local w, h = img.attributes["width"], img.attributes["height"]
+      if not (w or h) then return nil end -- unsized: pandoc bounds these itself
+      if (w and w:match("%%$")) or (h and h:match("%%$")) then return nil end -- relative
+      local tex = pandoc.write(pandoc.Pandoc({ pandoc.Plain({ img }) }), "latex")
+      return pandoc.RawInline("latex", "\\pandocbounded{" .. tex:gsub("%s+$", "") .. "}")
     end,
   })
 end
@@ -158,7 +146,7 @@ function Pandoc(doc)
     slide_level = PANDOC_WRITER_OPTIONS.slide_level
   end
 
-  doc = cap_image_widths(doc)
+  doc = bound_sized_images(doc)
   load_theme(doc)
 
   -- title fine print from metadata
