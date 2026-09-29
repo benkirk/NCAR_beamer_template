@@ -6,7 +6,8 @@
 \usepackage{layout}
 \usepackage{relsize}
 \usepackage{lipsum}
-\usepackage{ncar_branding} % initialize ncar_branded package here, perhaps with options, or beamer will do it later
+\usepackage{listings}
+\usepackage{ncar_branding} % brand colors, fonts (Poppins under XeLaTeX/LuaLaTeX), listings style
 
 \renewcommand{\familydefault}{\sfdefault} % prefer sans-serif fonts (yuck, I think)
 
@@ -25,7 +26,7 @@
 \section{First Section}
 \lipsum[1]
 \begin{figure}
-  \centerline{\includegraphics[width=0.5\textwidth]{common/images/wallpaper/mesa_lab_sunset}}
+  \centerline{\includegraphics[width=0.5\textwidth]{images/wallpaper/mesa_lab_sunset}}
   \caption{Pretty Picure.\label{fig:pretty}}
 \end{figure}
 Reference my pretty picture (Figure~\ref{fig:pretty}).

@@ -1,0 +1,38 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerfontthemeNCAR}[2026/09/29 v2.0 NSF NCAR / UCAR beamer font theme]
+% Poppins Bold for headlines & subheads, Poppins Regular for body
+% (Brand Guide p20).  Font selection itself lives in ncar_branding.sty.
+\mode<presentation>
+\@ifpackageloaded{ncar_branding}{}{\RequirePackage{ncar_branding}}
+
+\setbeamerfont{normal text}{family=\sffamily}
+\setbeamerfont{structure}{family=\sffamily}
+\setbeamerfont{alerted text}{series=\sbseries}
+
+\setbeamerfont{title}{size=\Large,series=\bfseries}
+\setbeamerfont{subtitle}{size=\normalsize,series=\bfseries}
+\setbeamerfont{author}{size=\normalsize,series=\bfseries}
+\setbeamerfont{institute}{size=\small,series=\mdseries}
+\setbeamerfont{date}{size=\scriptsize,series=\bfseries}
+\setbeamerfont{title fineprint}{size=\tiny,series=\mdseries}
+
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\normalsize,series=\sbseries}
+\setbeamerfont{section title}{size=\huge,series=\bfseries}
+\setbeamerfont{section number}{size=\small,series=\sbseries}
+\setbeamerfont{subsection title}{size=\Large,series=\bfseries}
+
+\setbeamerfont{block title}{size=\normalsize,series=\sbseries}
+\setbeamerfont{item projected}{size=\scriptsize,series=\bfseries}
+% itemize/enumerate sizes: beamer defaults (body inherits the local size)
+
+\setbeamerfont{section in toc}{series=\sbseries}
+\setbeamerfont{subsection in toc}{size=\small}
+\setbeamerfont{page number in head/foot}{size=\scriptsize,series=\bfseries}
+\setbeamerfont{footline}{size=\tiny}
+\setbeamerfont{caption}{size=\footnotesize}
+\setbeamerfont{caption name}{series=\sbseries}
+\setbeamerfont{footnote}{size=\tiny}
+
+% math: keep beamer's sans math unless the user loads another font theme
+\mode<all>

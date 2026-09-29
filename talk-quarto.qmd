@@ -1,0 +1,53 @@
+---
+# Starter deck -- edit me, then `make quarto` (-> talk-quarto.pdf).
+# Every feature is demonstrated in examples/quarto-demo.qmd.
+title: "Talk Title Goes Here"
+subtitle: "An optional subtitle"
+author: "Your Name"
+institute: "Your Title, Your Lab, NSF NCAR"
+date: today
+date-format: long
+titlegraphic: images/wallpaper/mesa_lab_sunset.jpg   # optional
+fineprint: >-
+  This material is based upon work supported by the NSF National Center for
+  Atmospheric Research, a major facility sponsored by the U.S. National
+  Science Foundation.
+themeoptions: [brand=ncar, title=dark]   # brand=ncar|ucar|ncarucar, title=dark|light
+format: ncar-beamer
+---
+
+# Introduction
+
+## A Content Slide
+
+- Make a point
+  - and support it
+- Highlight [one key idea]{.alert}
+
+### A block
+
+Level-3 headings become blocks; add `{.example}` or `{.alert}` for the variants.
+
+## A Photo Slide {.feature background="images/wallpaper/mesa_lab.jpg"}
+
+### Blocks turn translucent on photos
+
+`## Title {.feature background="photo.jpg"}`
+
+# Details
+
+## Code
+
+```bash
+#!/bin/bash
+#PBS -A <project>
+#PBS -l select=1:ncpus=128
+mpiexec ./my_model
+```
+
+## Thank you! {.closing}
+
+Questions?
+
+**Your Name** \
+`you@ucar.edu`

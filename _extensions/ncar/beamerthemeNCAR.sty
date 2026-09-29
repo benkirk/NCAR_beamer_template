@@ -1,0 +1,50 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeNCAR}[2026/09/29 v2.0 NSF NCAR / UCAR beamer theme]
+%
+% \usetheme[<options>]{NCAR}
+%
+%   brand=ncar|ucar|ncarucar   palette + logo lockup                  (ncar)
+%   title=dark|light           title/closing slide field:
+%                              brand color w/ white-reversed logo, or
+%                              white w/ full-color logo               (dark)
+%   fonts=poppins|helvetica    (poppins under XeLaTeX/LuaLaTeX)
+%   footer=minimal|full        page number only, or + short title/date (minimal)
+%   sectionpages=true|false    automatic divider frame per \section   (true)
+%   logo=true|false            logo in the top-right of content frames (true)
+%
+% Frame extensions (see README):
+%   \begin{frame}[ncarbg=<image>]   full-bleed photo "feature" frame
+%   \begin{frame}[ncarclosing]      closing / thank-you frame
+%   \ncarclosingframe{Thank you}{contact text}
+%
+\mode<presentation>
+
+\def\ncar@opt@brand{ncar}
+\def\ncar@titlestyle{dark}
+\def\ncar@opt@fonts{auto}
+\def\ncar@footer{minimal}
+\newif\ifncar@sectionpages \ncar@sectionpagestrue
+\newif\ifncar@framelogo    \ncar@framelogotrue
+
+\DeclareOptionBeamer{brand}{\def\ncar@opt@brand{#1}}
+\DeclareOptionBeamer{title}{\def\ncar@titlestyle{#1}}
+\DeclareOptionBeamer{fonts}{\def\ncar@opt@fonts{#1}}
+\DeclareOptionBeamer{footer}{\def\ncar@footer{#1}}
+\DeclareOptionBeamer{sectionpages}[true]{\csname ncar@sectionpages#1\endcsname}
+\DeclareOptionBeamer{logo}[true]{\csname ncar@framelogo#1\endcsname}
+\ProcessOptionsBeamer
+
+\mode<all>
+\@ifpackageloaded{ncar_branding}{}{%
+  \edef\ncar@tmp{\noexpand\RequirePackage[brand=\ncar@opt@brand,fonts=\ncar@opt@fonts]{ncar_branding}}%
+  \ncar@tmp}
+\mode<presentation>
+
+\usecolortheme{NCAR}
+\usefonttheme{NCAR}
+\useinnertheme{NCAR}
+\useoutertheme{NCAR}
+
+\setbeamertemplate{navigation symbols}{}
+
+\mode<all>

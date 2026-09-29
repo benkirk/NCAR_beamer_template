@@ -1,0 +1,195 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ncar_branding}[2026/09/29 v2.0 NSF NCAR / UCAR brand colors, fonts & logos]
+%
+% Brand primitives shared by the NCAR beamer theme and plain documents
+% (see examples/paper.tex).  Values follow the 2026 "Vermilion" NSF NCAR /
+% UCAR / UCP Brand Guide (pp. 17-21).
+%
+% Options:
+%   brand=ncar|ucar|ncarucar  which palette/logo lockup is primary   (ncar)
+%   fonts=poppins|bundled|helvetica   brand font, bundled copy, or the
+%                             sanctioned substitute (default: poppins under
+%                             XeTeX/LuaTeX, helvetica under pdfTeX)
+%   brandedfonts              legacy (v1) spelling of fonts=poppins
+%
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=ncar,prefix=ncar@}
+\DeclareStringOption[ncar]{brand}
+\DeclareStringOption[auto]{fonts}
+\DeclareVoidOption{brandedfonts}{\def\ncar@fonts{poppins}}
+\ProcessKeyvalOptions*
+
+\RequirePackage{iftex}
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Colors (Brand Guide p17-19)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% primary
+\definecolor{NCARBlue}{HTML}{0057C2}
+\definecolor{DarkBlue}{HTML}{00357A}   % primary text color on light backgrounds
+\definecolor{UCARAqua}{HTML}{00A2B4}
+\definecolor{UCARAquaContrast}{HTML}{00818F} % small text on white only
+% secondary
+\definecolor{Space}{HTML}{011837}
+\definecolor{LightBlue}{HTML}{42C0FF}
+\definecolor{LightAqua}{HTML}{34E1F4}
+\definecolor{LightGray}{HTML}{F1F0EE}
+\definecolor{BrandWhite}{HTML}{FFFFFF}
+% accents -- small amounts only (charts, highlights, the title/tab bars)
+\definecolor{BrandOrange}{HTML}{FAA119}
+\definecolor{BrandYellow}{HTML}{FFDD31}
+
+% semantic roles, switched by brand=
+\def\ncar@tmp{ucar}\ifx\ncar@brand\ncar@tmp
+  \colorlet{BrandPrimary}{UCARAqua}
+  \colorlet{BrandPrimaryText}{Space}     % text on BrandPrimary
+  \colorlet{BrandPrimaryContrast}{UCARAquaContrast}
+  \colorlet{BrandSecondary}{LightAqua}
+  \colorlet{BrandAccent}{BrandYellow}
+\else
+  \colorlet{BrandPrimary}{NCARBlue}
+  \colorlet{BrandPrimaryText}{white}
+  \colorlet{BrandPrimaryContrast}{NCARBlue}
+  \colorlet{BrandSecondary}{LightBlue}
+  \colorlet{BrandAccent}{BrandOrange}
+\fi
+\colorlet{BrandText}{DarkBlue}
+
+% legacy (v1, 2020 brand) names, mapped onto the nearest 2026 color so old
+% documents still compile.  Prefer the names above in new work.
+\colorlet{NCARLighterBlue}{NCARBlue}
+\colorlet{NCARLightestBlue}{LightBlue}
+\colorlet{DeepBlue}{DarkBlue}
+\colorlet{UCARGreen}{UCARAquaContrast}
+\colorlet{UCARLighterGreen}{UCARAqua}
+\colorlet{UCARLightestGreen}{LightAqua}
+\colorlet{HilightGreen}{BrandOrange}
+\colorlet{CoolGray11}{DarkBlue}
+\colorlet{CoolGray7}{DarkBlue!60}
+\colorlet{CoolGray4}{DarkBlue!30}
+\colorlet{CoolGray1}{LightGray}
+\colorlet{TitleBoxGray}{Space}
+\colorlet{BackgroundBlue1}{LightBlue!30}
+\colorlet{BackgroundBlue2}{LightGray}
+\colorlet{BackgroundBlue3}{LightGray}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fonts (Brand Guide p20): Poppins Bold headlines, Poppins Regular body;
+% Helvetica is the sanctioned substitute.
+%
+%   fonts=poppins   installed system Poppins if present, else the bundled copy
+%   fonts=bundled   always the bundled copy (reproducible output)
+%   fonts=helvetica Helvetica (pdfLaTeX) / TeX Gyre Heros (XeLaTeX, LuaLaTeX)
+%
+% The bundled copy lives in \ncarassetdir fonts/Poppins/.  \ncarassetdir
+% defaults to the relative `ncar-assets/'; the Quarto extension defines it as
+% an absolute path, and plain-LaTeX builds find the relative path through
+% kpathsea (TEXINPUTS=<theme>// for logos, TTFONTS=<theme>// for fonts).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\providecommand\ncarassetdir{ncar-assets/}
+\newif\ifncar@poppins \ncar@poppinsfalse
+\def\ncar@tmp{auto}\ifx\ncar@fonts\ncar@tmp
+  \iftutex\def\ncar@fonts{poppins}\else\def\ncar@fonts{helvetica}\fi
+\fi
+\def\ncar@tmp{helvetica}\ifx\ncar@fonts\ncar@tmp\else
+  \iftutex
+    \RequirePackage{fontspec}
+    \def\ncar@bundledpoppins{%
+      \edef\ncar@tmp{\noexpand\setsansfont{Poppins}[%
+        Scale          = 1.0,  % pandoc sets Scale=MatchLowercase, shrinking Poppins
+        Path           = \ncarassetdir fonts/Poppins/,
+        Extension      = .ttf,
+        UprightFont    = *-Regular,
+        BoldFont       = *-Bold,
+        ItalicFont     = *-Italic,
+        BoldItalicFont = *-BoldItalic,
+        FontFace       = {sb}{n}{*-SemiBold}]}%
+      \ncar@tmp\ncar@poppinstrue}
+    \def\ncar@tmp{bundled}\ifx\ncar@fonts\ncar@tmp
+      \ncar@bundledpoppins
+    \else
+      \IfFontExistsTF{Poppins}{%
+        \setsansfont{Poppins}[Scale=1.0,FontFace={sb}{n}{Font=* SemiBold}]%
+        \ncar@poppinstrue
+      }{\ncar@bundledpoppins}%
+    \fi
+  \else
+    \PackageWarningNoLine{ncar_branding}{fonts=\ncar@fonts\space needs XeLaTeX or
+      LuaLaTeX; falling back to Helvetica}%
+  \fi
+\fi
+
+\ifncar@poppins\else
+  \iftutex
+    \RequirePackage{fontspec}
+    \IfFontExistsTF{TeX Gyre Heros}{\setsansfont{TeX Gyre Heros}[Scale=1.0]}{}%
+  \else
+    \RequirePackage[T1]{fontenc}
+    \IfFileExists{helvet.sty}{\RequirePackage[scaled=0.92]{helvet}}{}%
+  \fi
+\fi
+
+% semibold where available (Poppins SemiBold), else bold
+\ifncar@poppins
+  \DeclareRobustCommand{\sbseries}{\fontseries{sb}\selectfont}
+\else
+  \DeclareRobustCommand{\sbseries}{\bfseries}
+\fi
+\DeclareTextFontCommand{\textsb}{\sbseries}
+
+\newcommand{\supertinyfont}[1]{{\fontsize{5}{6}\selectfont #1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Logos (Brand Guide p3-8).  Full-color on white/Light Gray; the
+% "Color-White" (NSF color + white-reversed) lockup on dark backgrounds.
+% The NCAR logo must always be locked up with the NSF logo.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\ncar@logodir{\ncarassetdir logos/}
+\def\ncar@tmp{ucar}\ifx\ncar@brand\ncar@tmp
+  \def\ncar@logo@light{\ncar@logodir UCAR-Logo_Color_RGB}
+  \def\ncar@logo@dark {\ncar@logodir UCAR-Logo_White_RGB}
+\else\def\ncar@tmp{ncarucar}\ifx\ncar@brand\ncar@tmp
+  \def\ncar@logo@light{\ncar@logodir NSF-NCAR-UCAR_Logo_FullColor_RGB}
+  \def\ncar@logo@dark {\ncar@logodir NSF-NCAR-UCAR_Logo_Color-White_RGB}
+\else
+  \def\ncar@logo@light{\ncar@logodir NSF-NCAR_Logo_FullColor_RGB}
+  \def\ncar@logo@dark {\ncar@logodir NSF-NCAR_Logo_Color-White_RGB}
+\fi\fi
+
+% \ncarlogo[<includegraphics opts>]{light|dark}
+\newcommand{\ncarlogo}[2][height=1cm]{%
+  \includegraphics[#1]{\csname ncar@logo@#2\endcsname}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Small marks
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{pifont}
+\newcommand{\cmark}{{\color{NCARBlue}\ding{51}}}
+\newcommand{\xmark}{{\color{DarkBlue!70}\ding{55}}}
+\newcommand{\pmark}{{\color{BrandOrange}\ding{108}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Code listings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\AddToHook{begindocument/before}{%
+  \@ifpackageloaded{listings}{%
+    \lstdefinestyle{ncar}{
+      backgroundcolor=\color{LightGray},
+      basicstyle=\footnotesize\ttfamily\color{Space},
+      keywordstyle=\color{NCARBlue}\bfseries,
+      commentstyle=\color{DarkBlue!55}\itshape,
+      stringstyle=\color{UCARAquaContrast},
+      numberstyle=\tiny\color{DarkBlue!50},
+      frame=leftline, framerule=2pt, rulecolor=\color{BrandPrimary},
+      xleftmargin=6pt, framexleftmargin=4pt, aboveskip=6pt, belowskip=6pt,
+      columns=fullflexible, keepspaces=true,
+      breaklines=true, showstringspaces=false, captionpos=b,
+      numbers=none, numbersep=5pt, tabsize=2,
+    }%
+    \lstset{style=ncar}%
+  }{}%
+}
+
+\endinput

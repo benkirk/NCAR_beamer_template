@@ -1,0 +1,196 @@
+% NSF NCAR / UCAR beamer theme -- feature showcase.
+%
+% Build (from the repository root):   make            -> examples/template.pdf
+% Variants: make variants  (brand=ucar|ncarucar, title=light, 4:3, pdflatex)
+%
+\providecommand\ncarthemeoptions{}
+\providecommand\ncaraspectratio{169}
+\documentclass[aspectratio=\ncaraspectratio]{beamer}
+
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{relsize}
+\usepackage{lipsum}
+
+\expandafter\usetheme\expandafter[\ncarthemeoptions]{NCAR}
+
+\title{Title Lorem Sit Ipsum Dolor Nonummy Aliquip}
+\subtitle{Optional subhead: the NSF NCAR beamer theme}
+\author{Presenter Name(s) Here}
+\institute{Presenter Title, CISL, NSF NCAR}
+\date{\today}
+\titlegraphic{\includegraphics{images/wallpaper/mesa_lab_sunset.jpg}}
+\titlefineprint{This material is based upon work supported by the NSF National
+  Center for Atmospheric Research, a major facility sponsored by the
+  U.S.~National Science Foundation.}
+
+% palette swatch: \swatch{<color>}{<name>}{<hex>}
+\newcommand\swatch[3]{%
+  \begin{minipage}[t]{0.23\textwidth}\centering
+    \tikz\fill[#1,draw=DarkBlue!20] (0,0) rectangle (\linewidth,0.9cm);\\[0.3ex]
+    {\scriptsize\textsb{#2}}\\[-0.4ex]{\tiny\##3}
+  \end{minipage}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+\end{frame}
+
+\begin{frame}{Overview}
+  \tableofcontents
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Basics}
+
+\begin{frame}{A Basic Frame}
+  \begin{itemize}
+  \item Poppins Bold for headlines, Poppins Regular for body text
+    \begin{itemize}
+    \item Dark Blue on white is the primary text color
+      \begin{itemize}
+      \item accents (orange, yellow) only in small amounts
+      \end{itemize}
+    \end{itemize}
+  \item Use \alert{alerted text} sparingly
+  \end{itemize}
+  \begin{enumerate}
+  \item Numbered items
+  \item Carry the brand color, too
+  \end{enumerate}
+  \begin{equation}
+    \frac{\partial u}{\partial t} + (u\cdot\nabla)u = -\frac{1}{\rho}\nabla p + \nu\nabla^2 u
+  \end{equation}
+\end{frame}
+
+\begin{frame}{Blocks}
+  \begin{block}{Regular Block}
+    \begin{itemize}
+    \item Brand primary title bar, Light Gray body
+    \end{itemize}
+  \end{block}
+  \begin{exampleblock}{Example Block}
+    Dark Blue title bar.
+  \end{exampleblock}
+  \begin{alertblock}{Alert Block}
+    Accent title bar -- keep these rare.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[t]{Columns}{Frame subtitles are supported too}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Left Block Title}
+        \begin{itemize}
+        \item First item
+        \item Second item
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Right Block Title}
+        \begin{enumerate}
+        \item First item
+        \item Second item
+        \end{enumerate}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \begin{exampleblock}{Example Block Title}
+    Spanning both columns.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[ncarbg=images/wallpaper/mesa_lab.jpg]{Feature Frame}{\texttt{\textbackslash begin\{frame\}[ncarbg=<image>]}}
+  \vfill
+  \begin{columns}
+    \begin{column}{0.55\textwidth}
+      \begin{block}{Blocks go translucent}
+        Photo frames carry no logo: the brand guide forbids logos on busy photos.
+      \end{block}
+      \begin{alertblock}{Alert}
+        Still legible.
+      \end{alertblock}
+    \end{column}
+    \begin{column}{0.4\textwidth}\end{column}
+  \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Content}
+
+\begin{frame}{Tables and Figures}
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \centering\small
+      \begin{tabular}{lrr}
+        \toprule
+        System & Nodes & Cores \\
+        \midrule
+        Derecho & 2\,488 & 323\,712 \\
+        Casper  &    104 &   5\,008 \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \begin{figure}
+        \includegraphics[width=\linewidth]{images/wallpaper/NCAR_Clouds.jpg}
+        \caption{A captioned figure.}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Code Listings}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      Python, via \texttt{\textbackslash lstinputlisting}:
+      \lstinputlisting[language=Python]{snippets/hello_world.py}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      C++:
+      \lstinputlisting[language=C++]{snippets/hello_world.cxx}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{A PBS Job Script}
+  \lstinputlisting[language=bash,basicstyle=\scriptsize\ttfamily\color{Space}]{snippets/PBS/hello_world_PBS.sh}
+\end{frame}
+
+\begin{frame}{Brand Palette}
+  \swatch{NCARBlue}{NCAR Blue}{0057C2}\hfill
+  \swatch{DarkBlue}{Dark Blue}{00357A}\hfill
+  \swatch{Space}{Space}{011837}\hfill
+  \swatch{LightBlue}{Light Blue}{42C0FF}\\[1.2ex]
+  \swatch{UCARAqua}{UCAR Aqua}{00A2B4}\hfill
+  \swatch{UCARAquaContrast}{Aqua contrast}{00818F}\hfill
+  \swatch{LightAqua}{Light Aqua}{34E1F4}\hfill
+  \swatch{LightGray}{Light Gray}{F1F0EE}\\[1.2ex]
+  \swatch{BrandOrange}{Orange (accent)}{FAA119}\hfill
+  \swatch{BrandYellow}{Yellow (accent)}{FFDD31}\hfill
+  \begin{minipage}[t]{0.48\textwidth}\scriptsize
+    Colors are defined by \texttt{ncar\_branding.sty}; use the names above.
+    Legacy (2020) names such as \texttt{NCARBlue} and \texttt{CoolGray11} still compile.
+  \end{minipage}
+\end{frame}
+
+\input{code_of_conduct}
+
+\begin{frame}{Plain Text}
+  \relsize{-1}
+  \lipsum[1]
+  \begin{quote}
+    \lipsum[4][1-3]
+  \end{quote}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ncarclosingframe{Thank you!}{%
+  Questions? \par\medskip
+  \textsb{Presenter Name}\\
+  \texttt{name@ucar.edu}}
+
+\end{document}

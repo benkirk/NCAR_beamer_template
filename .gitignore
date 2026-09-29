@@ -1,10 +1,20 @@
-template.pdf
-paper.pdf
+# LaTeX build products
 *.aux
+*.fdb_latexmk
+*.fls
 *.log
 *.nav
 *.out
 *.snm
 *.toc
+*.vrb
+*.xdv
 *~
-_minted-template/
+examples/*.pdf
+# quarto
+examples/quarto-demo.tex
+examples/*_files/
+.quarto/
+/talk.pdf
+/talk-quarto.pdf
+/talk-quarto.tex

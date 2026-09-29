@@ -1,0 +1,17 @@
+title: NCAR
+author: Benjamin Kirk
+version: 2.0.0
+quarto-required: ">=1.4.0"
+contributes:
+  formats:
+    beamer:
+      # The theme is loaded by ncar-beamer.lua (\usetheme[<themeoptions>]{NCAR}
+      # with the extension directory on LaTeX's \input@path), so nothing is
+      # copied next to the document.  Use `themeoptions:` for theme options.
+      pdf-engine: xelatex
+      aspectratio: 169
+      slide-level: 2
+      section-titles: true
+      highlight-style: ncar.theme
+      filters:
+        - ncar-beamer.lua
