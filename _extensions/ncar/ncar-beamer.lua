@@ -129,6 +129,7 @@ end
 -- at their natural size and so ignore fig-width) can run off the slide or
 -- into the neighboring column.  Wrap them in pandoc's \pandocbounded, which
 -- scales the image down to the current \linewidth / \textheight if needed.
+-- (\pandocbounded exists since pandoc 3.2.1, i.e. Quarto >= 1.6; see _extension.yml.)
 local function bound_sized_images(doc)
   return doc:walk({
     Image = function(img)

@@ -1,7 +1,7 @@
 title: NCAR
 author: Benjamin Kirk
 version: 2.0.0
-quarto-required: ">=1.4.0"
+quarto-required: ">=1.6.0"   # \pandocbounded (used by ncar-beamer.lua) needs pandoc >= 3.2.1
 contributes:
   formats:
     beamer:

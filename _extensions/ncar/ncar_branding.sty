@@ -126,6 +126,7 @@
     \RequirePackage{fontspec}
     \IfFontExistsTF{TeX Gyre Heros}{\setsansfont{TeX Gyre Heros}[Scale=1.0]}{}%
   \else
+    \IfFileExists{lmodern.sty}{\RequirePackage{lmodern}}{}% Type 1 outlines for T1 (esp. the code font): no bitmap fonts
     \RequirePackage[T1]{fontenc}
     \IfFileExists{helvet.sty}{\RequirePackage[scaled=0.92]{helvet}}{}%
   \fi
