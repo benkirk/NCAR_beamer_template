@@ -1,0 +1,127 @@
+---
+title: "The NSF NCAR Beamer Theme"
+subtitle: "Branded PDF slides from Quarto Markdown"
+author: "Presenter Name(s) Here"
+institute: "Presenter Title, CISL, NSF NCAR"
+date: today
+date-format: long
+titlegraphic: ../images/wallpaper/mesa_lab_sunset.jpg
+fineprint: >-
+  This material is based upon work supported by the NSF National Center for
+  Atmospheric Research, a major facility sponsored by the U.S. National
+  Science Foundation.
+format:
+  ncar-beamer:
+    # themeoptions: [brand=ucar, title=light, footer=full]
+    keep-tex: false
+---
+
+## Overview
+
+- Install once per project: `quarto add benkirk/NCAR_beamer_template`
+- Render with `format: ncar-beamer`
+- Every beamer feature of the LaTeX theme is reachable from Markdown
+
+# Basics
+
+## A Basic Slide
+
+- Poppins Bold headlines, Poppins Regular body text
+  - Dark Blue on white is the primary text color
+    - accents (orange, yellow) only in small amounts
+- Use [alerted text]{.alert} sparingly
+
+1. Numbered items
+2. Carry the brand color, too
+
+$$
+\frac{\partial u}{\partial t} + (u\cdot\nabla)u = -\frac{1}{\rho}\nabla p + \nu\nabla^2 u
+$$
+
+## Blocks
+
+### Regular block
+
+Level-3 headings inside a slide become beamer blocks.
+
+### Example block {.example}
+
+Add `{.example}` to the heading.
+
+### Alert block {.alert}
+
+Or `{.alert}` -- keep these rare.
+
+## Columns
+
+:::: {.columns}
+::: {.column width="48%"}
+### Left
+
+- First item
+- Second item
+:::
+::: {.column width="48%"}
+### Right
+
+1. First item
+2. Second item
+:::
+::::
+
+## Feature Slide {.feature background="../images/wallpaper/mesa_lab.jpg"}
+
+:::: {.columns}
+::: {.column width="55%"}
+### Blocks go translucent
+
+`{.feature background="photo.jpg"}` on the heading. Photo slides carry no
+logo -- the brand guide forbids logos on busy photos.
+:::
+::: {.column width="40%"}
+:::
+::::
+
+# Content
+
+## Code
+
+```python
+#!/usr/bin/env python
+import os
+
+if __name__ == "__main__":
+    print("Hello World!")   # brand-colored highlighting
+    print(os.uname())
+```
+
+## Tables and Figures
+
+:::: {.columns}
+::: {.column width="50%"}
+| System  | Nodes |   Cores |
+|:--------|------:|--------:|
+| Derecho | 2,488 | 323,712 |
+| Casper  |   104 |   5,008 |
+:::
+::: {.column width="45%"}
+![A captioned figure.](../images/wallpaper/NCAR_Clouds.jpg)
+:::
+::::
+
+## Callouts
+
+::: {.callout-note}
+Quarto callouts render in beamer output too.
+:::
+
+::: {.callout-warning}
+Keep slides short: beamer does not shrink overflowing content.
+:::
+
+## Thank you! {.closing}
+
+Questions?
+
+**Presenter Name** \
+`name@ucar.edu`

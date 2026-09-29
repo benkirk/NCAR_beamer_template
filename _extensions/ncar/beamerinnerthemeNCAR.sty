@@ -1,0 +1,176 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerinnerthemeNCAR}[2026/09/29 v2.0 NSF NCAR / UCAR beamer inner theme]
+%
+% Title page, section divider, closing frame, blocks and lists.
+% Title page layout follows the brand's slide template (Brand Guide p26):
+% logo lockup, date, bold title with an accent bar at the left edge,
+% subtitle, short rule, presenter, affiliation, fine print; photo (from
+% \titlegraphic) masked by the brand waves on the right.
+%
+\mode<presentation>
+\@ifpackageloaded{ncar_branding}{}{\RequirePackage{ncar_branding}}
+\RequirePackage{tikz}
+\providecommand\ncar@titlestyle{dark}
+\newif\ifncar@translucent
+\@ifundefined{ifncar@sectionpages}{\newif\ifncar@sectionpages\ncar@sectionpagestrue}{}
+
+% optional fine print under the title block, e.g. an NSF funding statement
+\def\ncar@fineprint{}
+\newcommand\titlefineprint[1]{\def\ncar@fineprint{#1}}
+
+% vertical accent bar spanning box #1, flush with the paper's left edge
+\def\ncar@accentbar#1{%
+  \hbox{\hskip-\beamer@leftmargin
+    {\usebeamercolor[fg]{frametitle tab}%
+     \vrule width\ncar@tabwidth height\ht#1 depth\dp#1}%
+    \hskip\dimexpr\beamer@leftmargin-\ncar@tabwidth\relax
+    \box#1}}
+
+% ---------------------------------------------------------------------------
+% title page
+% ---------------------------------------------------------------------------
+\defbeamertemplate*{title page}{NCAR}{%
+  \gdef\ncar@bodystyle{title}%
+  \ncar@darkfieldcolors
+  \@tempdima=\ifx\inserttitlegraphic\@empty 0.62\paperwidth\else 0.47\paperwidth\fi
+  \setbox\@tempboxa=\vbox{\hsize=\@tempdima \raggedright
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}%
+    \ifx\insertsubtitle\@empty\else
+      \vskip0.5em
+      {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+    \fi}%
+  \vbox to \dimexpr\textheight-2pt\relax{%
+    \vskip0.06\paperheight
+    \hbox{\def\ncar@tmp{light}%
+      \ifx\ncar@titlestyle\ncar@tmp\ncarlogo[height=0.09\paperheight]{light}%
+      \else\ncarlogo[height=0.09\paperheight]{dark}\fi}%
+    \vskip0.055\paperheight
+    \ifx\insertdate\@empty\else
+      {\usebeamerfont{date}\usebeamercolor[fg]{date}\MakeUppercase{\insertdate}\par}%
+      \vskip0.02\paperheight
+    \fi
+    \ncar@accentbar\@tempboxa
+    \vskip0.035\paperheight
+    {\usebeamercolor[fg]{title rule}\vrule width0.13\paperwidth height1.2pt}\par
+    \vskip0.035\paperheight
+    \vbox{\hsize=\@tempdima \raggedright
+      \ifx\insertauthor\@empty\else
+        {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}\fi
+      \ifx\insertinstitute\@empty\else
+        {\usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute\par}\fi}%
+    \vfill
+    \ifx\ncar@fineprint\@empty\else
+      \vbox{\hsize=\@tempdima \raggedright
+        \usebeamerfont{title fineprint}\ncar@fineprint\par}%
+    \fi
+    \vskip0.02\paperheight}%
+}
+% keep the title frame free of frame numbering by default
+\def\ncar@titlepageframe{%
+  {\setbeamertemplate{footline}{}\begin{frame}[plain,noframenumbering]\titlepage\end{frame}}}
+
+% ---------------------------------------------------------------------------
+% section divider
+% ---------------------------------------------------------------------------
+\defbeamertemplate*{section page}{NCAR}{%
+  \gdef\ncar@bodystyle{section}%
+  \usebeamercolor[fg]{section page}%
+  \vbox to \dimexpr\textheight-2pt\relax{%
+    \vskip0.075\paperheight
+    \hbox{\ncarlogo[height=0.08\paperheight]{dark}}%
+    \vfill
+    \setbox\@tempboxa=\vbox{\hsize=0.62\paperwidth \raggedright
+      \ifnum\thesection>0
+        {\usebeamerfont{section number}\color{BrandSecondary}%
+          \MakeUppercase{\insertsectionnumberlabel}\par}\vskip0.6ex
+      \fi
+      {\usebeamerfont{section title}\insertsectionhead\par}}%
+    \ncar@accentbar\@tempboxa
+    \vfill\vfill}%
+}
+\def\insertsectionnumberlabel{\sectionname~\insertsectionnumber}
+\providecommand\sectionname{Section}
+\defbeamertemplate*{subsection page}{NCAR}{%
+  \vbox{\raggedright
+    {\usebeamerfont{section number}\usebeamercolor[fg]{structure}%
+      \MakeUppercase{\insertsectionhead}\par}\vskip0.8ex
+    {\usebeamerfont{subsection title}\usebeamercolor[fg]{frametitle}%
+      \insertsubsectionhead\par}}}
+
+\ifncar@sectionpages
+  \AtBeginSection[]{%
+    {\setbeamercolor{normal text}{fg=BrandPrimaryText}%
+     \begin{frame}[plain,noframenumbering]\sectionpage\end{frame}}}
+\fi
+
+% ---------------------------------------------------------------------------
+% closing frame:  \ncarclosingframe{Thank you!}{contact details ...}
+% or \begin{frame}[ncarclosing] ... \end{frame}
+% ---------------------------------------------------------------------------
+\newcommand\ncarclosingframe[2]{%
+  \begin{frame}[ncarclosing,plain,noframenumbering]
+    \ncarclosingcontent{#1}{#2}
+  \end{frame}}
+\newcommand\ncarclosingcontent[2]{%
+  \vbox to \dimexpr\textheight-2pt\relax{%
+    \vskip0.075\paperheight
+    \hbox{\def\ncar@tmp{light}%
+      \ifx\ncar@titlestyle\ncar@tmp\ncarlogo[height=0.10\paperheight]{light}%
+      \else\ncarlogo[height=0.10\paperheight]{dark}\fi}%
+    \vfill
+    \setbox\@tempboxa=\vbox{\hsize=0.62\paperwidth \raggedright
+      \usebeamerfont{section title}#1\par}%
+    \ncar@accentbar\@tempboxa
+    \vskip0.05\paperheight
+    \vbox{\hsize=0.62\paperwidth \raggedright \usebeamerfont{normal text}#2\par}%
+    \vfill\vfill}}
+
+% ---------------------------------------------------------------------------
+% lists
+% ---------------------------------------------------------------------------
+\setbeamertemplate{itemize item}{%
+  \tikz[baseline=-0.62ex]\fill[BrandPrimaryContrast] (0,0) circle (0.42ex);}
+\setbeamertemplate{itemize subitem}{%
+  \tikz[baseline=-0.62ex]\draw[BrandPrimaryContrast,line width=0.9pt] (0,0) circle (0.36ex);}
+\setbeamertemplate{itemize subsubitem}{%
+  \tikz[baseline=-0.62ex]\fill[BrandPrimaryContrast] (-0.35ex,-0.1ex) rectangle (0.35ex,0.1ex);}
+\setbeamertemplate{enumerate item}{\textbf{\insertenumlabel.}}
+\setbeamertemplate{enumerate subitem}{\textbf{\insertenumlabel.\insertsubenumlabel}}
+\setbeamertemplate{enumerate subsubitem}{%
+  \textbf{\insertenumlabel.\insertsubenumlabel.\insertsubsubenumlabel}}
+\setlength{\leftmargini}{1.4em}
+\setbeamertemplate{sections/subsections in toc}[square]
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{:\enspace}
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+
+% ---------------------------------------------------------------------------
+% blocks: square, flat (no shadows/gradients -- Brand Guide p25)
+% ---------------------------------------------------------------------------
+\setbeamertemplate{blocks}[default]
+\addtobeamertemplate{block begin}{}{\vskip-0.2ex}
+
+% blocks on photo ("feature") frames: translucent so the image shows through
+\def\ncar@featureblocks{%
+  \setbeamercolor{block title}{fg=white,bg=Space}%
+  \setbeamercolor{block body}{fg=Space,bg=white}%
+  \setbeamercolor{block title example}{fg=Space,bg=LightBlue}%
+  \setbeamercolor{block body example}{fg=Space,bg=white}%
+  \setbeamercolor{block title alerted}{fg=Space,bg=BrandAccent}%
+  \setbeamercolor{block body alerted}{fg=white,bg=Space}%
+  \ncar@translucenttrue
+}
+\def\ncar@blockopacity{\ifncar@translucent\pgfsetfillopacity{0.88}\fi}
+\addtobeamertemplate{block begin}{\ncar@blockopacity}{\pgfsetfillopacity{1}}
+\addtobeamertemplate{block example begin}{\ncar@blockopacity}{\pgfsetfillopacity{1}}
+\addtobeamertemplate{block alerted begin}{\ncar@blockopacity}{\pgfsetfillopacity{1}}
+
+% ---------------------------------------------------------------------------
+% misc
+% ---------------------------------------------------------------------------
+\setbeamertemplate{frametitle continuation}{\,(\insertcontinuationcount)}
+\setbeamertemplate{footnote}{%
+  \parindent 0em\noindent\raggedright
+  \hbox to 1.2em{\hfil\insertfootnotemark\,}\insertfootnotetext\par}
+
+\mode<all>

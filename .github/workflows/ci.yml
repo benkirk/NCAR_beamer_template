@@ -1,0 +1,47 @@
+name: build examples
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      # texlive-fonts-extra: fontawesome5, used by Quarto's callout icons
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk texlive-xetex texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended texlive-fonts-extra lmodern fonts-lmodern \
+            poppler-utils
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      # No system Poppins on the runner: this exercises the bundled copy.
+      - name: Build the starter decks
+        run: make default quarto
+
+      - name: Build examples and variants
+        run: make examples variants
+
+      - name: Check fonts are embedded
+        run: |
+          for f in talk.pdf talk-quarto.pdf examples/template.pdf examples/quarto-demo.pdf; do
+            pdffonts "$f" | tee /dev/stderr | grep -q Poppins-Bold
+          done
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: examples
+          path: |
+            *.pdf
+            examples/*.pdf
+            examples/*.log

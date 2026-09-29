@@ -1,0 +1,21 @@
+title: NCAR
+author: Benjamin Kirk
+version: 2.0.0
+quarto-required: ">=1.6.0"   # \pandocbounded (used by ncar-beamer.lua) needs pandoc >= 3.2.1
+contributes:
+  formats:
+    beamer:
+      # The theme is loaded by ncar-beamer.lua (\usetheme[<themeoptions>]{NCAR}
+      # with the extension directory on LaTeX's \input@path), so nothing is
+      # copied next to the document.  Use `themeoptions:` for theme options.
+      pdf-engine: xelatex
+      aspectratio: 169
+      slide-level: 2
+      section-titles: true
+      # figures (incl. mermaid) are sized in inches; the 16:9 text area is ~5.6in wide
+      fig-width: 5.5
+      fig-height: 3.5
+      highlight-style: ncar.theme
+      filters:
+        - quarto          # run after quarto's filters (mermaid images exist by then)
+        - ncar-beamer.lua

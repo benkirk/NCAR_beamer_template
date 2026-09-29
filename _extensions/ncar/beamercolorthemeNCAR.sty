@@ -1,0 +1,62 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamercolorthemeNCAR}[2026/09/29 v2.0 NSF NCAR / UCAR beamer color theme]
+% Maps the brand palette (ncar_branding.sty) onto beamer's color slots.
+% Rules encoded (Brand Guide p16-22): Dark Blue is the text color on white
+% and Light Gray; white on NCAR Blue; Space on UCAR Aqua; accent colors
+% (orange/yellow) only in small amounts.
+\mode<presentation>
+\@ifpackageloaded{ncar_branding}{}{\RequirePackage{ncar_branding}}
+
+\setbeamercolor{normal text}{fg=BrandText,bg=white}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{structure}{fg=BrandPrimaryContrast}
+\setbeamercolor{alerted text}{fg=BrandPrimaryContrast}
+\setbeamercolor{example text}{fg=UCARAquaContrast}
+
+\setbeamercolor{titlelike}{fg=BrandText}
+\setbeamercolor{frametitle}{fg=BrandText}
+\setbeamercolor{framesubtitle}{fg=BrandPrimaryContrast}
+\setbeamercolor{frametitle rule}{fg=LightGray!70!DarkBlue!40}
+\setbeamercolor{frametitle tab}{fg=BrandAccent}
+
+% title / closing / section slides
+\setbeamercolor{title}{fg=BrandText}
+\setbeamercolor{subtitle}{fg=BrandText}
+\setbeamercolor{author}{fg=BrandText}
+\setbeamercolor{institute}{fg=BrandText}
+\setbeamercolor{date}{fg=BrandText}
+\setbeamercolor{title rule}{fg=BrandSecondary}
+\setbeamercolor{title field}{bg=BrandPrimary,fg=BrandPrimaryText}
+\setbeamercolor{section page}{fg=BrandPrimaryText,bg=BrandPrimary}
+
+% lists
+\setbeamercolor{item}{fg=BrandPrimaryContrast}
+\setbeamercolor{subitem}{fg=BrandPrimaryContrast}
+\setbeamercolor{subsubitem}{fg=BrandPrimaryContrast}
+\setbeamercolor{enumerate item}{fg=BrandPrimaryContrast}
+\setbeamercolor{section number projected}{bg=BrandPrimary,fg=BrandPrimaryText}
+\setbeamercolor{section in toc}{fg=BrandText}
+\setbeamercolor{subsection in toc}{fg=BrandPrimaryContrast}
+
+% blocks: plain = brand primary; example = dark blue; alert = accent bar
+\setbeamercolor{block title}{fg=BrandPrimaryText,bg=BrandPrimary}
+\setbeamercolor{block body}{fg=BrandText,bg=LightGray}
+\setbeamercolor{block title example}{fg=white,bg=DarkBlue}
+\setbeamercolor{block body example}{fg=BrandText,bg=LightGray}
+\setbeamercolor{block title alerted}{fg=Space,bg=BrandAccent}
+\setbeamercolor{block body alerted}{fg=BrandText,bg=LightGray}
+
+% footline
+\setbeamercolor{page number in head/foot}{fg=BrandText}
+\setbeamercolor{footline}{fg=BrandText!70}
+
+% misc
+\setbeamercolor{caption name}{fg=BrandPrimaryContrast}
+\setbeamercolor{bibliography entry author}{fg=BrandText}
+\setbeamercolor{bibliography entry title}{fg=BrandText}
+\setbeamercolor{bibliography entry location}{fg=BrandText!70}
+\setbeamercolor{bibliography entry note}{fg=BrandText!70}
+\setbeamercolor{button}{bg=BrandPrimary,fg=BrandPrimaryText}
+\setbeamercolor{note page}{bg=LightGray,fg=BrandText}
+
+\mode<all>

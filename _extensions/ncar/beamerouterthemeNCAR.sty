@@ -1,0 +1,289 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerouterthemeNCAR}[2026/09/29 v2.0 NSF NCAR / UCAR beamer outer theme]
+%
+% Page furniture, following the brand's slide template (Brand Guide p26):
+%   content frames: accent tab at the left edge beside a bold Dark Blue
+%   title, hairline rule, logo top-right, page number bottom-left.
+%
+% Every page is drawn by the `background' template according to a page
+% style: normal | title | section | closing | feature.
+%   * frame keys (ncarbg=, ncarclosing) set \ncar@framestyle locally, so the
+%     style holds for every overlay of that frame;
+%   * the title/section page templates set \ncar@bodystyle globally from
+%     inside the frame body; it is reset after each shipout.
+%
+\mode<presentation>
+\@ifpackageloaded{ncar_branding}{}{\RequirePackage{ncar_branding}}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\providecommand\ncar@footer{minimal}
+\providecommand\ncar@titlestyle{dark}
+\@ifundefined{ifncar@framelogo}{\newif\ifncar@framelogo\ncar@framelogotrue}{}
+
+\def\ncar@framestyle{normal}
+\def\ncar@bodystyle{}
+\AddToHook{shipout/after}{\gdef\ncar@bodystyle{}}
+\def\ncar@style{\ifx\ncar@bodystyle\@empty\ncar@framestyle\else\ncar@bodystyle\fi}
+% \ncar@ifstyle{<style>}{<true>}{<false>}
+\def\ncar@ifstyle#1{%
+  \edef\ncar@tmpa{\ncar@style}\def\ncar@tmpb{#1}%
+  \ifx\ncar@tmpa\ncar@tmpb\expandafter\@firstoftwo\else\expandafter\@secondoftwo\fi}
+\def\ncar@ifplainstyle#1#2{% true for everything except normal frames
+  \ncar@ifstyle{normal}{#2}{#1}}
+
+% ---------------------------------------------------------------------------
+% geometry (relative to the paper, so 16:9, 16:10 and 4:3 all work)
+% ---------------------------------------------------------------------------
+\newdimen\ncar@margin      \ncar@margin=0.06\paperwidth
+\newdimen\ncar@tabwidth    \ncar@tabwidth=0.018\paperwidth
+\newdimen\ncar@logoheight  \ncar@logoheight=0.06\paperheight
+\newdimen\ncar@logotop     \ncar@logotop=0.055\paperheight
+\setbeamersize{text margin left=\ncar@margin,text margin right=\ncar@margin}
+
+% brand lockup shown at the top right of content frames
+\def\ncar@framelogo{\ncarlogo[height=\ncar@logoheight]{light}}
+% a user \logo{...} (or Quarto's `logo:') is beamer's secondary logo: set in
+% the footline, bottom right, at its natural size (as in beamer's default
+% themes and the v1 theme), so beamer reserves room for it and content stops
+% above it -- scaled down only if unreasonably tall
+\newsavebox\ncar@userlogo
+\def\ncar@userlogorow{%
+  \ifbeamertemplateempty{logo}{}{%
+    \sbox\ncar@userlogo{\insertlogo}%
+    \ifdim\ht\ncar@userlogo>0.35\paperheight
+      \sbox\ncar@userlogo{\resizebox{!}{0.15\paperheight}{\usebox\ncar@userlogo}}%
+    \fi
+    \hbox to\paperwidth{\hfil\usebox\ncar@userlogo
+      \ifdim\wd\ncar@userlogo<0.8\paperwidth\hskip\ncar@margin\fi}%
+    \vskip0.01\paperheight}}
+\newdimen\ncar@logowidth
+\AtBeginDocument{%
+  \settowidth\ncar@logowidth{\ncar@framelogo}%
+  \ifncar@framelogo\else\ncar@logowidth=0pt\fi}
+
+% ---------------------------------------------------------------------------
+% frame title
+% ---------------------------------------------------------------------------
+\defbeamertemplate*{frametitle}{NCAR}{%
+  \nointerlineskip
+  \@tempdima=\paperwidth
+  \advance\@tempdima by -2\ncar@margin
+  \ifdim\ncar@logowidth>0pt
+    \ncar@ifstyle{normal}{\advance\@tempdima by -\ncar@logowidth
+      \advance\@tempdima by -0.03\paperwidth}{}%
+  \fi
+  \setbox\@tempboxa=\vbox{%
+    \hsize=\@tempdima \raggedright
+    \usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}%
+    \strut\insertframetitle\strut\par
+    \ifx\insertframesubtitle\@empty\else
+      \vskip-0.25ex{\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}%
+        \strut\insertframesubtitle\strut\par}%
+    \fi}%
+  \vbox{%
+    \vskip0.045\paperheight
+    \hbox{%
+      \hskip-\beamer@leftmargin % frametitle is typeset at the text margin
+      \ncar@ifstyle{normal}{%
+        {\usebeamercolor[fg]{frametitle tab}%
+         \vrule width\ncar@tabwidth height\ht\@tempboxa depth\dp\@tempboxa}%
+        \hskip\dimexpr\ncar@margin-\ncar@tabwidth\relax
+      }{\hskip\ncar@margin}%
+      \box\@tempboxa}%
+    \vskip0.6ex
+    \ncar@ifstyle{normal}{%
+      \hbox{{\usebeamercolor[fg]{frametitle rule}%
+        \vrule width\dimexpr\paperwidth-2\ncar@margin\relax height0.4pt}}%
+    }{}%
+    \vskip0.02\paperheight}%
+}
+
+% ---------------------------------------------------------------------------
+% headline (empty -- the logo is drawn on the background) & footline
+% ---------------------------------------------------------------------------
+\setbeamertemplate{headline}{}
+% beamer's default `sidebar right' also typesets \insertlogo (and the
+% navigation symbols); the logo lives in our footline instead
+\setbeamertemplate{sidebar right}{}
+\defbeamertemplate*{footline}{NCAR}{%
+  \ncar@ifstyle{normal}{\ncar@footline}{%
+    \ncar@ifstyle{feature}{{\color{white}\ncar@footline}}{%
+      \vbox to 0.075\paperheight{\vfil}}}}
+\def\ncar@footline{%
+  \ncar@userlogorow
+  \vbox to 0.075\paperheight{%
+    \vfil
+    \hbox to\paperwidth{%
+      \hskip\ncar@margin
+      {\usebeamerfont{page number in head/foot}\insertframenumber}%
+      \def\ncar@tmp{full}\ifx\ncar@footer\ncar@tmp
+        \hfil
+        {\usebeamerfont{footline}\usebeamercolor[fg]{footline}%
+          \ifx\insertsectionhead\@empty\else
+            \insertsectionhead\enspace\textbar\enspace\fi
+          \insertshorttitle\ifx\insertshortdate\@empty\else
+          \enspace\textbar\enspace\insertshortdate\fi}%
+      \else\hfil\fi
+      \hskip\ncar@margin}%
+    \vskip0.035\paperheight}}
+
+% ---------------------------------------------------------------------------
+% backgrounds
+% ---------------------------------------------------------------------------
+% brand waves: two translucent bands and thin lines following an S-curve,
+% after the logo symbol's waves (Brand Guide p24).
+% #1 = x of the curve at the top, as a fraction of the paper width
+\def\ncar@curve#1{%
+  (#1\paperwidth,\paperheight)
+    .. controls ({(#1-0.02)*\paperwidth},0.62\paperheight)
+          and   ({(#1+0.16)*\paperwidth},0.45\paperheight)
+    .. ({(#1+0.10)*\paperwidth},0)}
+% \ncar@field{<x>}{<fill>}: fill the page left of the curve at x
+\def\ncar@field#1#2{%
+  \fill[#2] (0,0) -- (0,\paperheight) -- \ncar@curve{#1} -- cycle;}
+% \ncar@band{<x0>}{<x1>}{<fill>}{<opacity>}: fill between two curves
+\def\ncar@band#1#2#3#4{%
+  \fill[#3,opacity=#4] \ncar@curve{#1} -- ({(#2+0.10)*\paperwidth},0)
+    .. controls ({(#2+0.16)*\paperwidth},0.45\paperheight)
+          and   ({(#2-0.02)*\paperwidth},0.62\paperheight)
+    .. (#2\paperwidth,\paperheight) -- cycle;}
+\def\ncar@line#1#2{%
+  \draw[#2,line width=0.6pt] \ncar@curve{#1};}
+
+% cover-scaled image clipped to the region right of the curve at x
+\newsavebox\ncar@imgbox
+\def\ncar@photo#1#2{% #1 = curve x (fraction), #2 = image box
+  \begin{scope}
+    \clip ({(#1-0.03)*\paperwidth},\paperheight) -- \ncar@curve{#1}
+      -- (\paperwidth,0) -- (\paperwidth,\paperheight) -- cycle;
+    \node[anchor=north east,inner sep=0pt] at (\paperwidth,\paperheight) {#2};
+  \end{scope}}
+% \ncar@coverbox{<width>}{<height>}{<image-or-box>}: scale to cover
+\newcommand\ncar@coverbox[3]{%
+  \sbox\ncar@imgbox{#3}%
+  \@tempdima=\dimexpr#2*\wd\ncar@imgbox/\ht\ncar@imgbox\relax
+  \ifdim\@tempdima<#1\relax
+    \resizebox{#1}{!}{\usebox\ncar@imgbox}%
+  \else
+    \resizebox{!}{#2}{\usebox\ncar@imgbox}%
+  \fi}
+
+% field behind the title/closing slides (title=dark|light)
+\def\ncar@tmp{light}\ifx\ncar@titlestyle\ncar@tmp
+  \colorlet{NCARTitleField}{white}\else\colorlet{NCARTitleField}{BrandPrimary}\fi
+\def\ncar@titlefield{NCARTitleField}
+
+\defbeamertemplate*{background}{NCAR}{%
+  \begin{tikzpicture}[x=1pt,y=1pt]
+    \useasboundingbox (0,0) rectangle (\paperwidth,\paperheight);
+    \ncar@ifstyle{normal}{%
+      \ifncar@framelogo
+        \node[anchor=north east,inner sep=0pt]
+          at (\paperwidth-\ncar@margin,\paperheight-\ncar@logotop) {\ncar@framelogo};
+      \fi
+    }{}%
+    \ncar@ifstyle{title}{\ncar@drawtitlebg}{}%
+    \ncar@ifstyle{closing}{\ncar@drawclosingbg}{}%
+    \ncar@ifstyle{section}{\ncar@drawsectionbg}{}%
+    \ncar@ifstyle{feature}{\ncar@drawfeaturebg}{}%
+  \end{tikzpicture}}
+
+% title page: field + (photo | waves)
+\def\ncar@drawtitlebg{%
+  \ifx\inserttitlegraphic\@empty
+    \fill[\ncar@titlefield] (0,0) rectangle (\paperwidth,\paperheight);
+    \ncar@band{0.66}{0.74}{BrandSecondary}{0.18}%
+    \ncar@band{0.74}{0.84}{BrandSecondary}{0.10}%
+    \ncar@line{0.70}{BrandSecondary}\ncar@line{0.80}{BrandSecondary}%
+  \else
+    \ncar@photo{0.56}{\ncar@coverbox{0.52\paperwidth}{\paperheight}{\inserttitlegraphic}}%
+    \ncar@band{0.56}{0.60}{\ncar@titlefield}{0.55}%
+    \ncar@field{0.56}{\ncar@titlefield}%
+    \ncar@line{0.59}{BrandSecondary}\ncar@line{0.625}{BrandSecondary}%
+  \fi}
+\def\ncar@drawclosingbg{%
+  \fill[\ncar@titlefield] (0,0) rectangle (\paperwidth,\paperheight);
+  \ncar@band{0.66}{0.74}{BrandSecondary}{0.18}%
+  \ncar@band{0.74}{0.84}{BrandSecondary}{0.10}%
+  \ncar@line{0.70}{BrandSecondary}\ncar@line{0.80}{BrandSecondary}}
+\def\ncar@drawsectionbg{%
+  \fill[BrandPrimary] (0,0) rectangle (\paperwidth,\paperheight);
+  \ncar@band{0.72}{0.80}{BrandSecondary}{0.18}%
+  \ncar@band{0.80}{0.90}{BrandSecondary}{0.10}%
+  \ncar@line{0.76}{BrandSecondary}\ncar@line{0.86}{BrandSecondary}}
+\def\ncar@drawfeaturebg{%
+  \node[anchor=center,inner sep=0pt] at (0.5\paperwidth,0.5\paperheight)
+    {\ncar@coverbox{\paperwidth}{\paperheight}{\includegraphics{\ncar@featureimage}}};
+  \ifx\ncar@featuretitle\@empty\else\ifx\beamer@frametitle\@empty\else
+    \fill[Space,opacity=0.72] (0,\paperheight) rectangle
+      (\paperwidth,\paperheight-\ncar@featuretitle);
+  \fi\fi}
+
+% ---------------------------------------------------------------------------
+% frame keys
+% ---------------------------------------------------------------------------
+% Frame keys are processed *outside* any group, so everything they change
+% must be reset at the start of the next frame.  Beamer applies the
+% `environment' key to every frame before the user's keys, which makes it the
+% reset point.  Key handlers run inside \setkeys{beamerframe}, where
+% \setbeamercolor would clobber keyval's state, so color changes are deferred
+% to \ncar@framehook; that runs from \beamer@calculateheadfoot, which beamer
+% calls right after the keys (\beamer@frametemplate is unusable: `plain'
+% replaces it).  Colors touched by the hook are snapshotted at
+% \begin{document} and restored on reset.
+\def\ncar@framehook{}
+\def\ncar@atframe#1{%
+  \expandafter\def\expandafter\ncar@framehook\expandafter{\ncar@framehook#1}}
+\let\ncar@calculateheadfoot\beamer@calculateheadfoot
+\def\beamer@calculateheadfoot{\ncar@framehook\ncar@calculateheadfoot}
+
+\def\ncar@touchedcolors{normal text,title,subtitle,author,institute,date,%
+frametitle,framesubtitle,structure,item,subitem,subsubitem,local structure,%
+enumerate item,alerted text,block title,block body,block title example,%
+block body example,block title alerted,block body alerted}
+\def\ncar@colorslots{thcfg,thcbg,thcinherits,thcuse}
+\def\ncar@copycolors#1#2{% #1 -> #2 prefixes, for every touched color & slot
+  \@for\ncar@c:=\ncar@touchedcolors\do{%
+    \@for\ncar@s:=\ncar@colorslots\do{%
+      \expandafter\let\csname #2\ncar@s @\ncar@c\expandafter\endcsname
+        \csname #1\ncar@s @\ncar@c\endcsname}}}
+\AtBeginDocument{\ncar@copycolors{beamer@}{ncar@saved@}}
+\def\ncar@resetframe{%
+  \def\ncar@framestyle{normal}\def\ncar@featuretitle{}%
+  \def\ncar@framehook{}\ncar@translucentfalse
+  \ncar@copycolors{ncar@saved@}{beamer@}}
+\let\ncar@envkey\KV@beamerframe@environment
+\def\KV@beamerframe@environment#1{\ncar@resetframe\ncar@envkey{#1}}
+
+% [ncarbg=<image>]: full-bleed photo; no logo (never on busy photos)
+\define@key{beamerframe}{ncarbg}{%
+  \def\ncar@framestyle{feature}\def\ncar@featureimage{#1}%
+  \def\ncar@featuretitle{0.2\paperheight}%
+  \ncar@atframe{%
+    \setbeamercolor{frametitle}{fg=white}%
+    \setbeamercolor{framesubtitle}{fg=LightBlue}%
+    \ncar@featureblocks}}
+% [ncarclosing]: brand field, like the title slide
+\define@key{beamerframe}{ncarclosing}[true]{%
+  \def\ncar@framestyle{closing}%
+  \ncar@atframe{\ncar@darkfieldcolors}}
+
+% colors for text sitting on the brand field (title=dark) or white (light)
+\def\ncar@darkfieldcolors{%
+  \def\ncar@tmp{light}\ifx\ncar@titlestyle\ncar@tmp\else
+    \setbeamercolor{normal text}{fg=BrandPrimaryText}%
+    \usebeamercolor[fg]{normal text}%
+    \setbeamercolor{title}{fg=BrandPrimaryText}%
+    \setbeamercolor{subtitle}{fg=BrandPrimaryText}%
+    \setbeamercolor{author}{fg=BrandPrimaryText}%
+    \setbeamercolor{institute}{fg=BrandPrimaryText}%
+    \setbeamercolor{date}{fg=BrandPrimaryText}%
+    \setbeamercolor{frametitle}{fg=BrandPrimaryText}%
+    \setbeamercolor{structure}{fg=BrandPrimaryText}%
+    \setbeamercolor{item}{fg=BrandPrimaryText}%
+    \setbeamercolor{subitem}{fg=BrandPrimaryText}%
+    \setbeamercolor{local structure}{fg=BrandPrimaryText}%
+    \setbeamercolor{alerted text}{fg=BrandAccent}%
+  \fi}
+
+\mode<all>
