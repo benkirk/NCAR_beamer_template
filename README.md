@@ -146,3 +146,26 @@ and Cormorant) is preserved at tag
 and on branch `brand-2020`. Documents that use its color names (`NCARBlue`,
 `CoolGray11`, `DeepBlue`, ...) still compile with this version; those names
 map onto the nearest 2026 colors.
+
+## License
+
+Copyright © 2026 University Corporation for Atmospheric Research.
+
+This theme is licensed under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) (Creative
+Commons Attribution-ShareAlike 4.0 International); the full text is in
+[`LICENSE`](LICENSE). You may share and adapt it with attribution, provided
+you distribute your changes under the same license.
+
+Slides you *create* with the template are your own content. The license
+covers the theme and the starter files, not what you put in your deck.
+
+These parts are **not** covered by that license:
+
+- **NSF, NCAR, UCAR and UCP logos** (`_extensions/ncar/ncar-assets/logos/`).
+  These are trademarks used under the
+  [UCAR brand guidelines](https://ucar.canto.com/v/branding).
+- **The Poppins font** (`_extensions/ncar/ncar-assets/fonts/Poppins/`) is
+  licensed under the SIL Open Font License; see `OFL.txt` in that directory.
+- **The photographs in `images/wallpaper/`** are carried over from the
+  original template as example imagery. Replace them with your own.
