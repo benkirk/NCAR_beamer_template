@@ -127,7 +127,7 @@ end
 
 -- Images with an absolute size (e.g. mermaid diagrams, which Quarto includes
 -- at their natural size and so ignore fig-width) can run off the slide or
--- into the neighbouring column.  Wrap them in pandoc's \pandocbounded, which
+-- into the neighboring column.  Wrap them in pandoc's \pandocbounded, which
 -- scales the image down to the current \linewidth / \textheight if needed.
 local function bound_sized_images(doc)
   return doc:walk({
