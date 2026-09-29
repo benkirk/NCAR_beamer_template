@@ -17,4 +17,5 @@ contributes:
       fig-height: 3.5
       highlight-style: ncar.theme
       filters:
+        - quarto          # run after quarto's filters (mermaid images exist by then)
         - ncar-beamer.lua
