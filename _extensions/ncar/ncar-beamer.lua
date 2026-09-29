@@ -161,8 +161,6 @@ function Pandoc(doc)
   doc = cap_image_widths(doc)
   load_theme(doc)
 
-  load_theme(doc)
-
   -- title fine print from metadata
   local fp = doc.meta["fineprint"]
   if fp then
