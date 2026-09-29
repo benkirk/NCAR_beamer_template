@@ -65,7 +65,7 @@
 \colorlet{UCARGreen}{UCARAquaContrast}
 \colorlet{UCARLighterGreen}{UCARAqua}
 \colorlet{UCARLightestGreen}{LightAqua}
-\colorlet{HilightGreen}{BrandOrange}
+\colorlet{HilightGreen}{NCARBlue}   % was a text highlight: keep it legible on white
 \colorlet{CoolGray11}{DarkBlue}
 \colorlet{CoolGray7}{DarkBlue!60}
 \colorlet{CoolGray4}{DarkBlue!30}
@@ -173,6 +173,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Code listings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% loaded unconditionally, as v1 did (existing decks rely on \lstset)
+\IfFileExists{listings.sty}{\RequirePackage{listings}}{}
 \AddToHook{begindocument/before}{%
   \@ifpackageloaded{listings}{%
     \lstdefinestyle{ncar}{

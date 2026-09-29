@@ -80,6 +80,7 @@ latexmk -xelatex my-talk.tex
 | Closing slide | `\ncarclosingframe{Thank you!}{...}` | `## Thank you! {.closing}` |
 | Code | `lstlisting` (styled automatically) | fenced code blocks (brand-colored highlighting) |
 | Callouts | | `::: {.callout-note}` and the other callout types |
+| Extra logo or slide decoration | `\logo{...}`: bottom right, above the footer (space reserved) | `logo: file.png` |
 | Theme options | `\usetheme[<options>]{NCAR}` | `themeoptions: [<options>]` |
 
 ### Theme options
@@ -89,7 +90,7 @@ latexmk -xelatex my-talk.tex
 | `brand` | `ncar`, `ucar`, `ncarucar` | `ncar` | palette and logo lockup: NSF NCAR, UCAR, or NSF NCAR-UCAR |
 | `title` | `dark`, `light` | `dark` | title/closing slide field: brand color with the white-reversed logo, or white with the full-color logo |
 | `fonts` | `poppins`, `bundled`, `helvetica` | `poppins` | `poppins` uses an installed Poppins, else the bundled copy; `bundled` always uses the bundled copy; `helvetica` is the brand's sanctioned substitute (and the only choice under pdfLaTeX) |
-| `footer` | `minimal`, `full` | `minimal` | page number only, or also the short title and date |
+| `footer` | `minimal`, `full` | `minimal` | page number only, or also the section, short title and date |
 | `sectionpages` | `true`, `false` | `true` | a branded divider slide at each section |
 | `logo` | `true`, `false` | `true` | logo at the top right of content slides |
 
@@ -137,6 +138,33 @@ _extensions/ncar/           the theme: Quarto extension *and* LaTeX sources
   ncar-assets/                logos and bundled Poppins
 examples/                   feature showcase (LaTeX, Quarto, article)
 ```
+
+## Migrating a 2020-brand (v1) deck
+
+1. Change `\usetheme{ncar}` to `\usetheme{NCAR}`.
+2. Point `TEXINPUTS` and `TTFONTS` at this repo's `_extensions/ncar/` (see
+   "Already have a project?" above).
+
+Everything else carries over:
+- **Environments:**
+  - `NCARtitleframe[img]` becomes the new title slide. Its body, usually
+    `\vspace` plus `\maketitle`, is ignored.
+  - `NCARprettyframe[img]` becomes a photo feature frame, or a brand-field
+    frame when no image is given.
+- **Colors:** the old names still compile. `HilightGreen` is now an NCAR Blue
+  text highlight, so it stays legible on white.
+- **`\logo{...}`** still decorates the bottom of a slide, as before.
+- **`listings`** is still loaded automatically, and your own `\lstset`
+  still works.
+- **No-op commands:** `\titlebackground`, `\nobackground` and
+  `\defaultbackground` do nothing.
+
+What looks different:
+- Poppins is wider than Helvetica, so slides packed to the limit may need
+  trimming or `[shrink]`.
+- Each `\section` now gets a divider slide. Use `sectionpages=false` for the
+  old behavior.
+- `footer=full` shows the section name in the footer, as the old footer did.
 
 ## The 2020-brand version
 

@@ -8,7 +8,7 @@
 %                              brand color w/ white-reversed logo, or
 %                              white w/ full-color logo               (dark)
 %   fonts=poppins|helvetica    (poppins under XeLaTeX/LuaLaTeX)
-%   footer=minimal|full        page number only, or + short title/date (minimal)
+%   footer=minimal|full        page number only, or + section/short title/date
 %   sectionpages=true|false    automatic divider frame per \section   (true)
 %   logo=true|false            logo in the top-right of content frames (true)
 %
@@ -46,5 +46,29 @@
 \useoutertheme{NCAR}
 
 \setbeamertemplate{navigation symbols}{}
+
+% ---------------------------------------------------------------------------
+% v1 (2020-brand theme) compatibility, so existing decks build after changing
+% \usetheme{ncar} to \usetheme{NCAR}
+% ---------------------------------------------------------------------------
+\RequirePackage{environ}
+% \begin{NCARprettyframe}[<image>] ... : photo feature frame; without an image,
+% a brand-field frame
+\NewEnviron{NCARprettyframe}[1][]{%
+  \def\ncar@tmp{#1}%
+  \ifx\ncar@tmp\@empty
+    \begin{frame}[ncarclosing]\BODY\end{frame}%
+  \else
+    \begin{frame}[ncarbg={#1}]\BODY\end{frame}%
+  \fi}
+% \begin{NCARtitleframe}[<image>] ... : the title page.  The body (v1 decks put
+% spacing and \maketitle there) is ignored; the new title page lays itself out.
+\NewEnviron{NCARtitleframe}[1][]{%
+  \def\ncar@tmp{#1}%
+  \ifx\ncar@tmp\@empty\else\titlegraphic{\includegraphics{#1}}\fi
+  \begin{frame}[plain,noframenumbering]\titlepage\end{frame}}
+\providecommand\titlebackground{}
+\providecommand\nobackground{}
+\providecommand\defaultbackground{}
 
 \mode<all>

@@ -40,12 +40,22 @@
 \newdimen\ncar@logotop     \ncar@logotop=0.055\paperheight
 \setbeamersize{text margin left=\ncar@margin,text margin right=\ncar@margin}
 
-% logo shown on content frames: the brand lockup, or \logo{...} if given
-% (e.g. Quarto's `logo:'), scaled to the frame logo height.
-\def\ncar@framelogo{%
-  \ifbeamertemplateempty{logo}{\ncar@@framelogo}%
-    {\resizebox{!}{\ncar@logoheight}{\insertlogo}}}
-\def\ncar@@framelogo{\ncarlogo[height=\ncar@logoheight]{light}}
+% brand lockup shown at the top right of content frames
+\def\ncar@framelogo{\ncarlogo[height=\ncar@logoheight]{light}}
+% a user \logo{...} (or Quarto's `logo:') is beamer's secondary logo: set in
+% the footline, bottom right, at its natural size (as in beamer's default
+% themes and the v1 theme), so beamer reserves room for it and content stops
+% above it -- scaled down only if unreasonably tall
+\newsavebox\ncar@userlogo
+\def\ncar@userlogorow{%
+  \ifbeamertemplateempty{logo}{}{%
+    \sbox\ncar@userlogo{\insertlogo}%
+    \ifdim\ht\ncar@userlogo>0.35\paperheight
+      \sbox\ncar@userlogo{\resizebox{!}{0.15\paperheight}{\usebox\ncar@userlogo}}%
+    \fi
+    \hbox to\paperwidth{\hfil\usebox\ncar@userlogo
+      \ifdim\wd\ncar@userlogo<0.8\paperwidth\hskip\ncar@margin\fi}%
+    \vskip0.01\paperheight}}
 \newdimen\ncar@logowidth
 \AtBeginDocument{%
   \settowidth\ncar@logowidth{\ncar@framelogo}%
@@ -92,11 +102,15 @@
 % headline (empty -- the logo is drawn on the background) & footline
 % ---------------------------------------------------------------------------
 \setbeamertemplate{headline}{}
+% beamer's default `sidebar right' also typesets \insertlogo (and the
+% navigation symbols); the logo lives in our footline instead
+\setbeamertemplate{sidebar right}{}
 \defbeamertemplate*{footline}{NCAR}{%
   \ncar@ifstyle{normal}{\ncar@footline}{%
     \ncar@ifstyle{feature}{{\color{white}\ncar@footline}}{%
       \vbox to 0.075\paperheight{\vfil}}}}
 \def\ncar@footline{%
+  \ncar@userlogorow
   \vbox to 0.075\paperheight{%
     \vfil
     \hbox to\paperwidth{%
@@ -105,6 +119,8 @@
       \def\ncar@tmp{full}\ifx\ncar@footer\ncar@tmp
         \hfil
         {\usebeamerfont{footline}\usebeamercolor[fg]{footline}%
+          \ifx\insertsectionhead\@empty\else
+            \insertsectionhead\enspace\textbar\enspace\fi
           \insertshorttitle\ifx\insertshortdate\@empty\else
           \enspace\textbar\enspace\insertshortdate\fi}%
       \else\hfil\fi
@@ -198,10 +214,10 @@
 \def\ncar@drawfeaturebg{%
   \node[anchor=center,inner sep=0pt] at (0.5\paperwidth,0.5\paperheight)
     {\ncar@coverbox{\paperwidth}{\paperheight}{\includegraphics{\ncar@featureimage}}};
-  \ifx\ncar@featuretitle\@empty\else
+  \ifx\ncar@featuretitle\@empty\else\ifx\beamer@frametitle\@empty\else
     \fill[Space,opacity=0.72] (0,\paperheight) rectangle
       (\paperwidth,\paperheight-\ncar@featuretitle);
-  \fi}
+  \fi\fi}
 
 % ---------------------------------------------------------------------------
 % frame keys
