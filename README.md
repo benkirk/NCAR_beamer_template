@@ -23,7 +23,7 @@ cd my-talk
 | you want | you need |
 |---|---|
 | LaTeX slides | TeX Live (or MacTeX / MiKTeX) with **XeLaTeX** and **latexmk** |
-| Quarto slides | the above, plus [Quarto](https://quarto.org/docs/get-started/) ≥ 1.4 |
+| Quarto slides | the above, plus [Quarto](https://quarto.org/docs/get-started/) ≥ 1.4. Quarto's TinyTeX (`quarto install tinytex`) also works and installs missing LaTeX packages on the fly. With a minimal TeX Live, callouts need `fontawesome5` (`texlive-fonts-extra` on Debian/Ubuntu). |
 
 On NCAR systems, `module load texlive` provides TeX. No font installation is
 needed, because Poppins is bundled with the theme.

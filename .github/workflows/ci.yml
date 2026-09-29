@@ -13,12 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # texlive-fonts-extra: fontawesome5, used by Quarto's callout icons
       - name: Install TeX Live
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             latexmk texlive-xetex texlive-latex-recommended texlive-latex-extra \
-            texlive-fonts-recommended lmodern fonts-lmodern poppler-utils
+            texlive-fonts-recommended texlive-fonts-extra lmodern fonts-lmodern \
+            poppler-utils
 
       - uses: quarto-dev/quarto-actions/setup@v2
 

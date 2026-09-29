@@ -12,6 +12,9 @@ contributes:
       aspectratio: 169
       slide-level: 2
       section-titles: true
+      # figures (incl. mermaid) are sized in inches; the 16:9 text area is ~5.6in wide
+      fig-width: 5.5
+      fig-height: 3.5
       highlight-style: ncar.theme
       filters:
         - ncar-beamer.lua

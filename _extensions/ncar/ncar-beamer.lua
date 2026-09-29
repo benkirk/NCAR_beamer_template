@@ -105,6 +105,15 @@ local function load_theme(doc)
   doc.meta["header-includes"] = hi
 end
 
+-- Raw blocks for other formats (e.g. an HTML comment such as an editor
+-- modeline above the YAML) are dropped by the LaTeX writer, but only after
+-- pandoc has already opened an empty frame for them.  Drop them up front.
+function RawBlock(el)
+  if el.format ~= "latex" and el.format ~= "tex" and el.format ~= "beamer" then
+    return {}
+  end
+end
+
 -- [text]{.alert} -> \alert{text}
 function Span(el)
   if has_class(el, "alert") then
