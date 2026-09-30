@@ -12,7 +12,7 @@ fineprint: >-
   Science Foundation.
 format:
   ncar-beamer:
-    # themeoptions: [brand=ucar, title=light, footer=full]
+    # themeoptions: [brand=ucar, title=light, footer=full, mathfont=stix]
     keep-tex: false
 ---
 

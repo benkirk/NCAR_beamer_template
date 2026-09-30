@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{beamerouterthemeNCAR}[2026/09/29 v2.0 NSF NCAR / UCAR beamer outer theme]
+\ProvidesPackage{beamerouterthemeNCAR}[2026/09/30 v2.3 NSF NCAR / UCAR beamer outer theme]
 %
 % Page furniture, following the brand's slide template (Brand Guide p26):
 %   content frames: accent tab at the left edge beside a bold Dark Blue
@@ -19,6 +19,7 @@
 \providecommand\ncar@footer{minimal}
 \providecommand\ncar@titlestyle{dark}
 \@ifundefined{ifncar@framelogo}{\newif\ifncar@framelogo\ncar@framelogotrue}{}
+\@ifundefined{ifncar@waves}{\newif\ifncar@waves\ncar@wavestrue}{}
 
 \def\ncar@framestyle{normal}
 \def\ncar@bodystyle{}
@@ -130,33 +131,62 @@
 % ---------------------------------------------------------------------------
 % backgrounds
 % ---------------------------------------------------------------------------
-% brand waves: two translucent bands and thin lines following an S-curve,
-% after the logo symbol's waves (Brand Guide p24).
-% #1 = x of the curve at the top, as a fraction of the paper width
-\def\ncar@curve#1{%
-  (#1\paperwidth,\paperheight)
-    .. controls ({(#1-0.02)*\paperwidth},0.62\paperheight)
-          and   ({(#1+0.16)*\paperwidth},0.45\paperheight)
-    .. ({(#1+0.10)*\paperwidth},0)}
-% \ncar@field{<x>}{<fill>}: fill the page left of the curve at x
-\def\ncar@field#1#2{%
-  \fill[#2] (0,0) -- (0,\paperheight) -- \ncar@curve{#1} -- cycle;}
-% \ncar@band{<x0>}{<x1>}{<fill>}{<opacity>}: fill between two curves
-\def\ncar@band#1#2#3#4{%
-  \fill[#3,opacity=#4] \ncar@curve{#1} -- ({(#2+0.10)*\paperwidth},0)
-    .. controls ({(#2+0.16)*\paperwidth},0.45\paperheight)
-          and   ({(#2-0.02)*\paperwidth},0.62\paperheight)
-    .. (#2\paperwidth,\paperheight) -- cycle;}
-\def\ncar@line#1#2{%
-  \draw[#2,line width=0.6pt] \ncar@curve{#1};}
+% The brand's three wave lines (tools/fit-waves.py), each two cubics from
+% the top edge to the bottom edge.  \ncar@wave@<n>@down{<dx>} is line n
+% shifted right by dx (a fraction of \paperwidth); @up is the same path
+% bottom to top, for filling between two lines.
+\def\ncar@wave@i@down#1{%
+  ({(0.4862+#1)*\paperwidth},1.0000\paperheight)
+    .. controls ({(0.5087+#1)*\paperwidth},0.8024\paperheight) and ({(0.6068+#1)*\paperwidth},0.5035\paperheight) .. ({(0.6068+#1)*\paperwidth},0.3234\paperheight)
+    .. controls ({(0.6068+#1)*\paperwidth},0.1259\paperheight) and ({(0.5756+#1)*\paperwidth},0.0319\paperheight) .. ({(0.5674+#1)*\paperwidth},0.0000\paperheight)}
+\def\ncar@wave@i@up#1{%
+  ({(0.5674+#1)*\paperwidth},0.0000\paperheight)
+    .. controls ({(0.5756+#1)*\paperwidth},0.0319\paperheight) and ({(0.6068+#1)*\paperwidth},0.1259\paperheight) .. ({(0.6068+#1)*\paperwidth},0.3234\paperheight)
+    .. controls ({(0.6068+#1)*\paperwidth},0.5035\paperheight) and ({(0.5087+#1)*\paperwidth},0.8024\paperheight) .. ({(0.4862+#1)*\paperwidth},1.0000\paperheight)}
+\def\ncar@wave@ii@down#1{%
+  ({(0.5138+#1)*\paperwidth},1.0000\paperheight)
+    .. controls ({(0.5402+#1)*\paperwidth},0.8417\paperheight) and ({(0.6570+#1)*\paperwidth},0.5253\paperheight) .. ({(0.6570+#1)*\paperwidth},0.3577\paperheight)
+    .. controls ({(0.6570+#1)*\paperwidth},0.1693\paperheight) and ({(0.6286+#1)*\paperwidth},0.0834\paperheight) .. ({(0.6000+#1)*\paperwidth},0.0000\paperheight)}
+\def\ncar@wave@ii@up#1{%
+  ({(0.6000+#1)*\paperwidth},0.0000\paperheight)
+    .. controls ({(0.6286+#1)*\paperwidth},0.0834\paperheight) and ({(0.6570+#1)*\paperwidth},0.1693\paperheight) .. ({(0.6570+#1)*\paperwidth},0.3577\paperheight)
+    .. controls ({(0.6570+#1)*\paperwidth},0.5253\paperheight) and ({(0.5402+#1)*\paperwidth},0.8417\paperheight) .. ({(0.5138+#1)*\paperwidth},1.0000\paperheight)}
+\def\ncar@wave@iii@down#1{%
+  ({(0.5427+#1)*\paperwidth},1.0000\paperheight)
+    .. controls ({(0.5762+#1)*\paperwidth},0.8619\paperheight) and ({(0.7073+#1)*\paperwidth},0.5590\paperheight) .. ({(0.7073+#1)*\paperwidth},0.3818\paperheight)
+    .. controls ({(0.7073+#1)*\paperwidth},0.1758\paperheight) and ({(0.6639+#1)*\paperwidth},0.0755\paperheight) .. ({(0.6320+#1)*\paperwidth},0.0000\paperheight)}
+\def\ncar@wave@iii@up#1{%
+  ({(0.6320+#1)*\paperwidth},0.0000\paperheight)
+    .. controls ({(0.6639+#1)*\paperwidth},0.0755\paperheight) and ({(0.7073+#1)*\paperwidth},0.1758\paperheight) .. ({(0.7073+#1)*\paperwidth},0.3818\paperheight)
+    .. controls ({(0.7073+#1)*\paperwidth},0.5590\paperheight) and ({(0.5762+#1)*\paperwidth},0.8619\paperheight) .. ({(0.5427+#1)*\paperwidth},1.0000\paperheight)}
 
-% cover-scaled image clipped to the region right of the curve at x
+% \ncar@wdown{<n>}{<dx>} / \ncar@wup{<n>}{<dx>}: line n (1-3), shifted right by dx
+\def\ncar@wdown#1#2{\csname ncar@wave@\romannumeral#1 @down\endcsname{#2}}
+\def\ncar@wup#1#2{\csname ncar@wave@\romannumeral#1 @up\endcsname{#2}}
+% \ncar@field{<n>}{<dx>}{<fill>}: fill the page left of line n
+\def\ncar@field#1#2#3{%
+  \fill[#3] (0,0) -- (0,\paperheight) -- \ncar@wdown{#1}{#2} -- cycle;}
+% \ncar@band{<n>}{<m>}{<dx>}{<fill>}{<opacity>}: fill between lines n and m
+\def\ncar@band#1#2#3#4#5{%
+  \fill[#4,opacity=#5] \ncar@wdown{#1}{#3} -- \ncar@wup{#2}{#3} -- cycle;}
+% \ncar@lines{<dx>}{<color>}: the three lines
+\def\ncar@lines#1#2{%
+  \draw[#2,line width=0.8pt] \ncar@wdown{1}{#1};
+  \draw[#2,line width=0.8pt] \ncar@wdown{2}{#1};
+  \draw[#2,line width=0.8pt] \ncar@wdown{3}{#1};}
+% \ncar@waves{<dx>}{<color>}: lines with the brand's translucent bands between
+% them (the "banded color transition blocks", Brand Guide p24)
+\def\ncar@waves#1#2{%
+  \ncar@band{1}{2}{#1}{#2}{0.18}%
+  \ncar@band{2}{3}{#1}{#2}{0.10}%
+  \ncar@lines{#1}{#2}}
+
+% cover-scaled image clipped to the region right of line 1
 \newsavebox\ncar@imgbox
-\def\ncar@photo#1#2{% #1 = curve x (fraction), #2 = image box
+\def\ncar@photo#1{% #1 = image box
   \begin{scope}
-    \clip ({(#1-0.03)*\paperwidth},\paperheight) -- \ncar@curve{#1}
-      -- (\paperwidth,0) -- (\paperwidth,\paperheight) -- cycle;
-    \node[anchor=north east,inner sep=0pt] at (\paperwidth,\paperheight) {#2};
+    \clip \ncar@wdown{1}{0} -- (\paperwidth,0) -- (\paperwidth,\paperheight) -- cycle;
+    \node[anchor=north east,inner sep=0pt] at (\paperwidth,\paperheight) {#1};
   \end{scope}}
 % \ncar@coverbox{<width>}{<height>}{<image-or-box>}: scale to cover
 \newcommand\ncar@coverbox[3]{%
@@ -173,10 +203,17 @@
   \colorlet{NCARTitleField}{white}\else\colorlet{NCARTitleField}{BrandPrimary}\fi
 \def\ncar@titlefield{NCARTitleField}
 
+% where the waves sit on each page type: the shift of the cover art, whose
+% line 1 starts at 0.49 of the width
+\def\ncar@waveshift@title{0.20}     % title without a photo, closing
+\def\ncar@waveshift@section{0.26}
+\def\ncar@waveshift@content{0.27}   % the guide's content slides (p26)
+
 \defbeamertemplate*{background}{NCAR}{%
   \begin{tikzpicture}[x=1pt,y=1pt]
     \useasboundingbox (0,0) rectangle (\paperwidth,\paperheight);
     \ncar@ifstyle{normal}{%
+      \ifncar@waves\ncar@lines{\ncar@waveshift@content}{LightGray}\fi
       \ifncar@framelogo
         \node[anchor=north east,inner sep=0pt]
           at (\paperwidth-\ncar@margin,\paperheight-\ncar@logotop) {\ncar@framelogo};
@@ -188,29 +225,24 @@
     \ncar@ifstyle{feature}{\ncar@drawfeaturebg}{}%
   \end{tikzpicture}}
 
-% title page: field + (photo | waves)
+% title page: field + (photo | waves).  With a photo, the brand's cover: the
+% field runs to line 2, is translucent between lines 2 and 3, and the photo
+% shows right of that.
 \def\ncar@drawtitlebg{%
   \ifx\inserttitlegraphic\@empty
-    \fill[\ncar@titlefield] (0,0) rectangle (\paperwidth,\paperheight);
-    \ncar@band{0.66}{0.74}{BrandSecondary}{0.18}%
-    \ncar@band{0.74}{0.84}{BrandSecondary}{0.10}%
-    \ncar@line{0.70}{BrandSecondary}\ncar@line{0.80}{BrandSecondary}%
+    \ncar@drawclosingbg
   \else
-    \ncar@photo{0.56}{\ncar@coverbox{0.52\paperwidth}{\paperheight}{\inserttitlegraphic}}%
-    \ncar@band{0.56}{0.60}{\ncar@titlefield}{0.55}%
-    \ncar@field{0.56}{\ncar@titlefield}%
-    \ncar@line{0.59}{BrandSecondary}\ncar@line{0.625}{BrandSecondary}%
+    \ncar@photo{\ncar@coverbox{0.52\paperwidth}{\paperheight}{\inserttitlegraphic}}%
+    \ncar@field{2}{0}{\ncar@titlefield}%
+    \ncar@band{2}{3}{0}{\ncar@titlefield}{0.65}%
+    \ncar@lines{0}{BrandSecondary}%
   \fi}
 \def\ncar@drawclosingbg{%
   \fill[\ncar@titlefield] (0,0) rectangle (\paperwidth,\paperheight);
-  \ncar@band{0.66}{0.74}{BrandSecondary}{0.18}%
-  \ncar@band{0.74}{0.84}{BrandSecondary}{0.10}%
-  \ncar@line{0.70}{BrandSecondary}\ncar@line{0.80}{BrandSecondary}}
+  \ncar@waves{\ncar@waveshift@title}{BrandSecondary}}
 \def\ncar@drawsectionbg{%
   \fill[BrandPrimary] (0,0) rectangle (\paperwidth,\paperheight);
-  \ncar@band{0.72}{0.80}{BrandSecondary}{0.18}%
-  \ncar@band{0.80}{0.90}{BrandSecondary}{0.10}%
-  \ncar@line{0.76}{BrandSecondary}\ncar@line{0.86}{BrandSecondary}}
+  \ncar@waves{\ncar@waveshift@section}{BrandSecondary}}
 \def\ncar@drawfeaturebg{%
   \node[anchor=center,inner sep=0pt] at (0.5\paperwidth,0.5\paperheight)
     {\ncar@coverbox{\paperwidth}{\paperheight}{\includegraphics{\ncar@featureimage}}};

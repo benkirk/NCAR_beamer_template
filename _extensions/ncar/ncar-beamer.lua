@@ -84,6 +84,15 @@ local function load_theme(doc)
     end
     doc.meta["themeoptions"] = nil -- consumed here; the template would ignore it
   end
+  -- Quarto's own `mathfont:` key (\setmathfont in the template, before the
+  -- theme loads) wins over the theme's default math font
+  if doc.meta["mathfont"] then
+    local set = false
+    for _, o in ipairs(opts) do
+      if o:match("^%s*mathfont%s*=") then set = true end
+    end
+    if not set then table.insert(opts, "mathfont=keep") end
+  end
   local tex = table.concat({
     "\\makeatletter",
     "\\providecommand\\input@path{}",

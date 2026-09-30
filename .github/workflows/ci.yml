@@ -43,6 +43,14 @@ jobs:
             pdffonts "$f" | tee /dev/stderr | grep -q Poppins-Bold
           done
 
+      # mathfont=serif by default: the equation page sets its math in a serif
+      # math font, not Poppins Italic (that is what mathfont=poppins is for)
+      - name: Check the math font
+        run: |
+          pdffonts -f 4 -l 4 examples/template.pdf | tee /dev/stderr | grep -q 'CMMath\|LatinModernMath'
+          ! pdffonts -f 4 -l 4 examples/template.pdf | grep -q Poppins-Italic
+          pdffonts -f 4 -l 4 examples/template-mathpoppins.pdf | grep -q Poppins-Italic
+
       - name: Build the HTML decks
         run: make html
 
