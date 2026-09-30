@@ -38,7 +38,7 @@ if not FORMAT:match("revealjs") then
   return {}
 end
 
-local VERSION = "2.1.0"
+local VERSION = "2.2.0"
 local W, H = 1600, 900
 
 -- Brand Guide pp. 17-19; roles as in ncar_branding.sty
@@ -61,6 +61,18 @@ local function html(s) return pandoc.RawBlock("html", s) end
 
 local function is_slide_break(blk)
   return (blk.t == "Header" and blk.level <= slide_level) or blk.t == "HorizontalRule"
+end
+
+-- A percentage height (the beamer recipe for a full-width screenshot,
+-- {height="72%"}) resolves against the whole 900-px slide here and runs past
+-- the bottom: give it the content-height cap the diagrams get instead.
+function Image(el)
+  local h = el.attributes.height
+  if h and h:match("%%$") then
+    el.attributes.height = nil
+    el.attributes.style = "max-height: calc(600px * var(--ncar-fit, 1)); width: auto;"
+    return el
+  end
 end
 
 -- themeoptions: a list or a comma-separated string of key=value

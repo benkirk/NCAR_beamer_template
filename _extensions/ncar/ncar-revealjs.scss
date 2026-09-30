@@ -296,6 +296,14 @@ html.ncar-brand-ucar .reveal .slides section.ncar-title::after {
   height: auto;
   max-height: calc(600px * var(--ncar-fit, 1));  // shrinks with the autofit
 }
+// quarto bakes a {dot} diagram into an svg of fig-width x 96 px (960 of 1600
+// at fig-width 10) and pins max-width/max-height inline: same treatment
+.reveal .slides section .cell-output-display svg:has(> g.graph) {
+  max-width: 100% !important;
+  width: 100%;
+  height: auto;
+  max-height: calc(600px * var(--ncar-fit, 1)) !important;
+}
 .reveal .slides section .footnotes,
 .reveal .slides section aside { color: $ncar-muted; }
 

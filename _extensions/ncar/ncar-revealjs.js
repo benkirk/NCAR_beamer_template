@@ -9,6 +9,11 @@
  * Reveal only lays out the slides near the current one, so each slide is
  * fitted when it is shown (and all of them for ?print-pdf); fitting is
  * idempotent, so late renderers (fonts, mermaid, MathJax) just refit.
+ *
+ * Also: quarto renders each mermaid diagram inside its slide, which reveal
+ * has scaled to the window, so mermaid measured every label at that scale
+ * (0.8 at 1280 px) and clipped the text.  Rendering in mermaid's own
+ * unscaled scratch element measures true sizes.
  */
 (function () {
   "use strict";
@@ -44,7 +49,22 @@
     document.querySelectorAll(".reveal .slides section.slide").forEach(fit);
   }
 
+  // mermaidAPI is frozen, so swap in a copy whose render drops the container
+  function unscaledMermaid() {
+    try {
+      var api = window.mermaid && window.mermaid.mermaidAPI;
+      if (!api || !api.render || api.ncarUnscaled) return;
+      window.mermaid.mermaidAPI = Object.assign({}, api, {
+        ncarUnscaled: true,
+        render: function (id, text) { return api.render(id, text); },
+      });
+    } catch (e) {
+      console.warn("ncar-revealjs: mermaid labels may clip", e);
+    }
+  }
+
   window.addEventListener("DOMContentLoaded", function () {
+    unscaledMermaid();  // before quarto's "load" handler renders
     var R = window.Reveal;
     if (!R) return;
     ["ready", "slidechanged", "pdf-ready"].forEach(function (e) { R.on(e, fitShown); });
