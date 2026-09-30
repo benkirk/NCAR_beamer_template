@@ -1,6 +1,6 @@
 ---
 title: "The NSF NCAR Beamer Theme"
-subtitle: "Branded PDF slides from Quarto Markdown"
+subtitle: "Branded PDF and HTML slides from Quarto Markdown"
 author: "Presenter Name(s) Here"
 institute: "Presenter Title, CISL, NSF NCAR"
 date: today
@@ -19,7 +19,7 @@ format:
 ## Overview
 
 - Install once per project: `quarto add benkirk/NCAR_beamer_template`
-- Render with `format: ncar-beamer`
+- Render with `format: ncar-beamer` (PDF) or `ncar-revealjs` (HTML)
 - Every beamer feature of the LaTeX theme is reachable from Markdown
 
 # Basics
@@ -114,11 +114,11 @@ if __name__ == "__main__":
 ## Callouts
 
 ::: {.callout-note}
-Quarto callouts render in beamer output too.
+Quarto callouts render in both formats.
 :::
 
 ::: {.callout-warning}
-Keep slides short: beamer does not shrink overflowing content.
+Keep slides short: beamer does not shrink overflowing content (HTML does).
 :::
 
 ## Thank you! {.closing}

@@ -37,6 +37,17 @@ jobs:
             pdffonts "$f" | tee /dev/stderr | grep -q Poppins-Bold
           done
 
+      - name: Build the HTML decks
+        run: make html
+
+      - name: Check the HTML decks carry the theme
+        run: |
+          for f in talk-quarto.html examples/quarto-demo.html; do
+            grep -q 'ncar-revealjs.css' "$f"   # fonts and logos attached
+            grep -q 'class="ncar-waves"' "$f"  # the Lua filter ran
+          done
+          ls talk-quarto_files/libs/quarto-contrib/ncar-revealjs-*/Poppins-Bold.ttf
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -45,3 +56,7 @@ jobs:
             *.pdf
             examples/*.pdf
             examples/*.log
+            *.html
+            *_files/
+            examples/*.html
+            examples/*_files/

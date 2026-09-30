@@ -1,5 +1,6 @@
 ---
-# Starter deck -- edit me, then `make quarto` (-> talk-quarto.pdf).
+# Starter deck -- edit me, then `make quarto` (-> talk-quarto.pdf)
+# or `make html` (-> talk-quarto.html, the same deck as a web page).
 # Every feature is demonstrated in examples/quarto-demo.qmd.
 title: "Talk Title Goes Here"
 subtitle: "An optional subtitle"

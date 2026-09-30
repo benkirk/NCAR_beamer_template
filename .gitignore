@@ -18,3 +18,6 @@ examples/*_files/
 /talk.pdf
 /talk-quarto.pdf
 /talk-quarto.tex
+/talk-quarto.html
+/talk-quarto_files/
+examples/*.html

@@ -1,10 +1,14 @@
 # NSF NCAR / UCAR Beamer Template
 
-Branded PDF slides for NSF NCAR, UCAR and UCP, written in **LaTeX beamer** or
-**Quarto Markdown**. The theme follows the 2026 Brand Guide: the brand
-palette, Poppins type, the official logo lockups, and the wave super-graphic.
+Branded slides for NSF NCAR, UCAR and UCP, written in **LaTeX beamer** or
+**Quarto Markdown**: a PDF, and from the same Markdown an **HTML** (revealjs)
+deck to present in a browser. The theme follows the 2026 Brand Guide: the
+brand palette, Poppins type, the official logo lockups, and the wave
+super-graphic.
 
 ![preview](docs/preview.png)
+
+![HTML preview](docs/preview-html.png)
 
 ## Quick Start
 
@@ -23,7 +27,8 @@ cd my-talk
 | you want | you need |
 |---|---|
 | LaTeX slides | TeX Live (or MacTeX / MiKTeX) with **XeLaTeX** and **latexmk** |
-| Quarto slides | the above, plus [Quarto](https://quarto.org/docs/get-started/) ≥ 1.6. Quarto's TinyTeX (`quarto install tinytex`) also works and installs missing LaTeX packages on the fly. With a minimal TeX Live, callouts need `fontawesome5` (`texlive-fonts-extra` on Debian/Ubuntu). |
+| Quarto HTML slides | [Quarto](https://quarto.org/docs/get-started/) ≥ 1.6 only: no TeX |
+| Quarto PDF slides | the LaTeX row, plus [Quarto](https://quarto.org/docs/get-started/) ≥ 1.6. Quarto's TinyTeX (`quarto install tinytex`) also works and installs missing LaTeX packages on the fly. With a minimal TeX Live, callouts need `fontawesome5` (`texlive-fonts-extra` on Debian/Ubuntu). |
 
 On NCAR systems, `module load texlive` provides TeX. No font installation is
 needed, because Poppins is bundled with the theme.
@@ -34,6 +39,7 @@ needed, because Poppins is bundled with the theme.
 |---|---|---|---|
 | **LaTeX** | `talk.tex` | `make` | `talk.pdf` |
 | **Quarto** | `talk-quarto.qmd` | `make quarto` | `talk-quarto.pdf` |
+| **Quarto, HTML** | `talk-quarto.qmd` | `make html` | `talk-quarto.html` (+ `talk-quarto_files/`) |
 
 Both starter decks contain a title slide, a section divider, a content slide,
 a photo slide, code, and a closing slide. Replace the placeholder text, drop
@@ -46,7 +52,8 @@ Stuck? `examples/` shows every feature: [`template.tex`](examples/template.tex),
 
 ## Already have a project?
 
-**A Quarto project:** add the extension to it, then use `format: ncar-beamer`:
+**A Quarto project:** add the extension to it, then use `format: ncar-beamer`
+(PDF) or `format: ncar-revealjs` (HTML), or list both:
 
 ```bash
 quarto add benkirk/NCAR_beamer_template
@@ -84,6 +91,57 @@ latexmk -xelatex my-talk.tex
 | Extra logo or slide decoration | `\logo{...}`: bottom right, above the footer (space reserved) | `logo: file.png` |
 | Theme options | `\usetheme[<options>]{NCAR}` | `themeoptions: [<options>]` |
 
+Everything in the Quarto column works in both `ncar-beamer` and `ncar-revealjs`.
+The HTML format adds a few things of its own (next section).
+
+## HTML slides (`ncar-revealjs`)
+
+The same Markdown renders as a [revealjs](https://revealjs.com) web deck, in the
+same layouts: the title slide with waves or a photo, section dividers,
+content slides with the accent tab and logo, feature and closing slides.
+
+```bash
+quarto render talk-quarto.qmd --to ncar-revealjs    # or: make html
+```
+
+Open `talk-quarto.html` in a browser; keep `talk-quarto_files/` beside it.
+
+| key | |
+|---|---|
+| `→` `←` / space | next / previous |
+| `f` | full screen |
+| `s` | speaker view: notes (`::: {.notes}`), next slide, timer |
+| `m` | slide menu |
+| `b` / `c` | whiteboard / draw on the slide |
+| `o` / `esc` | overview |
+
+HTML-only extras:
+- **`## Title {.brand-dark}`**: a content slide on Space with white text. PDF
+  draws an ordinary slide.
+- **Autofit**: a content slide that overflows shrinks its body text (down to
+  65%) until it fits; the title keeps its size. Opt out per slide with
+  `{.no-autofit}` or `{.scrollable}`, or per deck with `themeoptions: [autofit=false]`.
+- **Live diagrams**: mermaid and Graphviz draw in the browser. Mermaid picks up
+  the brand font and colors.
+- **Fragments**: `::: {.incremental}` lists and `. . .` pauses step through.
+  (Beamer PDF gets one page per step.)
+
+**One file to email:** set `embed-resources: true` for a single self-contained
+`.html` (fonts, logos and photos inlined). The whiteboard can't be embedded,
+so turn it off at the same time:
+
+```yaml
+format:
+  ncar-revealjs:
+    embed-resources: true
+    chalkboard: false
+```
+
+**A PDF from the HTML deck:** open it with `?print-pdf` after the file name
+(for example `talk-quarto.html?print-pdf`) in Chrome, and print to PDF with
+background graphics on. For a PDF to hand out, the beamer format is usually
+the better choice.
+
 ### Theme options
 
 | option | values | default | |
@@ -94,6 +152,11 @@ latexmk -xelatex my-talk.tex
 | `footer` | `minimal`, `full` | `minimal` | page number only, or also the section, short title and date |
 | `sectionpages` | `true`, `false` | `true` | a branded divider slide at each section |
 | `logo` | `true`, `false` | `true` | logo at the top right of content slides |
+| `autofit` | `true`, `false` | `true` | HTML only: shrink overflowing content slides to fit |
+
+The HTML format reads `brand`, `title` and `autofit` and ignores the rest. It
+has no NSF NCAR-UCAR web lockup yet, so `brand=ncarucar` shows the NSF NCAR
+logo there.
 
 `make variants` builds `examples/template.tex` in UCAR, NCAR-UCAR, light-title,
 4:3 and pdfLaTeX flavors.
@@ -135,8 +198,11 @@ _extensions/ncar/           the theme: Quarto extension *and* LaTeX sources
   beamerthemeNCAR.sty         options; loads the color/font/inner/outer themes
   ncar_branding.sty           palette, fonts, logos, listings style (also for non-beamer docs)
   ncar-beamer.lua             Quarto: loads the theme; Markdown sugar
+  ncar-revealjs.{scss,css,js,lua}, title-slide.html
+                              the HTML (revealjs) format
   ncar.theme                  syntax-highlighting colors
-  ncar-assets/                logos and bundled Poppins
+  ncar-assets/                logos and bundled Poppins; web/ holds the HTML logos
+tools/web-logos.sh          regenerates ncar-assets/web/ from the brand kit
 examples/                   feature showcase (LaTeX, Quarto, article)
 ```
 
@@ -191,7 +257,8 @@ covers the theme and the starter files, not what you put in your deck.
 
 These parts are **not** covered by that license:
 
-- **NSF, NCAR, UCAR and UCP logos** (`_extensions/ncar/ncar-assets/logos/`).
+- **NSF, NCAR, UCAR and UCP logos** (`_extensions/ncar/ncar-assets/logos/`
+  and `ncar-assets/web/`).
   These are trademarks used under the
   [UCAR brand guidelines](https://ucar.canto.com/v/branding).
 - **The Poppins font** (`_extensions/ncar/ncar-assets/fonts/Poppins/`) is
