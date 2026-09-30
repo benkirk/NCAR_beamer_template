@@ -63,16 +63,22 @@ local function is_slide_break(blk)
   return (blk.t == "Header" and blk.level <= slide_level) or blk.t == "HorizontalRule"
 end
 
--- A percentage height (the beamer recipe for a full-width screenshot,
--- {height="72%"}) resolves against the whole 900-px slide here and runs past
--- the bottom: give it the content-height cap the diagrams get instead.
+-- A percentage height resolves against the whole 900-px slide here, so the
+-- beamer recipe for a full-width screenshot, {height="72%"}, runs past the
+-- bottom.  Map it onto the content height instead: 72% is the 600-px cap the
+-- diagrams get, a smaller percentage is proportionally smaller, and nothing
+-- exceeds the cap.  Any style the author set is kept.
+local CAP, FULL = 600, 72
 function Image(el)
-  local h = el.attributes.height
-  if h and h:match("%%$") then
-    el.attributes.height = nil
-    el.attributes.style = "max-height: calc(600px * var(--ncar-fit, 1)); width: auto;"
-    return el
-  end
+  local pct = tonumber((el.attributes.height or ""):match("^([%d.]+)%%$"))
+  if not pct then return nil end
+  local px = math.min(CAP, CAP * pct / FULL)
+  local style = el.attributes.style or ""
+  if style ~= "" and not style:match(";%s*$") then style = style .. ";" end
+  el.attributes.height = nil
+  el.attributes.style = string.format(
+    "%s max-height: calc(%.0fpx * var(--ncar-fit, 1)); width: auto;", style, px):gsub("^ ", "")
+  return el
 end
 
 -- themeoptions: a list or a comma-separated string of key=value

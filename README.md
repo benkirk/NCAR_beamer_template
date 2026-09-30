@@ -125,7 +125,8 @@ HTML-only extras:
   column (capped to the content height). Mermaid picks up the brand font and
   colors. `examples/quarto-demo.qmd` has one of each.
 - **Screenshots**: `{height="72%" fig-align="center"}`, the beamer recipe for a
-  full-width 16:9 image, fits the HTML slide too.
+  full-width 16:9 image, fits the HTML slide too. A smaller percentage gives
+  a proportionally smaller image.
 - **Fragments**: `::: {.incremental}` lists and `. . .` pauses step through.
   (Beamer PDF gets one page per step.)
 
