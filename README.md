@@ -73,6 +73,7 @@ latexmk -xelatex my-talk.tex
 | Photo on the title slide | `\titlegraphic{\includegraphics{photo.jpg}}` | `titlegraphic: photo.jpg` |
 | Fine print under the title | `\titlefineprint{...}` | `fineprint: "..."` |
 | Section divider | `\section{...}` | `# Section` |
+| Divider subtitle | `\sectionsubtitle{...}` before `\section` | a paragraph right after `# Section` |
 | Slide | `\begin{frame}{Title}` | `## Title` |
 | Blocks | `block`, `exampleblock`, `alertblock` | `### Title`, `### Title {.example}`, `### Title {.alert}` |
 | Emphasis | `\alert{...}` | `[text]{.alert}` |

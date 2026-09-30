@@ -8,6 +8,12 @@ ncar-beamer.lua -- Markdown sugar for the NCAR beamer theme (beamer output only)
       closing frame on the brand field; the heading becomes the large
       headline and the slide's content sits beneath it
 
+  # Section
+  One paragraph right after the divider heading.
+      the paragraph becomes the divider's subtitle instead of a slide of
+      its own (declared in the preamble as \ncarsectionsubtitle{n}{...},
+      so no stray block before the section can open an empty frame)
+
   metadata `fineprint: "..."`
       small print under the title block, e.g. an NSF funding statement
 
@@ -168,6 +174,7 @@ function Pandoc(doc)
 
   local out = pandoc.Blocks({})
   local i, blocks = 1, doc.blocks
+  local section, subtitles = 0, pandoc.List({})
   while i <= #blocks do
     local blk = blocks[i]
     if blk.t == "Header" and blk.level == slide_level then
@@ -197,11 +204,39 @@ function Pandoc(doc)
         out:insert(blk)
         i = i + 1
       end
+    elseif blk.t == "Header" and blk.level == 1 and slide_level > 1 then
+      -- paragraphs alone between a divider and the next slide: the subtitle
+      if not has_class(blk, "unnumbered") then section = section + 1 end
+      local j, paras = i + 1, pandoc.List({})
+      while j <= #blocks and (blocks[j].t == "Para" or blocks[j].t == "Plain") do
+        paras:insert(blocks[j])
+        j = j + 1
+      end
+      if #paras > 0 and (j > #blocks or is_slide_break(blocks[j]))
+          and not has_class(blk, "unnumbered") then
+        local text = pandoc.List({})
+        for k, p in ipairs(paras) do
+          if k > 1 then text:insert(pandoc.RawInline("latex", "\\par ")) end
+          text:extend(p.content)
+        end
+        subtitles:insert(latex("\\ncarsectionsubtitle{" .. section .. "}{"
+          .. inlines_to_latex(text) .. "}"))
+        out:insert(blk)
+        i = j
+      else
+        out:insert(blk)
+        i = i + 1
+      end
     else
       out:insert(blk)
       i = i + 1
     end
   end
   doc.blocks = out
+  if #subtitles > 0 then
+    local hi = header_includes(doc)
+    hi:insert(pandoc.Blocks(subtitles))
+    doc.meta["header-includes"] = hi
+  end
   return doc
 end
