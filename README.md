@@ -121,8 +121,12 @@ HTML-only extras:
 - **Autofit**: a content slide that overflows shrinks its body text (down to
   65%) until it fits; the title keeps its size. Opt out per slide with
   `{.no-autofit}` or `{.scrollable}`, or per deck with `themeoptions: [autofit=false]`.
-- **Live diagrams**: mermaid and Graphviz draw in the browser. Mermaid picks up
-  the brand font and colors.
+- **Live diagrams**: mermaid and Graphviz draw in the browser, filling the
+  column (capped to the content height). Mermaid picks up the brand font and
+  colors. `examples/quarto-demo.qmd` has one of each.
+- **Screenshots**: `{height="72%" fig-align="center"}`, the beamer recipe for a
+  full-width 16:9 image, fits the HTML slide too. A smaller percentage gives
+  a proportionally smaller image.
 - **Fragments**: `::: {.incremental}` lists and `. . .` pauses step through.
   (Beamer PDF gets one page per step.)
 
@@ -204,6 +208,9 @@ _extensions/ncar/           the theme: Quarto extension *and* LaTeX sources
   ncar-assets/                logos and bundled Poppins; web/ holds the HTML logos
 tools/web-logos.sh          regenerates ncar-assets/web/ from the brand kit
 examples/                   feature showcase (LaTeX, Quarto, article)
+  diagrams/                   one Graphviz and one mermaid source, shared by both
+                              showcases; `make diagrams` rebuilds the PDFs that
+                              template.tex includes (needs Graphviz and npx)
 ```
 
 ## Migrating a 2020-brand (v1) deck

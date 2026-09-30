@@ -24,6 +24,12 @@ jobs:
 
       - uses: quarto-dev/quarto-actions/setup@v2
 
+      # The demo's mermaid diagram renders through a headless browser; the
+      # runner's system Chrome can wedge quarto's handshake, so give it the
+      # Chrome Headless Shell, which quarto prefers when present.
+      - name: Install Chrome Headless Shell (mermaid rendering)
+        run: quarto install chrome-headless-shell --no-prompt
+
       # No system Poppins on the runner: this exercises the bundled copy.
       - name: Build the starter decks
         run: make default quarto

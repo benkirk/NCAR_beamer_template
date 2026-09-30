@@ -1,0 +1,13 @@
+flowchart LR
+    MD["Quarto Markdown<br/>one source"]:::src
+    Q{"quarto render"}:::tool
+    PDF["PDF slides"]:::out
+    HTML["HTML slides"]:::out
+    TEX["LaTeX<br/>\usetheme{NCAR}"]:::src
+    MD --> Q
+    Q -->|ncar-beamer| PDF
+    Q -->|ncar-revealjs| HTML
+    TEX -->|latexmk| PDF
+    classDef src fill:#E6F0FA,stroke:#0057C2,color:#00357A
+    classDef tool fill:#0057C2,stroke:#00357A,color:#FFFFFF
+    classDef out fill:#FFF4E0,stroke:#FAA119,color:#00357A
