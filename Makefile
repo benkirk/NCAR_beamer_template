@@ -7,11 +7,13 @@
 #   make variants   brand/title/aspect-ratio/engine/math-font variants of examples/template.tex
 #   make previews   docs/math-fonts.png from the specimen (needs poppler's pdftoppm)
 #   make diagrams   examples/diagrams/*.pdf from their .dot/.mmd (needs Graphviz, npx)
+#   make overleaf   ncar-beamer-overleaf.zip: talk.tex + the theme, ready to upload
 #   make clean
 #
 # The theme lives in _extensions/ncar/ -- the same files that
 # `quarto add benkirk/NCAR_beamer_template` installs.  LaTeX finds the .sty
-# files and logos through TEXINPUTS, and the bundled Poppins through TTFONTS.
+# files and logos through TEXINPUTS, and the bundled Poppins through TTFONTS
+# (set here, and by latexmkrc for Overleaf).
 #
 THEME   := $(CURDIR)/_extensions/ncar
 ENGINE  ?= xelatex
@@ -81,11 +83,21 @@ $(DIAGRAMS)/%.pdf: $(DIAGRAMS)/%.dot
 $(DIAGRAMS)/%.pdf: $(DIAGRAMS)/%.mmd
 	$(MMDC) -i $< -o $@
 
+# An Overleaf project: the starter deck, its photos, latexmkrc (which finds the
+# theme) and the LaTeX half of the theme -- no Quarto or revealjs files.
+# Uploaded as a new project, or opened through the README's Overleaf link.
+overleaf: ncar-beamer-overleaf.zip
+ncar-beamer-overleaf.zip: talk.tex latexmkrc FORCE
+	rm -f $@
+	zip -q $@ talk.tex latexmkrc images/wallpaper/mesa_lab_sunset.jpg images/wallpaper/mesa_lab.jpg
+	zip -qr $@ _extensions/ncar -i '*.sty' '*/ncar-assets/fonts/*' '*/ncar-assets/logos/*'
+
 clean:
 	latexmk -C -quiet talk.tex 2>/dev/null; rm -f talk-quarto.pdf talk-quarto.tex talk-quarto.html
+	rm -f ncar-beamer-overleaf.zip
 	rm -rf talk-quarto_files examples/quarto-demo_files examples/quarto-demo.html
 	cd examples && latexmk -C -quiet template.tex paper.tex $(addsuffix .tex,$(VARIANTS)) 2>/dev/null; \
 	  rm -f *.pdf *.nav *.snm *.vrb *.xdv quarto-demo.tex
 
 FORCE:
-.PHONY: default quarto html examples variants previews diagrams clean FORCE
+.PHONY: default quarto html examples variants previews diagrams overleaf clean FORCE

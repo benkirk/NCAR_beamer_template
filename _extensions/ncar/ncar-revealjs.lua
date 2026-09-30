@@ -40,7 +40,7 @@ if not FORMAT:match("revealjs") then
   return {}
 end
 
-local VERSION = "2.3.0"
+local VERSION = "2.3.1"
 local W, H = 1600, 900
 
 -- Brand Guide pp. 17-19; roles as in ncar_branding.sty

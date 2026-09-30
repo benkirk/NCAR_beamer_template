@@ -1,0 +1,33 @@
+# Pushing a tag v<version> publishes a GitHub Release carrying the Overleaf
+# project zip, at the stable URL the README links:
+#   https://github.com/benkirk/NCAR_beamer_template/releases/latest/download/ncar-beamer-overleaf.zip
+# The tag must match `version:` in _extensions/ncar/_extension.yml.
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Tag matches the extension version
+        run: |
+          v=$(sed -n 's/^version: *//p' _extensions/ncar/_extension.yml)
+          echo "extension $v, tag $GITHUB_REF_NAME"
+          test "v$v" = "$GITHUB_REF_NAME"
+
+      - name: Build the Overleaf project zip
+        run: make overleaf
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" ncar-beamer-overleaf.zip --title "$GITHUB_REF_NAME" --generate-notes

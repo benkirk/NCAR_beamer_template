@@ -26,7 +26,7 @@ cd my-talk
 
 | you want | you need |
 |---|---|
-| LaTeX slides | TeX Live (or MacTeX / MiKTeX) with **XeLaTeX** and **latexmk** |
+| LaTeX slides | TeX Live (or MacTeX / MiKTeX) with **XeLaTeX** and **latexmk**; or nothing, on [Overleaf](#overleaf) |
 | Quarto HTML slides | [Quarto](https://quarto.org/docs/get-started/) ≥ 1.6 only: no TeX |
 | Quarto PDF slides | the LaTeX row, plus [Quarto](https://quarto.org/docs/get-started/) ≥ 1.6. Quarto's TinyTeX (`quarto install tinytex`) also works and installs missing LaTeX packages on the fly. With a minimal TeX Live, callouts need `fontawesome5` (`texlive-fonts-extra` on Debian/Ubuntu). |
 
@@ -50,6 +50,29 @@ Stuck? `examples/` shows every feature: [`template.tex`](examples/template.tex),
 [`paper.tex`](examples/paper.tex) for non-slide documents. Build them with
 `make examples`.
 
+### Overleaf
+
+No TeX to install: open the LaTeX starter deck as a new Overleaf project, with
+the compiler already set to XeLaTeX:
+
+[**Open in Overleaf**](https://www.overleaf.com/docs?snip_uri=https://github.com/benkirk/NCAR_beamer_template/releases/latest/download/ncar-beamer-overleaf.zip&engine=xelatex)
+
+Or by hand: download `ncar-beamer-overleaf.zip` from the
+[latest release](https://github.com/benkirk/NCAR_beamer_template/releases/latest),
+**New Project → Upload Project**, then **Settings → Compiler → XeLaTeX**
+(under pdfLaTeX the deck still builds, but in Helvetica with Computer Modern
+math: the theme's pdfLaTeX fallback) and **Recompile**.
+
+![Overleaf](docs/overleaf-preview.png)
+
+![Overleaf compiler setting](docs/overleaf-compiler.png)
+
+The project is `talk.tex`, its photos, the theme in `_extensions/ncar/`, and a
+`latexmkrc` at the root that points TeX at the theme (Overleaf reads it; it is
+the only way to set `TEXINPUTS` there). Poppins comes bundled, so it works on
+the free plan's compile time limit. Quarto decks stay local: Overleaf has no
+Quarto.
+
 ## Already have a project?
 
 **A Quarto project:** add the extension to it, then use `format: ncar-beamer`
@@ -71,6 +94,11 @@ latexmk -xelatex my-talk.tex
 ```latex
 \usetheme[brand=ncar]{NCAR}
 ```
+
+**An existing Overleaf project:** upload the `_extensions/ncar` folder from the
+release zip (the `.sty` files, `ncar-assets/fonts/`, `ncar-assets/logos/`) and
+the zip's `latexmkrc` at the project root, then `\usetheme[...]{NCAR}` and set
+the compiler to XeLaTeX.
 
 ## Cheat sheet
 
@@ -153,7 +181,7 @@ the better choice.
 |---|---|---|---|
 | `brand` | `ncar`, `ucar`, `ncarucar` | `ncar` | palette and logo lockup: NSF NCAR, UCAR, or NSF NCAR-UCAR |
 | `title` | `dark`, `light` | `dark` | title/closing slide field: brand color with the white-reversed logo, or white with the full-color logo |
-| `fonts` | `poppins`, `bundled`, `helvetica` | `poppins` | `poppins` uses an installed Poppins, else the bundled copy; `bundled` always uses the bundled copy; `helvetica` is the brand's sanctioned substitute (and the only choice under pdfLaTeX) |
+| `fonts` | `poppins`, `bundled`, `helvetica` | `poppins` | `poppins` uses the bundled copy where TeX can find it, else an installed Poppins (probing the system by name is slow on a cold font cache, so the bundled copy comes first); `bundled` always uses the bundled copy; `helvetica` is the brand's sanctioned substitute (and the only choice under pdfLaTeX) |
 | `footer` | `minimal`, `full` | `minimal` | page number only, or also the section, short title and date |
 | `sectionpages` | `true`, `false` | `true` | a branded divider slide at each section |
 | `logo` | `true`, `false` | `true` | logo at the top right of content slides |
@@ -242,6 +270,7 @@ designhelp@ucar.edu. Poppins is distributed under the SIL Open Font License.
 
 ```
 talk.tex, talk-quarto.qmd   your starter decks
+latexmkrc                   points latexmk at the theme (Overleaf reads it)
 images/                     photos (examples use images/wallpaper/)
 _extensions/ncar/           the theme: Quarto extension *and* LaTeX sources
   beamerthemeNCAR.sty         options; loads the color/font/inner/outer themes
@@ -258,6 +287,13 @@ examples/                   feature showcase (LaTeX, Quarto, article), math font
                               showcases; `make diagrams` rebuilds the PDFs that
                               template.tex includes (needs Graphviz and npx)
 ```
+
+**Releasing:** bump `version` in `_extensions/ncar/_extension.yml` (and
+`VERSION` in `ncar-revealjs.lua`), merge, then tag it: `git tag v2.3.1 && git
+push origin v2.3.1`. The `release` workflow builds `make overleaf`'s zip and
+publishes a GitHub Release with it, which is what the Overleaf link above
+opens; it refuses a tag that does not match the extension version. Quarto users
+can pin one: `quarto add benkirk/NCAR_beamer_template@v2.3.1`.
 
 ## Migrating a 2020-brand (v1) deck
 

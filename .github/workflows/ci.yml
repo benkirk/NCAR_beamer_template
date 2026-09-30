@@ -39,6 +39,15 @@ jobs:
       - name: Build examples and variants
         run: make examples variants
 
+      # Overleaf: the zip unpacked flat, no TEXINPUTS/TTFONTS; latexmkrc
+      # alone must find the theme, logos and bundled Poppins
+      - name: Build the Overleaf project
+        run: |
+          make overleaf
+          rm -rf /tmp/overleaf && mkdir /tmp/overleaf && unzip -q ncar-beamer-overleaf.zip -d /tmp/overleaf
+          cd /tmp/overleaf && env -u TEXINPUTS -u TTFONTS latexmk -xelatex -interaction=nonstopmode -halt-on-error talk.tex
+          pdffonts /tmp/overleaf/talk.pdf | tee /dev/stderr | grep -q Poppins-Bold
+
       - name: Check fonts are embedded
         run: |
           for f in talk.pdf talk-quarto.pdf examples/template.pdf examples/quarto-demo.pdf; do
