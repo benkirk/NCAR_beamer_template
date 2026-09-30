@@ -426,6 +426,7 @@ div.reveal div.slides section.ncar-title.quarto-title-block {
     margin-top: 0.7em;
     font-size: 1.1em;
     p { margin: 0 0 0.4em; }
+    :not(pre) > code { background: rgba(#fff, 0.16); color: var(--ncar-primary-text); }
   }
   &, h1, .ncar-subtitle, a { color: var(--ncar-primary-text); }
 }

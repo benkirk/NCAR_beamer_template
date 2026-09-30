@@ -232,7 +232,12 @@ function Pandoc(doc)
       out:insert(html(waves(c, 0.66)))
       i = i + 1
     elseif blk.t == "Header" and blk.level == slide_level and has_class(blk, "feature") then
-      -- the body goes on a translucent panel over the photo
+      -- the body goes on a translucent panel over the photo; Space under the
+      -- photo so reveal flags the slide dark (white slide number), and a
+      -- missing photo is not white-on-white
+      if not blk.attributes["data-background-color"] and not blk.attributes["background-color"] then
+        blk.attributes["data-background-color"] = SPACE
+      end
       out:insert(blk)
       i = i + 1
       local body, notes = pandoc.Blocks({}), pandoc.Blocks({})
