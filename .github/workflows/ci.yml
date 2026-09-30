@@ -13,14 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # texlive-fonts-extra: fontawesome5, used by Quarto's callout icons
+      # texlive-fonts-extra: fontawesome5 (Quarto's callout icons) and the
+      # mathfont= presets' fonts, except TeX Gyre Pagella Math
+      # (fonts-texgyre-math)
       - name: Install TeX Live
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             latexmk texlive-xetex texlive-latex-recommended texlive-latex-extra \
             texlive-fonts-recommended texlive-fonts-extra lmodern fonts-lmodern \
-            poppler-utils
+            fonts-texgyre-math poppler-utils
 
       - uses: quarto-dev/quarto-actions/setup@v2
 

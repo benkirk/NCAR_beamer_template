@@ -174,8 +174,15 @@
     \@ifpackageloaded{unicode-math}{}{\RequirePackage{unicode-math}}%
     \edef\ncar@tmp{\noexpand\setmathfont{#1}[\unexpanded{#2},\ncar@mathversionopt]}%
     \ncar@tmp
-  }{\PackageWarningNoLine{ncar_branding}{math font "#1" not found; keeping
-    the document's math font}}}
+  }{%
+    \PackageWarningNoLine{ncar_branding}{math font "#1" not found; keeping
+      the document's math font}%
+    % a math version must still exist to switch to: Latin Modern Math there
+    \ifx\ncar@mathversionopt\@empty\else
+      \@ifpackageloaded{unicode-math}{}{\RequirePackage{unicode-math}}%
+      \edef\ncar@tmp{\noexpand\setmathfont{latinmodern-math.otf}[\ncar@mathversionopt]}%
+      \ncar@tmp
+    \fi}}
 % \ncar@setmathor{<font>}{<fallback font>}{<options>}
 \def\ncar@setmathor#1#2#3{\IfFontExistsTF{#1}{\ncar@setmath{#1}{#3}}{\ncar@setmath{#2}{#3}}}
 % Scale: between matching Poppins' x-height (1.27 for Computer Modern) and
