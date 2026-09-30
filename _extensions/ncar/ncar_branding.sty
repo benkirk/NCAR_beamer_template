@@ -83,8 +83,9 @@
 % Fonts (Brand Guide p20): Poppins Bold headlines, Poppins Regular body;
 % Helvetica is the sanctioned substitute.
 %
-%   fonts=poppins   installed system Poppins if present, else the bundled copy
-%   fonts=bundled   always the bundled copy (reproducible output)
+%   fonts=poppins   the bundled copy where TeX can find it, else an installed
+%                   system Poppins
+%   fonts=bundled   always the bundled copy (an error if TeX cannot find it)
 %   fonts=helvetica Helvetica (pdfLaTeX) / TeX Gyre Heros (XeLaTeX, LuaLaTeX)
 %
 % The bundled copy lives in \ncarassetdir fonts/Poppins/.  \ncarassetdir
@@ -115,10 +116,16 @@
     \def\ncar@tmp{bundled}\ifx\ncar@fonts\ncar@tmp
       \ncar@bundledpoppins
     \else
-      \IfFontExistsTF{Poppins}{%
-        \setsansfont{Poppins}[Scale=1.0,FontFace={sb}{n}{Font=* SemiBold}]%
-        \ncar@poppinstrue
-      }{\ncar@bundledpoppins}%
+      % The bundled copy first, looked up as a file (kpathsea).  Probing the
+      % system by name goes through fontconfig, which on a TeX Live whose
+      % font cache is cold (Overleaf, each compile) takes longer than a
+      % free-plan compile is allowed -- and then found nothing anyway.
+      \edef\ncar@tmp{\noexpand\IfFontExistsTF{\ncarassetdir fonts/Poppins/Poppins-Regular.ttf}}%
+      \ncar@tmp{\ncar@bundledpoppins}{%
+        \IfFontExistsTF{Poppins}{%
+          \setsansfont{Poppins}[Scale=1.0,FontFace={sb}{n}{Font=* SemiBold}]%
+          \ncar@poppinstrue
+        }{\ncar@bundledpoppins}}%
     \fi
   \else
     \PackageWarningNoLine{ncar_branding}{fonts=\ncar@fonts\space needs XeLaTeX or
