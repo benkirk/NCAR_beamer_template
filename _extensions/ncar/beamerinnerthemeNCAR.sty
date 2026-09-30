@@ -75,6 +75,8 @@
 % ---------------------------------------------------------------------------
 \def\ncar@sectionsubtitle{}
 \newcommand\sectionsubtitle[1]{\gdef\ncar@sectionsubtitle{#1}}
+% the same, keyed by section number and declared in the preamble (Quarto filter)
+\newcommand\ncarsectionsubtitle[2]{\expandafter\gdef\csname ncar@secsub@#1\endcsname{#2}}
 \defbeamertemplate*{section page}{NCAR}{%
   \gdef\ncar@bodystyle{section}%
   \usebeamercolor[fg]{section page}%
@@ -106,6 +108,9 @@
 
 \ifncar@sectionpages
   \AtBeginSection[]{%
+    \@ifundefined{ncar@secsub@\thesection}{}{%
+      \expandafter\gdef\expandafter\ncar@sectionsubtitle\expandafter
+        {\csname ncar@secsub@\thesection\endcsname}}%
     {\setbeamercolor{normal text}{fg=BrandPrimaryText}%
      \begin{frame}[plain,noframenumbering]\sectionpage\end{frame}}%
     \gdef\ncar@sectionsubtitle{}}
