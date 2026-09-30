@@ -111,6 +111,10 @@ if __name__ == "__main__":
 :::
 ::::
 
+## A Full-Width Figure
+
+![](../images/wallpaper/NCAR_Clouds.jpg){height="72%" fig-align="center"}
+
 ## Callouts
 
 ::: {.callout-note}
@@ -120,6 +124,24 @@ Quarto callouts render in both formats.
 ::: {.callout-warning}
 Keep slides short: beamer does not shrink overflowing content (HTML does).
 :::
+
+# Diagrams
+
+Rendered from the same sources as the LaTeX example: live in HTML, images in the PDF.
+
+## Graphviz
+
+```{dot}
+//| file: diagrams/systems.dot
+//| fig-width: 9
+```
+
+## Mermaid
+
+```{mermaid}
+%%| file: diagrams/render.mmd
+%%| fig-width: 9
+```
 
 ## Thank you! {.closing}
 

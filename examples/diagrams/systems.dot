@@ -1,0 +1,30 @@
+// One source for both example decks: quarto-demo.qmd renders it live
+// ({dot} with file:), template.tex includes the PDF from `make diagrams`.
+// Helvetica, not Poppins: Quarto's WASM Graphviz cannot load Poppins.
+digraph systems {
+  graph [rankdir=LR, nodesep=0.35, ranksep=0.7, bgcolor="transparent",
+         fontname="Helvetica", fontsize=13, fontcolor="#00357A"];
+  node  [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=13,
+         fillcolor="#E6F0FA", color="#0057C2", fontcolor="#00357A"];
+  edge  [fontname="Helvetica", fontsize=11, color="#6B7280", fontcolor="#6B7280"];
+
+  user [label="Researcher", fillcolor="#FFF4E0", color="#FAA119"];
+
+  subgraph cluster_hpc {
+    label="NSF NCAR HPC"; style="rounded"; color="#C9D3E0";
+    derecho [label="Derecho\nsimulation"];
+    casper  [label="Casper\nanalysis"];
+  }
+  subgraph cluster_storage {
+    label="Storage"; style="rounded"; color="#C9D3E0";
+    glade    [label="GLADE", shape=cylinder];
+    campaign [label="Campaign Store", shape=cylinder];
+    {rank=same; glade; campaign}
+  }
+
+  user -> derecho [label="batch jobs"];
+  user -> casper  [label="notebooks"];
+  derecho -> glade;
+  casper  -> glade;
+  glade -> campaign [label="keep"];
+}
