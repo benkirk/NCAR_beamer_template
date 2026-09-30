@@ -2,6 +2,7 @@
 #
 #   make            talk.pdf             (your deck: talk.tex, XeLaTeX via latexmk)
 #   make quarto     talk-quarto.pdf      (your deck: talk-quarto.qmd, needs quarto)
+#   make html       talk-quarto.html, examples/quarto-demo.html  (revealjs, needs quarto)
 #   make examples   examples/template.pdf, examples/paper.pdf, examples/quarto-demo.pdf
 #   make variants   brand/title/aspect-ratio/engine variants of examples/template.tex
 #   make clean
@@ -26,6 +27,13 @@ talk.pdf: talk.tex FORCE
 quarto: talk-quarto.pdf
 talk-quarto.pdf: talk-quarto.qmd FORCE
 	quarto render talk-quarto.qmd --to ncar-beamer
+
+html: talk-quarto.html examples/quarto-demo.html
+talk-quarto.html: talk-quarto.qmd FORCE
+	quarto render talk-quarto.qmd --to ncar-revealjs
+
+examples/quarto-demo.html: examples/quarto-demo.qmd FORCE
+	cd examples && quarto render quarto-demo.qmd --to ncar-revealjs
 
 examples: examples/template.pdf examples/paper.pdf examples/quarto-demo.pdf
 
@@ -52,9 +60,10 @@ examples/template-%.pdf: examples/template.tex FORCE
 	  template.tex
 
 clean:
-	latexmk -C -quiet talk.tex 2>/dev/null; rm -f talk-quarto.pdf talk-quarto.tex
+	latexmk -C -quiet talk.tex 2>/dev/null; rm -f talk-quarto.pdf talk-quarto.tex talk-quarto.html
+	rm -rf talk-quarto_files examples/quarto-demo_files examples/quarto-demo.html
 	cd examples && latexmk -C -quiet template.tex paper.tex $(addsuffix .tex,$(VARIANTS)) 2>/dev/null; \
 	  rm -f *.pdf *.nav *.snm *.vrb *.xdv quarto-demo.tex
 
 FORCE:
-.PHONY: default quarto examples variants clean FORCE
+.PHONY: default quarto html examples variants clean FORCE

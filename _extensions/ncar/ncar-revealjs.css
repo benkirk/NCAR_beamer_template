@@ -1,0 +1,39 @@
+/* ncar-revealjs.css -- the parts of the NCAR revealjs theme that need url()s.
+ *
+ * Attached by ncar-revealjs.lua as an HTML dependency: Quarto copies this file
+ * and its resources side by side into <deck>_files/libs/ncar-revealjs-<ver>/
+ * (or inlines them all under `embed-resources: true`), so the url()s below are
+ * relative to this file.  Everything else is in ncar-revealjs.scss.
+ */
+
+/* Poppins, bundled (SIL OFL, ncar-assets/fonts/Poppins/OFL.txt) */
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 400; font-display: block;
+             src: url("Poppins-Regular.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: italic; font-weight: 400; font-display: block;
+             src: url("Poppins-Italic.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 600; font-display: block;
+             src: url("Poppins-SemiBold.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 700; font-display: block;
+             src: url("Poppins-Bold.ttf") format("truetype"); }
+@font-face { font-family: "Poppins"; font-style: italic; font-weight: 700; font-display: block;
+             src: url("Poppins-BoldItalic.ttf") format("truetype"); }
+
+/* Logos (Brand Guide p3-5): full color on white, NSF color + white-reversed on
+ * the brand field (`.ncar-field`: dark title, dividers, closing, .brand-dark).
+ * The NCAR logo is always the NSF lockup.  Size and position: the scss. */
+.reveal .slides section.slide::after,
+.reveal .slides section.ncar-title::after {
+  background-image: url("NSF-NCAR_Logo_FullColor_RGB.png");
+}
+.reveal .slides section.slide.ncar-field::after,
+.reveal .slides section.ncar-title.ncar-field::after {
+  background-image: url("NSF-NCAR_Logo_Color-White_RGB.png");
+}
+html.ncar-brand-ucar .reveal .slides section.slide::after,
+html.ncar-brand-ucar .reveal .slides section.ncar-title::after {
+  background-image: url("UCAR-Logo_Color_RGB.svg");
+}
+html.ncar-brand-ucar .reveal .slides section.slide.ncar-field::after,
+html.ncar-brand-ucar .reveal .slides section.ncar-title.ncar-field::after {
+  background-image: url("UCAR-Logo_White_RGB.svg");
+}

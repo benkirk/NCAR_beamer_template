@@ -1,0 +1,31 @@
+<section id="$idprefix$title-slide"$for(title-slide-attributes/pairs)$ $it.key$="$it.value$"$endfor$ class="quarto-title-block ncar-title$ncar-title-class$$if(titlegraphic)$ ncar-title-photo$endif$">
+  $ncar-title-art$
+  <div class="ncar-title-text">
+$if(date)$
+    <p class="date">$date$</p>
+$endif$
+    <h1 class="title">$title$</h1>
+$if(subtitle)$
+    <p class="subtitle">$subtitle$</p>
+$endif$
+    <div class="ncar-title-rule"></div>
+$if(by-author)$
+$for(by-author)$
+    <p class="author">$if(it.url)$<a href="$it.url$">$endif$$it.name.literal$$if(it.url)$</a>$endif$</p>
+$for(it.affiliations)$
+    <p class="institute">$it.name$</p>
+$endfor$
+$endfor$
+$else$
+$for(author)$
+    <p class="author">$author$</p>
+$endfor$
+$for(institute)$
+    <p class="institute">$institute$</p>
+$endfor$
+$endif$
+  </div>
+$if(fineprint)$
+  <div class="ncar-fineprint">$fineprint$</div>
+$endif$
+</section>

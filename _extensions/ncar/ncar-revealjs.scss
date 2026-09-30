@@ -1,0 +1,566 @@
+/*-- scss:defaults --*/
+
+// NSF NCAR / UCAR revealjs theme -- palette, type and slide furniture.
+//
+// Follows the 2026 "Vermilion" Brand Guide (colors pp. 17-22, type p. 20,
+// slide template p. 26) and mirrors the beamer theme (beamer*NCAR.sty).
+// Lengths are slide pixels: the format fixes the slide at 1600x900 and
+// reveal scales it to the screen.  Fonts and logos (url()s) are in
+// ncar-revealjs.css; waves and backgrounds come from ncar-revealjs.lua.
+
+// palette (ncar_branding.sty)
+$ncar-blue: #0057C2;
+$ncar-dark-blue: #00357A;      // text on white and Light Gray
+$ncar-space: #011837;
+$ncar-light-blue: #42C0FF;
+$ncar-light-gray: #F1F0EE;
+$ncar-orange: #FAA119;         // accents: small amounts only
+$ncar-yellow: #FFDD31;
+$ucar-aqua: #00A2B4;
+$ucar-aqua-contrast: #00818F;  // small text on white only
+$ucar-light-aqua: #34E1F4;
+$ncar-muted: #6B7C99;          // comments in ncar.theme; captions, footer
+
+// type (Brand Guide p20): Poppins Bold headlines, Regular body; Helvetica
+$font-family-sans-serif: "Poppins", Helvetica, Arial, sans-serif;
+$font-family-monospace: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+$presentation-font-size-root: 28px;  // ~ the pptx body size once autofit has had its say
+$presentation-line-height: 1.4;
+$presentation-heading-font: $font-family-sans-serif;
+$presentation-heading-font-weight: 700;
+$presentation-heading-line-height: 1.15;
+$presentation-h1-font-size: 2.6em;
+$presentation-h2-font-size: 1.65em;
+$presentation-h3-font-size: 1.1em;
+$presentation-h4-font-size: 1em;
+
+// colors
+$body-bg: #fff;
+$body-color: $ncar-dark-blue;
+$text-muted: $ncar-muted;
+$primary: $ncar-blue;
+$secondary: $ncar-dark-blue;
+$link-color: $ncar-blue;
+$selection-bg: $ncar-light-blue;
+$selection-color: $ncar-space;
+$presentation-heading-color: $ncar-dark-blue;
+$presentation-list-bullet-color: $ncar-blue;
+$border-color: mix($ncar-dark-blue, $ncar-light-gray, 25%);
+$border-radius: 0;             // flat, as in the NCAR web design system
+$light-bg-link-color: $ncar-blue;
+$dark-bg-text-color: #fff;
+$dark-bg-link-color: $ncar-light-blue;
+$dark-bg-code-color: $ncar-yellow;
+
+// code: Light Gray blocks (as the listings style); colors from ncar.theme
+$code-block-bg: $ncar-light-gray;
+$code-block-border-color: $ncar-light-gray;
+$code-block-font-size: 0.66em;
+$code-color: $ncar-space;
+
+// callouts, as ncar-beamer.lua maps them
+$callout-color-note: $ncar-blue;
+$callout-color-tip: $ucar-aqua-contrast;
+$callout-color-important: $ncar-dark-blue;
+$callout-color-caution: $ncar-orange;
+$callout-color-warning: $ncar-orange;
+
+// mermaid renders live in HTML, so it can wear the brand (pptx/pdf: baked PNGs)
+$mermaid-font-family: $font-family-sans-serif;
+$mermaid-bg-color: #fff;
+$mermaid-node-bg-color: $ncar-light-gray;
+$mermaid-node-fg-color: $ncar-dark-blue;
+$mermaid-fg-color: $ncar-dark-blue;
+$mermaid-edge-color: $ncar-dark-blue;
+$mermaid-label-bg-color: #fff;
+$mermaid-label-fg-color: $ncar-blue;
+
+/*-- scss:rules --*/
+
+// slide geometry (beamerouterthemeNCAR.sty: margins 0.06 W, tab 0.018 W,
+// logo 0.06 H tall at 0.055 H from the top)
+$ncar-margin: 96px;
+$ncar-tab: 29px;
+$ncar-logo-h: 58px;
+$ncar-logo-top: 48px;
+$ncar-logo-w: $ncar-logo-h * 1200 / 305;  // NSF NCAR lockup aspect
+
+// brand roles, switched by themeoptions brand= (the <html> class)
+:root {
+  --ncar-primary: #{$ncar-blue};
+  --ncar-primary-text: #fff;
+  --ncar-primary-contrast: #{$ncar-blue};
+  --ncar-secondary: #{$ncar-light-blue};
+  --ncar-accent: #{$ncar-orange};
+}
+html.ncar-brand-ucar {
+  --ncar-primary: #{$ucar-aqua};
+  --ncar-primary-text: #{$ncar-space};
+  --ncar-primary-contrast: #{$ucar-aqua-contrast};
+  --ncar-secondary: #{$ucar-light-aqua};
+  --ncar-accent: #{$ncar-yellow};
+}
+
+// ---------------------------------------------------------------------------
+// every slide: a 1600x900 box with the brand margins
+// ---------------------------------------------------------------------------
+// (descendant selectors: ?print-pdf moves each slide into a .pdf-page; the
+// vertical-stack wrappers carry no .slide class)
+.reveal .slides section.slide,
+.reveal .slides section.ncar-title {
+  height: 100%;
+  box-sizing: border-box;
+  isolation: isolate;  // keeps the z-index:-1 waves above the slide background in print
+  padding: 150px $ncar-margin 70px;
+}
+
+// the logo: top right on content slides (NSF NCAR full color; the images
+// are set in ncar-revealjs.css)
+.reveal .slides section.slide::after,
+.reveal .slides section.ncar-title::after {
+  content: "";
+  position: absolute;
+  top: $ncar-logo-top;
+  right: $ncar-margin;
+  width: $ncar-logo-w;
+  height: $ncar-logo-h;
+  background-repeat: no-repeat;
+  background-position: right top;
+  background-size: contain;
+  pointer-events: none;
+}
+html.ncar-brand-ucar .reveal .slides section.slide::after,
+html.ncar-brand-ucar .reveal .slides section.ncar-title::after {
+  width: $ncar-logo-h * 0.8 * 381 / 97;
+  height: $ncar-logo-h * 0.8;
+}
+// no logo on busy photos (Brand Guide p11)
+.reveal .slides section.slide.feature::after { content: none; }
+
+// ---------------------------------------------------------------------------
+// content slides: accent tab beside the title, hairline rule, logo
+// ---------------------------------------------------------------------------
+.reveal .slides section.slide.level2 > h2 {
+  position: absolute;
+  top: 44px;
+  left: $ncar-margin;
+  right: $ncar-margin + $ncar-logo-w + 40px;
+  min-height: 70px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  font-size: 46px;  // fixed: {.smaller} and the autofit script shrink only the body
+  line-height: 1.15;
+  // the tab: flush with the paper's left edge, as tall as the title
+  &::before {
+    content: "";
+    position: absolute;
+    left: -$ncar-margin;
+    top: 0;
+    bottom: 0;
+    width: $ncar-tab;
+    background: var(--ncar-accent);
+  }
+}
+// the hairline under the title block
+.reveal .slides section.slide.level2::before {
+  content: "";
+  position: absolute;
+  top: 130px;
+  left: $ncar-margin;
+  right: $ncar-margin;
+  height: 1px;
+  background: mix($ncar-dark-blue, $ncar-light-gray, 30%);
+}
+.reveal .slides section.slide.level2.feature::before,
+.reveal .slides section.slide.level2.closing::before,
+.reveal .slides section.slide.level2.brand-dark::before { content: none; }
+
+// body text
+.reveal .slides section {
+  h3 { color: var(--ncar-primary-contrast); margin-top: 0.4em; }
+  h3.example, h3.alert { padding-left: 0.45em; border-left: 0.22em solid; }
+  h3.example { color: $ncar-dark-blue; border-color: $ncar-dark-blue; }
+  h3.alert { color: $ncar-dark-blue; border-color: var(--ncar-accent); }
+  strong { font-weight: 700; }
+  .alert { color: var(--ncar-primary-contrast); font-weight: 700; }
+  a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.12em; }
+  p, li { margin-top: 0; }
+  li + li { margin-top: 0.25em; }
+  ul ul, ol ol, ul ol, ol ul { font-size: 0.9em; margin-top: 0.2em; }
+}
+
+// bullets: filled circle, open circle, dash (beamerinnerthemeNCAR.sty)
+.reveal .slides section ul,
+.reveal .slides section ol { display: block; }
+.reveal .slides section ul {
+  list-style: none;
+  margin-left: 1.1em;
+  padding: 0;
+  > li { position: relative; }
+  > li::before {
+    content: "";
+    position: absolute;
+    left: -0.95em;
+    top: 0.55em;
+    width: 0.36em;
+    height: 0.36em;
+    border-radius: 50%;
+    background: var(--ncar-primary-contrast);
+  }
+  ul > li::before { background: none; border: 0.09em solid var(--ncar-primary-contrast); box-sizing: border-box; }
+  ul ul > li::before { border: 0; border-radius: 0; background: var(--ncar-primary-contrast); height: 0.1em; top: 0.7em; }
+}
+.reveal .slides section ol {
+  margin-left: 1.3em;
+  padding: 0;
+  > li::marker { color: var(--ncar-primary-contrast); font-weight: 700; }
+}
+// quarto's task lists / checkboxes keep their own markers
+.reveal .slides section ul.task-list > li::before { content: none; }
+
+// tables: bold uppercase header over a primary-color rule, hairline rows
+.reveal .slides section table {
+  border-collapse: collapse;
+  font-size: 0.85em;
+  margin: 0.4em 0;
+  th {
+    color: $ncar-dark-blue;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.8em;
+    border-bottom: 3px solid var(--ncar-primary) !important;
+    padding: 0.35em 0.8em;
+  }
+  td {
+    border-bottom: 1px solid mix($ncar-dark-blue, $ncar-light-gray, 20%) !important;
+    padding: 0.3em 0.8em;
+  }
+  tbody tr:nth-child(even) { background: rgba($ncar-light-gray, 0.6); }
+  caption {
+    caption-side: bottom;
+    color: $ncar-muted;
+    font-size: 0.8em;
+    padding-top: 0.4em;
+    text-align: left;
+  }
+}
+
+// code: Light Gray with a primary-color rule on the left (listings style)
+.reveal div.sourceCode {
+  border: 0;
+  border-left: 5px solid var(--ncar-primary);
+  border-radius: 0;
+  background: $ncar-light-gray;
+  margin: 0.4em 0;
+}
+.reveal pre code { padding: 0.5em 0.8em; max-height: 560px; }
+.reveal code { font-size: 0.85em; }
+.reveal :not(pre) > code {
+  background: $ncar-light-gray;
+  color: $ncar-space;
+  padding: 0.05em 0.25em;
+}
+// executed-cell output
+.reveal .cell-output pre { background: #fff; border-left: 5px solid $ncar-light-gray; }
+
+// callouts: flat
+.reveal .callout {
+  border-radius: 0 !important;
+  .callout-header, .callout-title-container { font-weight: 700; }
+}
+
+// quotes, captions, footnotes
+.reveal blockquote {
+  width: auto;
+  margin: 0.6em 0;
+  padding: 0.2em 0 0.2em 0.8em;
+  border-left: 5px solid var(--ncar-secondary);
+  background: none;
+  box-shadow: none;
+  font-style: normal;
+}
+.reveal .slides section figcaption,
+.reveal .slides section .caption {
+  color: $ncar-muted;
+  font-size: 0.7em;
+}
+.reveal .slides section .quarto-figure-center figcaption { text-align: center; }
+
+// mermaid pins its svg to its natural width (tiny on a 1600-px slide):
+// let diagrams fill the column instead, capped to the content height
+.reveal .slides section svg.mermaid-js {
+  max-width: 100% !important;
+  width: 100%;
+  height: auto;
+  max-height: calc(600px * var(--ncar-fit, 1));  // shrinks with the autofit
+}
+.reveal .slides section .footnotes,
+.reveal .slides section aside { color: $ncar-muted; }
+
+// ---------------------------------------------------------------------------
+// title slide: brand field, waves (or the photo), logo top left
+// ---------------------------------------------------------------------------
+// the waves run past the slide edge (overflow), so a letterboxed screen
+// shows them continuing instead of cut off
+.ncar-waves {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  z-index: -1;
+  pointer-events: none;
+}
+.reveal .slides section.ncar-title .ncar-title-photo-img {
+  position: absolute;
+  top: 0;
+  left: 48%;
+  width: 52%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  object-fit: cover;
+  z-index: -1;
+}
+div.reveal div.slides section.ncar-title.quarto-title-block {
+  text-align: left;
+  padding: 180px $ncar-margin 60px;
+  &::after { left: $ncar-margin; right: auto; top: 72px; height: 70px; width: 70px * 1200 / 305; background-position: left top; }
+  .ncar-title-text { max-width: 58%; }
+  &.ncar-title-photo .ncar-title-text { max-width: 44%; }
+  .date {
+    font-size: 0.6em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 0.9em;
+  }
+  h1.title {
+    position: relative;
+    font-size: 2.3em;
+    line-height: 1.12;
+    margin: 0 0 0.35em;
+    // the accent bar at the paper edge, beside the title
+    &::before {
+      content: "";
+      position: absolute;
+      left: -$ncar-margin;
+      top: 0.08em;
+      bottom: 0.08em;
+      width: $ncar-tab;
+      background: var(--ncar-accent);
+    }
+  }
+  .subtitle {
+    font-size: 1em;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 0.6em;
+  }
+  .ncar-title-rule {
+    width: 208px;
+    height: 3px;
+    background: var(--ncar-secondary);
+    margin: 0.9em 0;
+  }
+  .author { font-weight: 700; margin: 0; font-size: 0.8em; }
+  .institute { margin: 0; font-size: 0.7em; }
+  .ncar-fineprint {
+    position: absolute;
+    left: $ncar-margin;
+    bottom: 36px;
+    max-width: 50%;
+    font-size: 0.4em;
+    line-height: 1.4;
+    opacity: 0.85;
+    p { margin: 0; line-height: 1.4; }
+  }
+  // text on the dark field
+  &.ncar-field {
+    &, h1, .subtitle, .date, .author, .institute, .ncar-fineprint, a { color: var(--ncar-primary-text); }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// section dividers: brand field, waves, "SECTION n", heading, subtitle
+// ---------------------------------------------------------------------------
+.reveal .slides section.slide.ncar-section {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px $ncar-margin 80px;
+  text-align: left;
+  &::after { left: $ncar-margin; right: auto; top: 72px; background-position: left top; }
+  &[data-ncar-section]::before {
+    content: "Section " attr(data-ncar-section);
+    display: block;
+    color: var(--ncar-secondary);
+    font-size: 0.7em;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5em;
+  }
+  h1 {
+    position: relative;
+    max-width: 62%;
+    font-size: 2.6em;
+    line-height: 1.08;
+    margin: 0;
+    text-align: left;
+    &::before {
+      content: "";
+      position: absolute;
+      left: -$ncar-margin;
+      top: 0.08em;
+      bottom: 0.08em;
+      width: $ncar-tab;
+      background: var(--ncar-accent);
+    }
+  }
+  .ncar-subtitle {
+    max-width: 60%;
+    margin-top: 0.7em;
+    font-size: 1.1em;
+    p { margin: 0 0 0.4em; }
+  }
+  &, h1, .ncar-subtitle, a { color: var(--ncar-primary-text); }
+}
+// UCAR: Space on Aqua; Light Aqua is too light there (Brand Guide p22)
+html.ncar-brand-ucar .reveal .slides section.slide.ncar-section[data-ncar-section]::before {
+  color: $ncar-space;
+}
+
+// ---------------------------------------------------------------------------
+// closing slide: title field and waves, headline, content beneath
+// ---------------------------------------------------------------------------
+.reveal .slides section.slide.level2.closing {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  padding: 150px $ncar-margin 80px;
+  &::after { left: $ncar-margin; right: auto; top: 81px; background-position: left top; }
+  > h2 {
+    position: relative;
+    top: auto; left: auto; right: auto;
+    min-height: 0;
+    display: block;
+    max-width: 60%;
+    font-size: 2.6em;
+    line-height: 1.08;
+    margin: 0 0 0.4em;
+    &::before { top: 0.08em; bottom: 0.08em; }
+  }
+  > :not(h2):not(svg) { max-width: 58%; }
+  &.ncar-field {
+    &, h2, p, li, a, strong { color: var(--ncar-primary-text); }
+    ul > li::before { background: var(--ncar-primary-text); }
+    :not(pre) > code { background: rgba(#fff, 0.16); color: var(--ncar-primary-text); }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// .feature: full-bleed photo, translucent Space band behind the title
+// ---------------------------------------------------------------------------
+.reveal .slides section.slide.level2.feature > h2 {
+  top: 0;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  min-height: 180px;
+  padding: 0 $ncar-margin;
+  background: rgba($ncar-space, 0.72);
+  color: #fff;
+  &::before { content: none; }
+}
+.reveal .slides section.slide.level2.feature {
+  padding-top: 230px;
+}
+// the body on a translucent Space panel (beamer: translucent blocks)
+.reveal .slides section.slide.feature .ncar-feature-body {
+  box-sizing: border-box;
+  width: 52%;
+  padding: 0.6em 0.9em;
+  background: rgba($ncar-space, 0.72);
+  &, p, li, strong { color: #fff; }
+  h3, .alert, a { color: $ncar-light-blue; }
+  > :last-child { margin-bottom: 0; }
+  ul > li::before { background: $ncar-light-blue; }
+  :not(pre) > code { background: rgba(#fff, 0.14); color: $ncar-yellow; }
+}
+
+// ---------------------------------------------------------------------------
+// .brand-dark: a content slide on Space
+// ---------------------------------------------------------------------------
+.reveal .slides section.slide.brand-dark {
+  &, h2, h3, p, li, td, th, strong, .alert { color: #fff; }
+  h3, .alert { color: $ncar-light-blue; }
+  a { color: $ncar-light-blue; }
+  ul > li::before { background: $ncar-light-blue; }
+  ul ul > li::before { background: none; border-color: $ncar-light-blue; }
+  ul ul ul > li::before { background: $ncar-light-blue; }
+  ol > li::marker { color: $ncar-light-blue; }
+  table th { color: #fff; border-bottom-color: $ncar-light-blue !important; }
+  table td { border-bottom-color: rgba(#fff, 0.25) !important; }
+  table tbody tr:nth-child(even) { background: rgba(#fff, 0.06); }
+  :not(pre) > code { background: rgba(#fff, 0.12); color: $ncar-yellow; }
+  // the hairline, lightened
+  &::before {
+    content: "" !important;
+    background: rgba(#fff, 0.25) !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// light title (themeoptions title=light): white field, Dark Blue text
+// ---------------------------------------------------------------------------
+html.ncar-title-light .reveal .slides section.slide.level2.closing {
+  > h2 { color: $ncar-dark-blue; }
+}
+
+// ---------------------------------------------------------------------------
+// reveal chrome: progress bar, slide number, controls, footer
+// ---------------------------------------------------------------------------
+.reveal .progress { height: 4px; color: var(--ncar-accent); }
+.reveal .controls { color: var(--ncar-primary-contrast); }
+.reveal .slide-number {
+  left: 50px;
+  right: auto;
+  bottom: 14px;
+  background: transparent;
+  color: $ncar-dark-blue;
+  font-family: $font-family-sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  a { color: inherit; }
+}
+.reveal.has-dark-background .slide-number { color: #fff; }
+.reveal .footer {
+  color: $ncar-muted;
+  font-size: 14px;
+}
+
+// ---------------------------------------------------------------------------
+// print (?print-pdf): keep the brand fields and waves
+// ---------------------------------------------------------------------------
+// reveal's print stylesheet zeroes every section's padding (!important);
+// restate each slide type's (more specific, so these win)
+html.reveal-print .reveal .slides {
+  section.slide, section.ncar-title { padding: 150px $ncar-margin 70px !important; }
+  section.ncar-title.quarto-title-block { padding: 180px $ncar-margin 60px !important; }
+  section.slide.ncar-section { padding: 120px $ncar-margin 80px !important; }
+  section.slide.level2.closing { padding: 150px $ncar-margin 80px !important; }
+  section.slide.level2.feature { padding-top: 230px !important; }
+  // full-height slides: no vertical centering offset
+  section.slide, section.ncar-title { top: 0 !important; }
+}
+
+@media print {
+  html, body, .reveal, .reveal .slides section, .reveal .slide-background {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

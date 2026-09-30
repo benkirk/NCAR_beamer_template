@@ -1,6 +1,6 @@
 title: NCAR
 author: Benjamin Kirk
-version: 2.0.0
+version: 2.1.0
 quarto-required: ">=1.6.0"   # \pandocbounded (used by ncar-beamer.lua) needs pandoc >= 3.2.1
 contributes:
   formats:
@@ -19,3 +19,30 @@ contributes:
       filters:
         - quarto          # run after quarto's filters (mermaid images exist by then)
         - ncar-beamer.lua
+    revealjs:
+      # Palette, type and slide furniture: ncar-revealjs.scss (compiled into the
+      # reveal theme) and ncar-revealjs.css (fonts and logos, which need url()s;
+      # attached by ncar-revealjs.lua).  The same `themeoptions:` as beamer.
+      theme: [default, ncar-revealjs.scss]
+      template-partials: [title-slide.html]
+      width: 1600          # 16:9 like the pptx and beamer decks; every length
+      height: 900          # in the theme is in these slide pixels
+      margin: 0            # the slide furniture sits at the paper edge
+      center: false
+      slide-level: 2
+      slide-number: c/t
+      hash-type: number
+      transition: fade
+      transition-speed: fast
+      background-transition: fade
+      preview-links: auto
+      highlight-style: ncar.theme
+      menu:
+        side: left
+        numbers: true
+      chalkboard:          # b: whiteboard, c: draw on the slide
+        buttons: false     # (drop it for `embed-resources: true`)
+      fig-width: 10
+      fig-height: 5
+      filters:
+        - ncar-revealjs.lua
