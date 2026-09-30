@@ -24,6 +24,8 @@ format:
 
 # Basics
 
+A paragraph right after a divider becomes its subtitle.
+
 ## A Basic Slide
 
 - Poppins Bold headlines, Poppins Regular body text

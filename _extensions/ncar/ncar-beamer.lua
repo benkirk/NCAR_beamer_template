@@ -8,6 +8,11 @@ ncar-beamer.lua -- Markdown sugar for the NCAR beamer theme (beamer output only)
       closing frame on the brand field; the heading becomes the large
       headline and the slide's content sits beneath it
 
+  # Section
+  One paragraph right after the divider heading.
+      the paragraph becomes the divider's subtitle (\sectionsubtitle)
+      instead of a slide of its own
+
   metadata `fineprint: "..."`
       small print under the title block, e.g. an NSF funding statement
 
@@ -193,6 +198,26 @@ function Pandoc(doc)
           i = i + 1
         end
         out:insert(latex("}"))
+      else
+        out:insert(blk)
+        i = i + 1
+      end
+    elseif blk.t == "Header" and blk.level < slide_level then
+      -- paragraphs alone between a divider and the next slide: the subtitle
+      local j, paras = i + 1, pandoc.List({})
+      while j <= #blocks and (blocks[j].t == "Para" or blocks[j].t == "Plain") do
+        paras:insert(blocks[j])
+        j = j + 1
+      end
+      if #paras > 0 and (j > #blocks or is_slide_break(blocks[j])) then
+        local text = pandoc.List({})
+        for k, p in ipairs(paras) do
+          if k > 1 then text:insert(pandoc.RawInline("latex", "\\par ")) end
+          text:extend(p.content)
+        end
+        out:insert(latex("\\sectionsubtitle{" .. inlines_to_latex(text) .. "}"))
+        out:insert(blk)
+        i = j
       else
         out:insert(blk)
         i = i + 1
