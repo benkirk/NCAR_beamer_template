@@ -331,7 +331,11 @@ function Pandoc(doc)
     else
       out:insert(blk)
       i = i + 1
-      if content_art and blk.t == "Header" and blk.level == slide_level then
+      -- (not over a slide's own background image: the waves sit above
+      -- reveal's background layer)
+      if content_art and blk.t == "Header" and blk.level == slide_level
+          and not blk.attributes["background"] and not blk.attributes["background-image"]
+          and not blk.attributes["data-background-image"] then
         out:insert(html(content_art))
       end
     end

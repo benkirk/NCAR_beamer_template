@@ -192,8 +192,9 @@ x-height, and `mathfont=` picks which:
 
 Under pdfLaTeX `serif` gives Computer Modern math and the other presets fall
 back to it. The fonts come with TeX Live (`newcomputermodern`, `stix2-otf`,
-`tex-gyre-math`, `lete-sans-math`, `firamath`); a preset whose font is missing
-warns and keeps the document's math font.
+`tex-gyre-math`, `lete-sans-math`, `firamath`; Debian and Ubuntu ship Pagella
+Math in `fonts-texgyre-math`, not in `texlive-fonts-extra`); a preset whose
+font is missing warns and keeps the document's math font.
 
 In Quarto, `themeoptions: [mathfont=stix]` does the same, and Quarto's own
 `mathfont:` key still works (the theme then leaves math alone). The HTML deck
