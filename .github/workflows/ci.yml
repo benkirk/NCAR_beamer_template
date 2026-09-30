@@ -11,16 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      # texlive-fonts-extra: fontawesome5, used by Quarto's callout icons
+      # texlive-fonts-extra: fontawesome5 (Quarto's callout icons) and the
+      # mathfont= presets' fonts, except TeX Gyre Pagella Math
+      # (fonts-texgyre-math)
       - name: Install TeX Live
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             latexmk texlive-xetex texlive-latex-recommended texlive-latex-extra \
             texlive-fonts-recommended texlive-fonts-extra lmodern fonts-lmodern \
-            poppler-utils
+            fonts-texgyre-math poppler-utils
 
       - uses: quarto-dev/quarto-actions/setup@v2
 
@@ -43,6 +45,14 @@ jobs:
             pdffonts "$f" | tee /dev/stderr | grep -q Poppins-Bold
           done
 
+      # mathfont=serif by default: the equation page sets its math in a serif
+      # math font, not Poppins Italic (that is what mathfont=poppins is for)
+      - name: Check the math font
+        run: |
+          pdffonts -f 4 -l 4 examples/template.pdf | tee /dev/stderr | grep -q 'CMMath\|LatinModernMath'
+          ! pdffonts -f 4 -l 4 examples/template.pdf | grep -q Poppins-Italic
+          pdffonts -f 4 -l 4 examples/template-mathpoppins.pdf | grep -q Poppins-Italic
+
       - name: Build the HTML decks
         run: make html
 
@@ -54,7 +64,7 @@ jobs:
           done
           ls talk-quarto_files/libs/quarto-contrib/ncar-revealjs-*/Poppins-Bold.ttf
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: examples

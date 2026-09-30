@@ -31,14 +31,16 @@ here (with the autofit script) as an HTML dependency (Quarto copies it with its 
 <deck>_files/libs/, or inlines everything under `embed-resources: true`).
 
 The waves are inline SVG drawn in slide pixels (the theme fixes the slide at
-1600x900), ported from \ncar@curve & co. in beamerouterthemeNCAR.sty.
+1600x900) from the same fitted curves as beamerouterthemeNCAR.sty (see
+tools/fit-waves.py); `themeoptions: [waves=false]` drops them from content
+slides.
 ]]
 
 if not FORMAT:match("revealjs") then
   return {}
 end
 
-local VERSION = "2.2.0"
+local VERSION = "2.3.0"
 local W, H = 1600, 900
 
 -- Brand Guide pp. 17-19; roles as in ncar_branding.sty
@@ -98,40 +100,84 @@ end
 ---------------------------------------------------------------------------
 -- brand waves (y runs down here, up in TikZ)
 ---------------------------------------------------------------------------
+-- The brand's three wave lines (tools/fit-waves.py): each is two cubics
+-- from the top edge to the bottom edge, as {x, y} fractions of the slide
+-- (y down): start, ctrl, ctrl, peak, ctrl, ctrl, end.
+local WAVES = {
+  { {0.4862, 0.0000}, {0.5087, 0.1976}, {0.6068, 0.4965}, {0.6068, 0.6766}, {0.6068, 0.8741}, {0.5756, 0.9681}, {0.5674, 1.0000} },
+  { {0.5138, 0.0000}, {0.5402, 0.1583}, {0.6570, 0.4747}, {0.6570, 0.6423}, {0.6570, 0.8307}, {0.6286, 0.9166}, {0.6000, 1.0000} },
+  { {0.5427, 0.0000}, {0.5762, 0.1381}, {0.7073, 0.4410}, {0.7073, 0.6182}, {0.7073, 0.8242}, {0.6639, 0.9245}, {0.6320, 1.0000} },
+}
+-- where the waves sit on each slide type: the shift of the cover art, whose
+-- line 1 starts at 0.49 of the width (the same numbers as the beamer theme)
+local SHIFT = { title = 0.20, section = 0.26, content = 0.27 }
+local LIGHT_GRAY = "#F1F0EE"
+
 local function n(v) return string.format("%.1f", v) end
-
--- S-curve from the top edge at x (fraction of the width) to the bottom.
--- Every shape continues straight up and down past the slide (by E) and the
--- field to the left, so letterboxed screens show no cut edge.
-local E = 1200
-local function curve(x)
-  return string.format("C %s %s %s %s %s %s",
-    n((x - 0.02) * W), n(0.38 * H), n((x + 0.16) * W), n(0.55 * H), n((x + 0.10) * W), n(H))
+local function P(k, i, dx)
+  local p = WAVES[k][i]
+  return (p[1] + dx) * W, p[2] * H
 end
-local function curve_back(x)
-  return string.format("C %s %s %s %s %s %s",
-    n((x + 0.16) * W), n(0.55 * H), n((x - 0.02) * W), n(0.38 * H), n(x * W), "0")
+-- x where the tangent at endpoint i (towards control point j) reaches y
+local function along(k, i, j, dx, y)
+  local xe, ye = P(k, i, dx)
+  local xc, yc = P(k, j, dx)
+  return xe + (xc - xe) * (y - ye) / (yc - ye)
 end
--- down the curve at x, from above the slide to below it
-local function down(x)
-  return string.format("L %s 0 %s L %s %d", n(x * W), curve(x), n((x + 0.10) * W), H + E)
-end
-local function up(x)
-  return string.format("L %s %d L %s %d %s L %s %d", n((x + 0.10) * W), H + E, n((x + 0.10) * W), H,
-    curve_back(x), n(x * W), -E)
+local function pt(x, y) return n(x) .. " " .. n(y) end
+local function seg(k, dx, a, b, c)  -- cubic to point c through controls a, b
+  return string.format("C %s %s %s", pt(P(k, a, dx)), pt(P(k, b, dx)), pt(P(k, c, dx)))
 end
 
-local function field(x, fill)
-  return string.format('<path d="M %d %d L %d %d L %s %d %s Z" fill="%s"/>',
-    -E, H + E, -E, -E, n(x * W), -E, down(x), fill)
+-- Every shape continues past the slide and the field to the left, so
+-- letterboxed screens show no cut edge.  Past each end a line follows its
+-- tangent for L px, then eases to vertical over M more (the tangents differ,
+-- so a longer run would let the lines cross, which the brand forbids) and
+-- runs straight on to E.
+local E, L, M = 1200, 100, 160
+-- past endpoint i (tangent towards control point j), in direction dir:
+-- the end of the straight run, the easing control point, and the far end
+local function ext(k, i, j, dx, dir)
+  local xe, ye = P(k, i, dx)
+  local xc, yc = P(k, j, dx)
+  local slope = (xc - xe) / (yc - ye)
+  local near = pt(xe + slope * dir * L, ye + dir * L)
+  local xfar = xe + slope * dir * (L + M)
+  return near, pt(xfar, ye + dir * (L + M)), pt(xfar, ye + dir * E)
 end
-local function band(x0, x1, fill, opacity)
-  return string.format('<path d="M %s %d %s %s Z" fill="%s" fill-opacity="%s"/>',
-    n(x0 * W), -E, down(x0), up(x1), fill, opacity)
+local function top(k, dx) local _, _, far = ext(k, 1, 2, dx, -1) return far end
+local function bottom(k, dx) local _, _, far = ext(k, 7, 6, dx, 1) return far end
+-- line k from above the slide to below it, and back up
+local function down(k, dx)
+  local tnear, tc, tfar = ext(k, 1, 2, dx, -1)
+  local bnear, bc, bfar = ext(k, 7, 6, dx, 1)
+  return string.format("L %s C %s %s %s L %s %s %s L %s C %s %s %s", tfar, tc, tc, tnear,
+    pt(P(k, 1, dx)), seg(k, dx, 2, 3, 4), seg(k, dx, 5, 6, 7), bnear, bc, bc, bfar)
 end
-local function line(x, stroke)
-  return string.format('<path d="M %s %d %s" fill="none" stroke="%s" stroke-width="1.6"/>',
-    n(x * W), -E, down(x), stroke)
+local function up(k, dx)
+  local tnear, tc, tfar = ext(k, 1, 2, dx, -1)
+  local bnear, bc, bfar = ext(k, 7, 6, dx, 1)
+  return string.format("L %s C %s %s %s L %s %s %s L %s C %s %s %s", bfar, bc, bc, bnear,
+    pt(P(k, 7, dx)), seg(k, dx, 6, 5, 4), seg(k, dx, 3, 2, 1), tnear, tc, tc, tfar)
+end
+
+-- the slide left of line k
+local function field(k, dx, fill)
+  return string.format('<path d="M %d %d L %d %d %s Z" fill="%s"/>',
+    -E, H + E, -E, -E, down(k, dx), fill)
+end
+-- between lines k and m
+local function band(k, m, dx, fill, opacity)
+  return string.format('<path d="M %s %s %s Z" fill="%s" fill-opacity="%s"/>',
+    top(k, dx), down(k, dx), up(m, dx), fill, opacity)
+end
+local function lines(dx, stroke)
+  local out = {}
+  for k = 1, 3 do
+    out[k] = string.format('<path d="M %s %s" fill="none" stroke="%s" stroke-width="2.4"/>',
+      top(k, dx), down(k, dx), stroke)
+  end
+  return table.concat(out)
 end
 
 local function svg(body)
@@ -139,21 +185,25 @@ local function svg(body)
     .. 'preserveAspectRatio="none" aria-hidden="true" focusable="false">%s</svg>', W, H, body)
 end
 
--- title and closing slides without a photo; section dividers further right
-local function waves(c, at)
-  return svg(band(at, at + 0.08, c.secondary, 0.18) .. band(at + 0.08, at + 0.18, c.secondary, 0.10)
-    .. line(at + 0.04, c.secondary) .. line(at + 0.14, c.secondary))
+-- title and closing slides without a photo, and section dividers: the lines
+-- with the brand's translucent bands between them (Brand Guide p24)
+local function waves(c, dx)
+  return svg(band(1, 2, dx, c.secondary, 0.18) .. band(2, 3, dx, c.secondary, 0.10)
+    .. lines(dx, c.secondary))
 end
 
--- title slide with `titlegraphic:`: the photo fills the right 52%, and the
--- opaque field (curve at 0.56) and a translucent band cover its left edge.
+-- title slide with `titlegraphic:`, as the brand's cover: the photo fills the
+-- right 52%; the opaque field runs to line 2 and a translucent band to line 3.
 -- A plain <img> behind the svg, not an svg <image>: pandoc's embed-resources
 -- inlines the former only.
 local function photo_waves(c, fieldcolor, src)
-  local x = 0.56
   return string.format('<img class="ncar-title-photo-img" src="%s" alt="">', src)
-    .. svg(band(x, x + 0.04, fieldcolor, 0.55) .. field(x, fieldcolor)
-      .. line(0.59, c.secondary) .. line(0.625, c.secondary))
+    .. svg(field(2, 0, fieldcolor) .. band(2, 3, 0, fieldcolor, 0.65) .. lines(0, c.secondary))
+end
+
+-- content slides: the faint lines of the brand's content slides (p26)
+local function content_waves()
+  return svg(lines(SHIFT.content, LIGHT_GRAY))
 end
 
 ---------------------------------------------------------------------------
@@ -205,6 +255,7 @@ function Pandoc(doc)
   local c = BRANDS[brand] or BRANDS.ncar
   local light = (opts.title == "light")
   local titlefield = light and "#FFFFFF" or c.primary
+  local content_art = opts.waves ~= "false" and content_waves() or nil
 
   add_dependency()
   quarto.doc.include_text("in-header", string.format(
@@ -215,7 +266,7 @@ function Pandoc(doc)
   -- title slide: brand field (or white), waves or the photo
   title_slide_attributes(meta, { ["data-background-color"] = titlefield })
   local tg = meta["titlegraphic"]
-  local art = tg and photo_waves(c, titlefield, pandoc.utils.stringify(tg)) or waves(c, 0.66)
+  local art = tg and photo_waves(c, titlefield, pandoc.utils.stringify(tg)) or waves(c, SHIFT.title)
   meta["ncar-title-art"] = pandoc.RawInline("html", art)
   meta["ncar-title-class"] = light and "" or " ncar-field"
 
@@ -231,7 +282,7 @@ function Pandoc(doc)
         blk.attributes["data-ncar-section"] = tostring(section)
       end
       out:insert(blk)
-      out:insert(html(waves(c, 0.72)))
+      out:insert(html(waves(c, SHIFT.section)))
       i = i + 1
       -- paragraphs alone between the divider and the next slide: the subtitle
       local j, paras = i, pandoc.List({})
@@ -247,7 +298,7 @@ function Pandoc(doc)
       blk.attributes["data-background-color"] = titlefield
       if not light then blk.classes:insert("ncar-field") end
       out:insert(blk)
-      out:insert(html(waves(c, 0.66)))
+      out:insert(html(waves(c, SHIFT.title)))
       i = i + 1
     elseif blk.t == "Header" and blk.level == slide_level and has_class(blk, "feature") then
       -- the body goes on a translucent panel over the photo; Space under the
@@ -280,6 +331,13 @@ function Pandoc(doc)
     else
       out:insert(blk)
       i = i + 1
+      -- (not over a slide's own background image: the waves sit above
+      -- reveal's background layer)
+      if content_art and blk.t == "Header" and blk.level == slide_level
+          and not blk.attributes["background"] and not blk.attributes["background-image"]
+          and not blk.attributes["data-background-image"] then
+        out:insert(html(content_art))
+      end
     end
   end
   doc.blocks = out

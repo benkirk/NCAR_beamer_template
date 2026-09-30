@@ -90,6 +90,7 @@ latexmk -xelatex my-talk.tex
 | Callouts | | `::: {.callout-note}` and the other callout types |
 | Extra logo or slide decoration | `\logo{...}`: bottom right, above the footer (space reserved) | `logo: file.png` |
 | Theme options | `\usetheme[<options>]{NCAR}` | `themeoptions: [<options>]` |
+| Math font | `\usetheme[mathfont=stix]{NCAR}` | `themeoptions: [mathfont=stix]` |
 
 Everything in the Quarto column works in both `ncar-beamer` and `ncar-revealjs`.
 The HTML format adds a few things of its own (next section).
@@ -156,14 +157,53 @@ the better choice.
 | `footer` | `minimal`, `full` | `minimal` | page number only, or also the section, short title and date |
 | `sectionpages` | `true`, `false` | `true` | a branded divider slide at each section |
 | `logo` | `true`, `false` | `true` | logo at the top right of content slides |
+| `waves` | `true`, `false` | `true` | the brand's faint wave lines behind content slides |
+| `mathfont` | `serif`, `lm`, `stix`, `pagella`, `sans`, `fira`, `poppins`, `keep`, or a font name | `serif` | the math font (next section) |
 | `autofit` | `true`, `false` | `true` | HTML only: shrink overflowing content slides to fit |
 
-The HTML format reads `brand`, `title` and `autofit` and ignores the rest. It
-has no NSF NCAR-UCAR web lockup yet, so `brand=ncarucar` shows the NSF NCAR
-logo there.
+The HTML format reads `brand`, `title`, `waves` and `autofit` and ignores the
+rest. It has no NSF NCAR-UCAR web lockup yet, so `brand=ncarucar` shows the
+NSF NCAR logo there.
 
 `make variants` builds `examples/template.tex` in UCAR, NCAR-UCAR, light-title,
-4:3 and pdfLaTeX flavors.
+4:3, pdfLaTeX and `mathfont=poppins` flavors.
+
+### Math fonts
+
+Poppins has no math. Left to itself, beamer sets the letters of an equation in
+Poppins Italic among Computer Modern symbols, which is fine for a variable name
+in a sentence and falls apart on anything with fractions or operators. So the
+theme sets a serif math font, scaled a little to sit with Poppins' large
+x-height, and `mathfont=` picks which:
+
+![math fonts](docs/math-fonts.png)
+
+| `mathfont=` | font | |
+|---|---|---|
+| `serif` | New Computer Modern Math (Book) | the default; Latin Modern Math where it is not installed |
+| `lm` | Latin Modern Math | lighter Computer Modern |
+| `stix` | STIX Two Math | Times-like, compact |
+| `pagella` | TeX Gyre Pagella Math | Palatino-like |
+| `sans` | Lete Sans Math | a complete sans math font (Lato); Fira Math where it is not installed |
+| `fira` | Fira Math | humanist sans; no bold or script alphabets |
+| `poppins` | Poppins letters, Computer Modern symbols | the look of theme versions before 2.3 |
+| `keep` | | leave the document's math setup alone |
+| anything else | that OpenType math font, by name or file | for example `mathfont=XITSMath-Regular.otf` |
+
+Under pdfLaTeX `serif` gives Computer Modern math and the other presets fall
+back to it. The fonts come with TeX Live (`newcomputermodern`, `stix2-otf`,
+`tex-gyre-math`, `lete-sans-math`, `firamath`; Debian and Ubuntu ship Pagella
+Math in `fonts-texgyre-math`, not in `texlive-fonts-extra`); a preset whose
+font is missing warns and keeps the document's math font.
+
+In Quarto, `themeoptions: [mathfont=stix]` does the same, and Quarto's own
+`mathfont:` key still works (the theme then leaves math alone). The HTML deck
+is unaffected: MathJax sets its own serif math.
+
+`\ncarmathfont{<preset>}` selects a preset later in the preamble, and
+`\ncarmathversion{<version>}{<preset>}` sets one up as a math version to
+compare several in one document; `examples/mathfonts.tex` is the specimen
+above.
 
 ### Colors
 
@@ -187,6 +227,11 @@ There are also brand-aware roles that follow the `brand=` option: `BrandPrimary`
   - Full-color on light backgrounds, white-reversed on dark ones.
   - Never placed on busy photos, so feature slides have no logo.
 - **Fonts:** Poppins Bold for headlines and Poppins Regular for body text, with Helvetica as the substitute.
+- **Waves:** the three lines of the brand's cover art, traced from the slide
+  template (`tools/fit-waves.py`): the photo title and the content-slide lines
+  as on the template, the same curves shifted right on dividers and the
+  closing slide. Never more than three, never crossing, never in an accent
+  color.
 
 The logos are the official RGB lockups from the UCAR brand portal
 (<https://ucar.canto.com/v/branding>). NSF NCAR, UCAR and UCP staff may use
@@ -207,7 +252,8 @@ _extensions/ncar/           the theme: Quarto extension *and* LaTeX sources
   ncar.theme                  syntax-highlighting colors
   ncar-assets/                logos and bundled Poppins; web/ holds the HTML logos
 tools/web-logos.sh          regenerates ncar-assets/web/ from the brand kit
-examples/                   feature showcase (LaTeX, Quarto, article)
+tools/fit-waves.py          fits the wave curves to the brand's cover art
+examples/                   feature showcase (LaTeX, Quarto, article), math font specimen
   diagrams/                   one Graphviz and one mermaid source, shared by both
                               showcases; `make diagrams` rebuilds the PDFs that
                               template.tex includes (needs Graphviz and npx)
@@ -239,6 +285,9 @@ What looks different:
 - Each `\section` now gets a divider slide. Use `sectionpages=false` for the
   old behavior.
 - `footer=full` shows the section name in the footer, as the old footer did.
+- Math is set in a serif math font (since 2.3; `mathfont=poppins` restores
+  Poppins letters), and content slides carry the brand's faint wave lines
+  (`waves=false` removes them).
 
 ## The 2020-brand version
 

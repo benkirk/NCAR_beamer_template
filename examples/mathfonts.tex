@@ -1,0 +1,94 @@
+% NSF NCAR / UCAR beamer theme -- math font specimen.
+%
+% One slide per mathfont= preset, and a summary slide with every preset on
+% it (docs/math-fonts.png).  \usetheme[mathfont=<preset>]{NCAR} picks one for
+% a deck; here \ncarmathversion sets each up as a math version so a single
+% document can show them all (poppins, which cannot be a version, is the
+% document's normal math).  Build: make examples/mathfonts.pdf
+%
+\documentclass[aspectratio=169]{beamer}
+\usetheme[mathfont=keep,logo=false]{NCAR}
+
+\ncarmathversion{serif}{serif}
+\ncarmathversion{lm}{lm}
+\ncarmathversion{stix}{stix}
+\ncarmathversion{pagella}{pagella}
+\ncarmathversion{sans}{sans}
+\ncarmathversion{fira}{fira}
+\ncarmathfont{poppins}
+
+\title{Math fonts}
+\subtitle{\texttt{mathfont=} presets of the NCAR theme}
+\author{\texttt{\textbackslash usetheme[mathfont=serif]\{NCAR\}} (the default)}
+\date{}
+
+% the same equations under each version
+\newcommand\specimen{%
+  \begin{equation*}
+    \frac{\partial \mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u}
+      = -\frac{1}{\rho}\nabla p + \nu\nabla^2\mathbf{u} + \mathbf{g},
+    \qquad
+    \int_{-\infty}^{\infty} e^{-x^2}\,\mathrm{d}x = \sqrt{\pi},
+    \qquad
+    \sum_{n=1}^{\infty}\frac{1}{n^2} = \frac{\pi^2}{6}
+  \end{equation*}
+  \begin{equation*}
+    \hat{f}(\xi) = \int_{\mathbb{R}^n} f(x)\, e^{-2\pi i\, x\cdot\xi}\,\mathrm{d}x,
+    \qquad
+    \mathcal{L}\{y\}(s) = \int_0^\infty y(t)\,e^{-st}\,\mathrm{d}t,
+    \qquad
+    \mathbf{A} = \begin{pmatrix} \alpha_{11} & \alpha_{12} \\ \alpha_{21} & \Omega_{22} \end{pmatrix}
+  \end{equation*}
+  where $\mathbf{u}\in\mathbb{R}^3$ is the velocity, $\rho$ the density and
+  $\nu$ the kinematic viscosity; $\Gamma(z) = \int_0^\infty t^{z-1}e^{-t}\,\mathrm{d}t$
+  for $\operatorname{Re}(z) > 0$, and $\epsilon \ll \delta \ll 1$.}
+
+% \specimenframe[<math version>]{<preset>}{<title>}{<what it is>}
+\newcommand\specimenframe[4][]{%
+  \begin{frame}{\texttt{mathfont=#2}}{#3}
+    \mathversion{\ifx\relax#1\relax#2\else#1\fi}
+    \specimen
+    \vfill
+    {\small\color{DarkBlue!70}#4}
+  \end{frame}}
+
+% \specimenrow[<math version>]{<preset>}: one line of the summary slide
+\newcommand\specimenrow[2][]{%
+  \par\noindent\makebox[\textwidth][l]{\small
+    \makebox[0.1\textwidth][l]{\texttt{#2}}%
+    \mathversion{\ifx\relax#1\relax#2\else#1\fi}%
+    $\dfrac{\partial \mathbf{u}}{\partial t} + (\mathbf{u}\cdot\nabla)\mathbf{u}
+      = -\dfrac{1}{\rho}\nabla p + \nu\nabla^2\mathbf{u}$\quad
+    $\int_0^{\infty} e^{-x^2}\,\mathrm{d}x = \tfrac{1}{2}\sqrt{\pi}$\quad
+    $\hat{f}(\xi),\ \mathbb{R}^n,\ \Gamma\Omega\,\alpha\beta\gamma$\quad
+    text $\rho$}%
+  \par\vspace{0.1ex}}
+
+\begin{document}
+
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+\end{frame}
+
+\specimenframe{serif}{New Computer Modern Math, Book weight}{The default.
+  The Computer Modern design at a weight that holds its own beside Poppins;
+  Latin Modern Math stands in where it is not installed.}
+\specimenframe{lm}{Latin Modern Math}{The lighter Computer Modern most LaTeX
+  users know; what Quarto PDFs got before theme 2.3.}
+\specimenframe{stix}{STIX Two Math}{Times-like; dense equations stay compact.}
+\specimenframe{pagella}{TeX Gyre Pagella Math}{Palatino-like; the widest
+  letterforms of the serif presets.}
+\specimenframe{sans}{Lete Sans Math (Lato)}{A complete sans math font, the
+  nearest relative to Poppins; Fira Math stands in where it is not installed.}
+\specimenframe{fira}{Fira Math}{Humanist sans with a large x-height; it
+  has no bold or script alphabets (the box above is \texttt{\textbackslash mathcal\{L\}}).}
+\specimenframe[normal]{poppins}{Poppins letters over Computer Modern symbols}{The look
+  of theme versions before 2.3: beamer's own sans math.  Fine for a variable
+  name in a sentence, less so for anything with fractions or operators.}
+
+\begin{frame}{The presets side by side}
+  \specimenrow{serif}\specimenrow{lm}\specimenrow{stix}\specimenrow{pagella}
+  \specimenrow{sans}\specimenrow{fira}\specimenrow[normal]{poppins}
+\end{frame}
+
+\end{document}

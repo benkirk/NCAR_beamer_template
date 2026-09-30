@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ncar_branding}[2026/09/29 v2.0 NSF NCAR / UCAR brand colors, fonts & logos]
+\ProvidesPackage{ncar_branding}[2026/09/30 v2.3 NSF NCAR / UCAR brand colors, fonts & logos]
 %
 % Brand primitives shared by the NCAR beamer theme and plain documents
 % (see examples/paper.tex).  Values follow the 2026 "Vermilion" NSF NCAR /
@@ -11,11 +11,15 @@
 %                             sanctioned substitute (default: poppins under
 %                             XeTeX/LuaTeX, helvetica under pdfTeX)
 %   brandedfonts              legacy (v1) spelling of fonts=poppins
+%   mathfont=serif|lm|stix|pagella|sans|poppins|keep|<font>
+%                             math font (default: a serif math font; see
+%                             "Math font" below)
 %
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{family=ncar,prefix=ncar@}
 \DeclareStringOption[ncar]{brand}
 \DeclareStringOption[auto]{fonts}
+\DeclareStringOption[serif]{mathfont}
 \DeclareVoidOption{brandedfonts}{\def\ncar@fonts{poppins}}
 \ProcessKeyvalOptions*
 
@@ -90,6 +94,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \providecommand\ncarassetdir{ncar-assets/}
 \newif\ifncar@poppins \ncar@poppinsfalse
+\newif\ifncar@bundledpoppins \ncar@bundledpoppinsfalse
 \def\ncar@tmp{auto}\ifx\ncar@fonts\ncar@tmp
   \iftutex\def\ncar@fonts{poppins}\else\def\ncar@fonts{helvetica}\fi
 \fi
@@ -106,7 +111,7 @@
         ItalicFont     = *-Italic,
         BoldItalicFont = *-BoldItalic,
         FontFace       = {sb}{n}{*-SemiBold}]}%
-      \ncar@tmp\ncar@poppinstrue}
+      \ncar@tmp\ncar@poppinstrue\ncar@bundledpoppinstrue}
     \def\ncar@tmp{bundled}\ifx\ncar@fonts\ncar@tmp
       \ncar@bundledpoppins
     \else
@@ -130,6 +135,115 @@
     \RequirePackage[T1]{fontenc}
     \IfFileExists{helvet.sty}{\RequirePackage[scaled=0.92]{helvet}}{}%
   \fi
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Math font (mathfont=)
+%
+% Poppins has no math.  Left alone, beamer sets math letters in Poppins
+% Italic among Computer Modern symbols, which reads as a novelty face once an
+% equation has any weight to it.  The default is a serif math font, scaled
+% up a little to sit with Poppins' large x-height (unicode-math, so under
+% XeLaTeX or LuaLaTeX; pdfLaTeX gets Computer Modern math).
+%
+%   mathfont=serif    New Computer Modern Math (Book), else Latin Modern Math
+%   mathfont=lm       Latin Modern Math
+%   mathfont=stix     STIX Two Math
+%   mathfont=pagella  TeX Gyre Pagella Math
+%   mathfont=sans     a sans math font: Lete Sans Math (else Fira Math)
+%   mathfont=fira     Fira Math
+%   mathfont=poppins  beamer's sans math: Poppins letters, CM symbols (the
+%                     look of theme versions before 2.3)
+%   mathfont=keep     leave the document's math setup alone
+%   mathfont=<font>   any OpenType math font, by name or file
+%
+% Presets fall back to the document's math font, with a warning, if the font
+% is not installed.  The beamer theme reads \ifncar@cmmath for pdfLaTeX.
+%
+% \ncarmathfont{<preset or font>} selects one later in the preamble, and
+% \ncarmathversion{<version>}{<preset or font>} sets one up as a math version
+% for comparing them in one document (examples/mathfonts.tex):
+% \mathversion{<version>} switches to it.  (poppins cannot be a version:
+% unicode-math's range= ignores version=.)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newif\ifncar@cmmath \ncar@cmmathfalse
+\def\ncar@mathversionopt{}
+% \ncar@setmath{<font>}{<fontspec options>}: the math font, if it exists
+\def\ncar@setmath#1#2{%
+  \IfFontExistsTF{#1}{%
+    \@ifpackageloaded{unicode-math}{}{\RequirePackage{unicode-math}}%
+    \edef\ncar@tmp{\noexpand\setmathfont{#1}[\unexpanded{#2},\ncar@mathversionopt]}%
+    \ncar@tmp
+  }{%
+    \PackageWarningNoLine{ncar_branding}{math font "#1" not found; keeping
+      the document's math font}%
+    % a math version must still exist to switch to: Latin Modern Math there
+    \ifx\ncar@mathversionopt\@empty\else
+      \@ifpackageloaded{unicode-math}{}{\RequirePackage{unicode-math}}%
+      \edef\ncar@tmp{\noexpand\setmathfont{latinmodern-math.otf}[\ncar@mathversionopt]}%
+      \ncar@tmp
+    \fi}}
+% \ncar@setmathor{<font>}{<fallback font>}{<options>}
+\def\ncar@setmathor#1#2#3{\IfFontExistsTF{#1}{\ncar@setmath{#1}{#3}}{\ncar@setmath{#2}{#3}}}
+% Scale: between matching Poppins' x-height (1.27 for Computer Modern) and
+% its cap height (1.02), so lowercase reads and capitals do not shout
+\@namedef{ncar@mathpreset@serif}{\ncar@setmathor{NewCMMath-Book.otf}{latinmodern-math.otf}{Scale=1.10}}
+\@namedef{ncar@mathpreset@lm}{\ncar@setmath{latinmodern-math.otf}{Scale=1.10}}
+\@namedef{ncar@mathpreset@stix}{\ncar@setmath{STIXTwoMath-Regular.otf}{Scale=1.10}}
+\@namedef{ncar@mathpreset@pagella}{\ncar@setmath{texgyrepagella-math.otf}{Scale=1.08}}
+\@namedef{ncar@mathpreset@sans}{\ncar@setmathor{LeteSansMath.otf}{FiraMath-Regular.otf}{Scale=1.10}}
+\@namedef{ncar@mathpreset@fira}{\ncar@setmath{FiraMath-Regular.otf}{Scale=1.02}}
+\@namedef{ncar@mathpreset@keep}{}
+% poppins: nothing, and beamer substitutes Poppins for the letters at
+% \begin{document}.  If unicode-math is already loaded (Quarto's template
+% loads it), it has disabled that substitution, so lay Poppins over the
+% letter and digit ranges of Latin Modern Math instead.
+\@namedef{ncar@mathpreset@poppins}{%
+  \@ifpackageloaded{unicode-math}{%
+    \ncar@setmath{latinmodern-math.otf}{Scale=1.0}%
+    \ifncar@bundledpoppins
+      \edef\ncar@tmp{\noexpand\setmathfont{Poppins-Italic.ttf}[range=it/{latin,Latin},
+        Path=\ncarassetdir fonts/Poppins/,\ncar@mathversionopt]%
+        \noexpand\setmathfont{Poppins-Regular.ttf}[range=up/{latin,Latin,num},
+        Path=\ncarassetdir fonts/Poppins/,\ncar@mathversionopt]}%
+      \ncar@tmp
+    \else\ifncar@poppins
+      \edef\ncar@tmp{\noexpand\setmathfont{Poppins Italic}[range=it/{latin,Latin},\ncar@mathversionopt]%
+        \noexpand\setmathfont{Poppins}[range=up/{latin,Latin,num},\ncar@mathversionopt]}%
+      \ncar@tmp
+    \fi\fi
+  }{}}
+% \ncar@mathselect{<preset or font>}
+\def\ncar@mathselect#1{%
+  \ifcsname ncar@mathpreset@#1\endcsname
+    \csname ncar@mathpreset@#1\endcsname
+  \else
+    \ncar@setmath{#1}{Scale=MatchLowercase}%
+  \fi}
+\newcommand\ncarmathfont[1]{%
+  \iftutex\ncar@mathselect{#1}\else
+    \PackageWarningNoLine{ncar_branding}{\string\ncarmathfont\space needs
+      XeLaTeX or LuaLaTeX}%
+  \fi}
+\newcommand\ncarmathversion[2]{%
+  \iftutex
+    \def\ncar@mathversionopt{version=#1}%
+    \ncar@mathselect{#2}%
+    \def\ncar@mathversionopt{}%
+  \else
+    \PackageWarningNoLine{ncar_branding}{\string\ncarmathversion\space needs
+      XeLaTeX or LuaLaTeX}%
+  \fi}
+\iftutex
+  \ncar@mathselect{\ncar@mathfont}%
+\else
+  \def\ncar@tmp{serif}\ifx\ncar@mathfont\ncar@tmp\ncar@cmmathtrue\else
+  \def\ncar@tmp{poppins}\ifx\ncar@mathfont\ncar@tmp\else
+  \def\ncar@tmp{keep}\ifx\ncar@mathfont\ncar@tmp\else
+    \PackageWarningNoLine{ncar_branding}{mathfont=\ncar@mathfont\space needs
+      XeLaTeX or LuaLaTeX; using Computer Modern math}%
+    \ncar@cmmathtrue
+  \fi\fi\fi
 \fi
 
 % semibold where available (Poppins SemiBold), else bold
