@@ -129,6 +129,35 @@ Quarto callouts render in both formats.
 Keep slides short: beamer does not shrink overflowing content (HTML does).
 :::
 
+# Layout
+
+Short slides: center the body, and scale it, per slide.
+
+## Centered and Scaled {.center scale="1.4"}
+
+| System  | Nodes |   Cores |
+|:--------|------:|--------:|
+| Derecho | 2,488 | 323,712 |
+| Casper  |   104 |   5,008 |
+
+† `{.center scale="1.4"}`: the table, not the title or this footnote.
+
+## Fill the Slide {.hcenter .fill}
+
+```bash
+#!/bin/bash
+#PBS -A <project>
+#PBS -l select=1:ncpus=128
+#PBS -l walltime=01:00:00
+mpiexec ./a.out
+```
+
+## Centered Down {.vcenter}
+
+- `.hcenter` centers the body across; its text stays left-aligned
+- `.vcenter` centers it down; `.center` does both
+- `scale="S"` sizes it; `.fill` grows it to fit (HTML only)
+
 # Diagrams
 
 Rendered from the same sources as the LaTeX example: live in HTML, images in the PDF.

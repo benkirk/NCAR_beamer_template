@@ -19,6 +19,14 @@ ncar-beamer.lua -- Markdown sugar for the NCAR beamer theme (beamer output only)
       the frame's foot under a short rule (\ncarfootnotes; see
       beamerinnerthemeNCAR.sty)
 
+  ## Title {.center scale="1.4"}
+      per-slide layout of the body (everything but the title, notes and
+      footnotes), as in HTML: scale="S" sizes its text, tables and code by S
+      (a \fontsize group: no autofit here, so check the PDF), .vcenter is
+      frame option c, .hcenter centers prose and lists as a block (tables
+      center on their own; with a table or columns it does nothing, since
+      neither fits in the box), .center is both, and .fill does nothing
+
   metadata `fineprint: "..."`
       small print under the title block, e.g. an NSF funding statement
 
@@ -134,6 +142,115 @@ local function hoist_footnotes(blocks)
   end
   return out
 end
+
+-- Per-slide layout controls: the body goes in a Div before the footnote hoist
+-- (which reaches into it) and becomes raw LaTeX afterwards (unwrap_layout).
+local LAYOUT_CLASSES = { hcenter = true, vcenter = true, center = true, fill = true }
+local used = { scale = false, hcenter = false }
+
+local function take_layout(blk)
+  local h, v, found = false, false, false
+  local kept = pandoc.List({})
+  for _, c in ipairs(blk.classes) do
+    if LAYOUT_CLASSES[c] then
+      found = true
+      h = h or c == "hcenter" or c == "center"
+      v = v or c == "vcenter" or c == "center"
+    else
+      kept:insert(c)
+    end
+  end
+  local scale = blk.attributes["scale"]
+  if scale then
+    blk.attributes["scale"] = nil
+    found = true
+    if not tonumber(scale) then
+      quarto.log.warning("ncar-beamer: scale=\"" .. scale .. "\" is not a number; ignored")
+      scale = nil
+    end
+  end
+  if not found then return nil end
+  blk.classes = kept
+  return { h = h, v = v, scale = scale }
+end
+
+local function wrap_layout(blocks)
+  local out, i = pandoc.Blocks({}), 1
+  while i <= #blocks do
+    local blk = blocks[i]
+    out:insert(blk)
+    i = i + 1
+    local lay = blk.t == "Header" and blk.level == slide_level
+      and not has_class(blk, "feature") and not has_class(blk, "closing") and take_layout(blk)
+    if lay then
+      if lay.v then add_frameoption(blk, "c") end
+      local body, notes = pandoc.Blocks({}), pandoc.Blocks({})
+      while i <= #blocks and not is_slide_break(blocks[i]) do
+        local b = blocks[i]
+        if b.t == "Div" and has_class(b, "notes") then notes:insert(b) else body:insert(b) end
+        i = i + 1
+      end
+      local attr = {}
+      if lay.scale then attr["scale"] = lay.scale end
+      if lay.h then attr["hcenter"] = "1" end
+      out:insert(pandoc.Div(body, pandoc.Attr("", { "ncar-body" }, attr)))
+      out:extend(notes)
+    end
+  end
+  return out
+end
+
+-- longtable cannot go in a box, nor can beamer's columns (verbatim can: varwidth
+-- is an environment, not a macro argument)
+local function boxable(blocks)
+  local ok = true
+  pandoc.walk_block(pandoc.Div(blocks), {
+    Table = function() ok = false end,
+    Div = function(d) if has_class(d, "columns") then ok = false end end,
+  })
+  return ok
+end
+
+local function unwrap_layout(blocks)
+  local out = pandoc.Blocks({})
+  for _, b in ipairs(blocks) do
+    if b.t == "Div" and has_class(b, "ncar-body") then
+      local open, close = "", ""
+      local scale = b.attributes["scale"]
+      if scale then
+        used.scale = true
+        open, close = "\\ncarscalebegin{" .. scale .. "}", "\\ncarscaleend"
+      end
+      if b.attributes["hcenter"] and boxable(b.content) then
+        used.hcenter = true
+        open = open .. "\\begin{center}\\begin{varwidth}{\\linewidth}"
+        close = "\\end{varwidth}\\end{center}" .. close
+      end
+      if open ~= "" then out:insert(latex(open)) end
+      out:extend(b.content)
+      if close ~= "" then out:insert(latex(close)) end
+    else
+      out:insert(b)
+    end
+  end
+  return out
+end
+
+-- \ncarscalebegin{S}: the body at S times the current size; beamer's sub-item
+-- sizes are absolute (\small, \footnotesize), so they are scaled too, all
+-- expanded when the group opens (inside it, \f@size is already scaled)
+local SCALE_TEX = table.concat({
+  "\\makeatletter",
+  "\\newcommand\\ncar@size[2]{\\noexpand\\fontsize{\\fpeval{#1*#2*\\f@size}pt}"
+    .. "{\\fpeval{#1*#2*\\strip@pt\\dimexpr\\f@baselineskip\\relax}pt}}",
+  "\\newcommand\\ncarscalebegin[1]{\\begingroup",
+  "  \\edef\\ncar@sub{\\ncar@size{#1}{0.9}}\\edef\\ncar@subsub{\\ncar@size{#1}{0.8}}%",
+  "  \\setbeamerfont{itemize/enumerate subbody}{size=\\ncar@sub}%",
+  "  \\setbeamerfont{itemize/enumerate subsubbody}{size=\\ncar@subsub}%",
+  "  \\edef\\ncar@body{\\ncar@size{#1}{1}}\\ncar@body\\selectfont}",
+  "\\newcommand\\ncarscaleend{\\endgroup}",
+  "\\makeatother",
+}, "\n")
 
 local function header_includes(doc)
   local hi = doc.meta["header-includes"]
@@ -262,7 +379,7 @@ function Pandoc(doc)
   end
 
   local out = pandoc.Blocks({})
-  local i, blocks = 1, doc.blocks
+  local i, blocks = 1, wrap_layout(doc.blocks)
   local section, subtitles = 0, pandoc.List({})
   while i <= #blocks do
     local blk = blocks[i]
@@ -321,7 +438,13 @@ function Pandoc(doc)
       i = i + 1
     end
   end
-  doc.blocks = hoist_footnotes(out)
+  doc.blocks = unwrap_layout(hoist_footnotes(out))
+  if used.scale or used.hcenter then
+    local hi = header_includes(doc)
+    if used.hcenter then hi:insert(pandoc.Blocks({ latex("\\usepackage{varwidth}") })) end
+    if used.scale then hi:insert(pandoc.Blocks({ latex(SCALE_TEX) })) end
+    doc.meta["header-includes"] = hi
+  end
   if #subtitles > 0 then
     local hi = header_includes(doc)
     hi:insert(pandoc.Blocks(subtitles))

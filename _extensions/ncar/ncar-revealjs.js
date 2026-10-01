@@ -6,6 +6,12 @@
  * the scss).  Opt out per slide with {.no-autofit} or {.scrollable}, or per
  * deck with `themeoptions: [autofit=false]`.
  *
+ * Layout controls (ncar-revealjs.lua wraps the body in .ncar-body): a slide
+ * with scale="S" starts at S instead of 1, .fill grows in the same steps until
+ * the body would overflow, down or across (up to 3x), and .vcenter then
+ * centers the body in the space left above the floor.  These apply even where
+ * autofit is off.
+ *
  * Reveal only lays out the slides near the current one, so each slide is
  * fitted when it is shown (and all of them for ?print-pdf); fitting is
  * idempotent, so late renderers (fonts, mermaid, MathJax) just refit.
@@ -18,7 +24,9 @@
 (function () {
   "use strict";
   var MIN = 0.65, STEP = 0.04, GAP = 24;  // GAP: slide px between body and footnotes
-  var SKIP = ".ncar-section, .closing, .feature, .scrollable, .no-autofit, .quarto-title-block";
+  var MAXFILL = 3.0;
+  var NEVER = ".ncar-section, .closing, .feature, .quarto-title-block";
+  var NOSHRINK = ".scrollable, .no-autofit";
 
   function contentBottom(s) {
     var b = 0;
@@ -30,26 +38,57 @@
     return b;
   }
 
-  function fit(s) {
-    if (!s.classList.contains("slide") || s.matches(SKIP) || s.offsetHeight === 0) return;
+  // a code block or table wider than the body scrolls instead of growing it
+  function tooWide(s) {
+    var wide = false;
+    s.querySelectorAll(":scope > .ncar-body pre, :scope > .ncar-body table").forEach(function (e) {
+      if (e.scrollWidth > e.clientWidth + 1) wide = true;
+    });
+    var body = s.querySelector(":scope > .ncar-body");
+    return wide || (body && body.scrollWidth > body.clientWidth + 1);
+  }
+
+  function fit(s, autofit) {
+    if (!s.classList.contains("slide") || s.matches(NEVER) || s.offsetHeight === 0) return;
+    var layout = s.classList.contains("ncar-layout");
+    var shrink = autofit && !s.matches(NOSHRINK);
+    if (!layout && !shrink) return;
     s.style.fontSize = "";
     s.style.removeProperty("--ncar-fit");  // scales the diagram cap (scss)
+    s.style.removeProperty("--ncar-shift");
     var cs = getComputedStyle(s);
     var base = parseFloat(cs.fontSize);
     // footnotes sit on the floor (scss): the body has to end above them
     var foot = s.querySelector(":scope > .ncar-footnotes");
     var floor = s.clientHeight - parseFloat(cs.paddingBottom);
     var limit = function () { return foot ? floor - foot.offsetHeight - GAP : floor; };
-    for (var f = 1; contentBottom(s) > limit() && f - STEP >= MIN; ) {
-      f -= STEP;
+    var f = 1;
+    var size = function (v) {
+      f = v;
       s.style.fontSize = (base * f).toFixed(2) + "px";
       s.style.setProperty("--ncar-fit", f.toFixed(2));
+    };
+    var scale = parseFloat(s.getAttribute("data-ncar-scale"));
+    if (scale > 0 && scale !== 1) size(scale);
+    if (s.classList.contains("ncar-fill")) {
+      var over = function () { return contentBottom(s) > limit() || tooWide(s); };
+      while (f + STEP <= MAXFILL && !over()) size(f + STEP);
+      if (over() && f - STEP >= MIN) size(f - STEP);
+    }
+    if (shrink) {
+      while (contentBottom(s) > limit() && f - STEP >= MIN) size(f - STEP);
+    }
+    if (s.classList.contains("ncar-vcenter")) {
+      var free = limit() - contentBottom(s);
+      if (free > 0) s.style.setProperty("--ncar-shift", (free / 2).toFixed(1) + "px");
     }
   }
 
   function fitShown() {
-    if (document.documentElement.classList.contains("ncar-no-autofit")) return;
-    document.querySelectorAll(".reveal .slides section.slide").forEach(fit);
+    var autofit = !document.documentElement.classList.contains("ncar-no-autofit");
+    document.querySelectorAll(".reveal .slides section.slide").forEach(function (s) {
+      fit(s, autofit);
+    });
   }
 
   // mermaidAPI is frozen, so swap in a copy whose render drops the container

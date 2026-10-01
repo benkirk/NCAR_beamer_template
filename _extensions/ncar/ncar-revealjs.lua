@@ -25,6 +25,14 @@ The same Markdown as the beamer theme (ncar-beamer.lua):
 Overflowing content slides shrink their body text to fit (ncar-revealjs.js);
 {.no-autofit} or {.scrollable} on a slide opts out.
 
+  ## Title {.center scale="1.4"}
+      per-slide layout of the body (everything but the title, notes and
+      footnotes), each control independent: .hcenter centers the body block
+      across (its text stays left-aligned), .vcenter centers it between the
+      title rule and the floor, .center does both (NOT Quarto's .center,
+      which moves the title too), scale="S" sizes its text, tables and code
+      by S, and .fill grows it until it just fits (HTML only)
+
 Colors, type and layout live in ncar-revealjs.scss; the fonts and logos,
 which need url()s relative to their files, in ncar-revealjs.css, attached
 here (with the autofit script) as an HTML dependency (Quarto copies it with its resources into
@@ -40,7 +48,7 @@ if not FORMAT:match("revealjs") then
   return {}
 end
 
-local VERSION = "2.4.0"
+local VERSION = "2.5.0"
 local W, H = 1600, 900
 
 -- Brand Guide pp. 17-19; roles as in ncar_branding.sty
@@ -120,6 +128,80 @@ local function dagger(p)
     '<span class="ncar-dagger">' .. footnote_marker(p) .. "</span>") })
   inl:extend(strip_marker(p.content))
   return pandoc.Para(inl)
+end
+
+-- Per-slide layout controls.  The body is wrapped in a Div here, before the
+-- footnote hoist (which reaches into it), and becomes raw tags afterwards
+-- (unwrap_layout), since pandoc turns a Div that starts with a heading into a
+-- <section>.  The classes go on the slide; the script and the scss act on them.
+local LAYOUT_CLASSES = { hcenter = true, vcenter = true, center = true, fill = true }
+
+local function take_layout(blk)
+  local h, v, fill, found = false, false, false, false
+  local kept = pandoc.List({})
+  for _, c in ipairs(blk.classes) do
+    if LAYOUT_CLASSES[c] then
+      found = true
+      h = h or c == "hcenter" or c == "center"
+      v = v or c == "vcenter" or c == "center"
+      fill = fill or c == "fill"
+    else
+      kept:insert(c)
+    end
+  end
+  local scale = blk.attributes["scale"]
+  if scale then
+    blk.attributes["scale"] = nil
+    found = true
+    if not tonumber(scale) then
+      quarto.log.warning("ncar-revealjs: scale=\"" .. scale .. "\" is not a number; ignored")
+      scale = nil
+    end
+  end
+  if not found then return nil end
+  blk.classes = kept
+  return { h = h, v = v, fill = fill, scale = scale }
+end
+
+local function wrap_layout(blocks)
+  local out, i = pandoc.Blocks({}), 1
+  while i <= #blocks do
+    local blk = blocks[i]
+    out:insert(blk)
+    i = i + 1
+    local lay = blk.t == "Header" and blk.level == slide_level
+      and not has_class(blk, "feature") and not has_class(blk, "closing") and take_layout(blk)
+    if lay then
+      blk.classes:insert("ncar-layout")
+      if lay.h then blk.classes:insert("ncar-hcenter") end
+      if lay.v then blk.classes:insert("ncar-vcenter") end
+      if lay.fill then blk.classes:insert("ncar-fill") end
+      if lay.scale then blk.attributes["data-ncar-scale"] = lay.scale end
+      local body, notes = pandoc.Blocks({}), pandoc.Blocks({})
+      while i <= #blocks and not is_slide_break(blocks[i]) do
+        local b = blocks[i]
+        if b.t == "Div" and has_class(b, "notes") then notes:insert(b) else body:insert(b) end
+        i = i + 1
+      end
+      out:insert(pandoc.Div(body, pandoc.Attr("", { "ncar-body" })))
+      out:extend(notes)
+    end
+  end
+  return out
+end
+
+local function unwrap_layout(blocks)
+  local out = pandoc.Blocks({})
+  for _, b in ipairs(blocks) do
+    if b.t == "Div" and has_class(b, "ncar-body") then
+      out:insert(html('<div class="ncar-body">'))
+      out:extend(b.content)
+      out:insert(html("</div>"))
+    else
+      out:insert(b)
+    end
+  end
+  return out
 end
 
 -- raw tags, not a Div (see the feature body); before the notes, after the body.
@@ -363,7 +445,7 @@ function Pandoc(doc)
   meta["ncar-title-class"] = light and "" or " ncar-field"
 
   local out = pandoc.Blocks({})
-  local i, blocks, section = 1, doc.blocks, 0
+  local i, blocks, section = 1, wrap_layout(doc.blocks), 0
   while i <= #blocks do
     local blk = blocks[i]
     if blk.t == "Header" and blk.level == 1 and slide_level > 1 then
@@ -432,6 +514,6 @@ function Pandoc(doc)
       end
     end
   end
-  doc.blocks = hoist_footnotes(out)
+  doc.blocks = unwrap_layout(hoist_footnotes(out))
   return doc
 end
