@@ -64,19 +64,36 @@ end
 local MARKERS = { ["†"] = true, ["‡"] = true }
 
 local function footnote_marker(blk)
-  if blk.t ~= "Para" or #blk.content == 0 or blk.content[1].t ~= "Str" then return nil end
-  local m = blk.content[1].text:sub(1, 3)  -- both markers are 3 bytes of UTF-8
+  if blk.t ~= "Para" then return nil end
+  local x = blk.content[1]
+  while x and (x.t == "Emph" or x.t == "Strong" or x.t == "Span") do x = x.content[1] end
+  if not (x and x.t == "Str") then return nil end
+  local m = x.text:sub(1, 3)  -- both markers are 3 bytes of UTF-8
   return MARKERS[m] and m or nil
 end
 
-local function footnote_latex(p)
-  local m, rest = footnote_marker(p), p.content[1].text:sub(4)
-  local inl = pandoc.Inlines({})
-  if rest ~= "" then inl:insert(pandoc.Str(rest)) end
-  for k = 2, #p.content do
-    if not (k == 2 and rest == "" and p.content[k].t == "Space") then inl:insert(p.content[k]) end
+-- the inlines without their leading marker (and its space); *† text* keeps
+-- its emphasis on the text
+local function strip_marker(inlines)
+  local x, out = inlines[1], pandoc.Inlines({})
+  if x.t == "Str" then
+    local rest = x.text:sub(4)
+    if rest ~= "" then out:insert(pandoc.Str(rest)) end
+    for k = 2, #inlines do
+      if not (k == 2 and rest == "" and inlines[k].t == "Space") then out:insert(inlines[k]) end
+    end
+  else
+    local c = x:clone()
+    c.content = strip_marker(x.content)
+    out:insert(c)
+    for k = 2, #inlines do out:insert(inlines[k]) end
   end
-  return "\\ncarfootnote{" .. m .. "}{" .. inlines_to_latex(inl) .. "}"
+  return out
+end
+
+local function footnote_latex(p)
+  return "\\ncarfootnote{" .. footnote_marker(p) .. "}{"
+    .. inlines_to_latex(strip_marker(p.content)) .. "}"
 end
 
 local function hoist_footnotes(blocks)
