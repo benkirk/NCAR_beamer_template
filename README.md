@@ -115,6 +115,7 @@ the compiler to XeLaTeX.
 | Slide footnote (an aside at the foot, under a short rule) | `\ncarfootnotespring` first and before `\begin{ncarfootnotes}\ncarfootnote{†}{...}\end{ncarfootnotes}` | a paragraph that starts with `†` or `‡`, anywhere on a content slide |
 | Photo "feature" slide | `\begin{frame}[ncarbg=photo.jpg]` | `## Title {.feature background="photo.jpg"}` |
 | Closing slide | `\ncarclosingframe{Thank you!}{...}` | `## Thank you! {.closing}` |
+| Center or scale a short slide's body | `\begin{frame}[c]`, `\fontsize` | `## Title {.center scale="1.4"}` (below) |
 | Code | `lstlisting` (styled automatically) | fenced code blocks (brand-colored highlighting) |
 | Callouts | | `::: {.callout-note}` and the other callout types |
 | Extra logo or slide decoration | `\logo{...}`: bottom right, above the footer (space reserved) | `logo: file.png` |
@@ -132,6 +133,25 @@ autofit keeps the body above them; in the PDF two `filll` springs keep the body
 centered above and stand the footnotes on the floor. (pptx output can't move
 content, so a post-render step only mutes them in place; see
 quarto-docs-framework's `style_footnotes.py`.)
+
+**Layout of a short slide.** Five per-slide controls, each independent, act on
+the body: everything but the title, speaker notes and footnotes.
+
+| Control | Effect | HTML | PDF |
+|---|---|---|---|
+| `.hcenter` | centers the body across as a block; its text stays left-aligned | yes | prose, lists and code; a table or captioned figure already centers; with one of those or columns, nothing |
+| `.vcenter` | centers the body between the title rule and the floor | yes | frame option `c` |
+| `.center` | both (not Quarto's `.center`, which moves the title too) | yes | as above |
+| `scale="S"` | sizes text, tables and code by S (0.8 shrinks) | yes; autofit still shrinks an overshoot | a `\fontsize` group; no autofit, so check the page |
+| `.fill` | grows the body until it just fits, up to 3× | yes | nothing (LaTeX can't measure it); add `scale=` for the PDF |
+
+```markdown
+## Who's still on legacy {.center scale="1.4"}
+## A short script {.hcenter .fill}
+```
+
+Images keep their own sizes. Highlighted code keeps its full-width shading in
+the PDF, so `.hcenter` shows there only on plain code blocks.
 
 ## HTML slides (`ncar-revealjs`)
 
