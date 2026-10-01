@@ -91,6 +91,8 @@ local function strip_marker(inlines)
   return out
 end
 
+-- The footnote is a raw block, so pandoc cannot see a Code inline in it when it
+-- decides on [fragile]; fine with \texttt, NOT with `listings: true` (\lstinline).
 local function footnote_latex(p)
   return "\\ncarfootnote{" .. footnote_marker(p) .. "}{"
     .. inlines_to_latex(strip_marker(p.content)) .. "}"

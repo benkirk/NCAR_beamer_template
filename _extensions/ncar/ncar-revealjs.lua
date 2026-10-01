@@ -66,7 +66,7 @@ local function is_slide_break(blk)
 end
 
 -- Slide footnotes: a paragraph that starts with † (or ‡) is an aside.  Every
--- one on a slide, columns included, moves to the slide's foot, in order, under
+-- one on a content slide, columns included, moves to the slide's foot, in order, under
 -- one short rule (scss); its marker hangs in the margin in the accent color.
 local MARKERS = { ["†"] = true, ["‡"] = true }
 
@@ -122,14 +122,17 @@ local function dagger(p)
   return pandoc.Para(inl)
 end
 
--- raw tags, not a Div (see the feature body); before the notes, after the body
+-- raw tags, not a Div (see the feature body); before the notes, after the body.
+-- Content slides only, as in ncar-beamer.lua: a feature slide's text sits on
+-- its panel, and the floor of a closing slide is the brand field.
 local function hoist_footnotes(blocks)
   local out, i = pandoc.Blocks({}), 1
   while i <= #blocks do
     local blk = blocks[i]
     out:insert(blk)
     i = i + 1
-    if blk.t == "Header" and blk.level == slide_level then
+    if blk.t == "Header" and blk.level == slide_level
+        and not has_class(blk, "feature") and not has_class(blk, "closing") then
       local slide = pandoc.Blocks({})
       while i <= #blocks and not is_slide_break(blocks[i]) do
         slide:insert(blocks[i])

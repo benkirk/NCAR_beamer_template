@@ -112,7 +112,7 @@ the compiler to XeLaTeX.
 | Slide | `\begin{frame}{Title}` | `## Title` |
 | Blocks | `block`, `exampleblock`, `alertblock` | `### Title`, `### Title {.example}`, `### Title {.alert}` |
 | Emphasis | `\alert{...}` | `[text]{.alert}` |
-| Slide footnote (an aside at the foot, under a short rule) | `\ncarfootnotespring` first and before `\begin{ncarfootnotes}\ncarfootnote{†}{...}\end{ncarfootnotes}` | a paragraph that starts with `†` or `‡`, anywhere on the slide |
+| Slide footnote (an aside at the foot, under a short rule) | `\ncarfootnotespring` first and before `\begin{ncarfootnotes}\ncarfootnote{†}{...}\end{ncarfootnotes}` | a paragraph that starts with `†` or `‡`, anywhere on a content slide |
 | Photo "feature" slide | `\begin{frame}[ncarbg=photo.jpg]` | `## Title {.feature background="photo.jpg"}` |
 | Closing slide | `\ncarclosingframe{Thank you!}{...}` | `## Thank you! {.closing}` |
 | Code | `lstlisting` (styled automatically) | fenced code blocks (brand-colored highlighting) |
@@ -125,8 +125,8 @@ Everything in the Quarto column works in both `ncar-beamer` and `ncar-revealjs`.
 The HTML format adds a few things of its own (next section).
 
 **Slide footnotes.** A paragraph that starts with `†` (or `‡`) is an aside, not
-body text. Every one on a slide, including one inside a column, moves to the
-slide's foot in the order written. There they stack under one short rule, in
+body text. Every one on a content slide (not a feature or closing slide),
+including one inside a column, moves to the slide's foot in the order written. There they stack under one short rule, in
 small muted type, with the marker hanging in the accent color. In HTML the
 autofit keeps the body above them; in the PDF two `filll` springs keep the body
 centered above and stand the footnotes on the floor. (pptx output can't move
