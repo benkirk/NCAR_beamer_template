@@ -139,7 +139,7 @@ the body: everything but the title, speaker notes and footnotes.
 
 | Control | Effect | HTML | PDF |
 |---|---|---|---|
-| `.hcenter` | centers the body across as a block; its text stays left-aligned | yes | prose, lists and code; a table already centers; with a table or columns, nothing |
+| `.hcenter` | centers the body across as a block; its text stays left-aligned | yes | prose, lists and code; a table or captioned figure already centers; with one of those or columns, nothing |
 | `.vcenter` | centers the body between the title rule and the floor | yes | frame option `c` |
 | `.center` | both (not Quarto's `.center`, which moves the title too) | yes | as above |
 | `scale="S"` | sizes text, tables and code by S (0.8 shrinks) | yes; autofit still shrinks an overshoot | a `\fontsize` group; no autofit, so check the page |

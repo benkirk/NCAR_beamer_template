@@ -24,8 +24,8 @@ ncar-beamer.lua -- Markdown sugar for the NCAR beamer theme (beamer output only)
       footnotes), as in HTML: scale="S" sizes its text, tables and code by S
       (a \fontsize group: no autofit here, so check the PDF), .vcenter is
       frame option c, .hcenter centers prose and lists as a block (tables
-      center on their own; with a table or columns it does nothing, since
-      neither fits in the box), .center is both, and .fill does nothing
+      and captioned figures center on their own; with one of those or
+      columns it does nothing), .center is both, and .fill does nothing
 
   metadata `fineprint: "..."`
       small print under the title block, e.g. an NSF funding statement
@@ -201,11 +201,17 @@ local function wrap_layout(blocks)
 end
 
 -- longtable cannot go in a box, nor can beamer's columns (verbatim can: varwidth
--- is an environment, not a macro argument)
+-- is an environment, not a macro argument); a captioned figure fits but keeps
+-- its full width, which strands its caption at the left edge (Quarto has
+-- already rendered the float to raw LaTeX by the time this filter runs)
 local function boxable(blocks)
   local ok = true
   pandoc.walk_block(pandoc.Div(blocks), {
     Table = function() ok = false end,
+    Figure = function() ok = false end,
+    RawBlock = function(r)
+      if r.format:match("latex") and r.text:find("\\begin{figure}", 1, true) then ok = false end
+    end,
     Div = function(d) if has_class(d, "columns") then ok = false end end,
   })
   return ok
