@@ -40,7 +40,7 @@ if not FORMAT:match("revealjs") then
   return {}
 end
 
-local VERSION = "2.3.1"
+local VERSION = "2.4.0"
 local W, H = 1600, 900
 
 -- Brand Guide pp. 17-19; roles as in ncar_branding.sty
@@ -63,6 +63,77 @@ local function html(s) return pandoc.RawBlock("html", s) end
 
 local function is_slide_break(blk)
   return (blk.t == "Header" and blk.level <= slide_level) or blk.t == "HorizontalRule"
+end
+
+-- Slide footnotes: a paragraph that starts with † (or ‡) is an aside.  Every
+-- one on a slide, columns included, moves to the slide's foot, in order, under
+-- one short rule (scss); its marker hangs in the margin in the accent color.
+local MARKERS = { ["†"] = true, ["‡"] = true }
+
+local function footnote_marker(blk)
+  if blk.t ~= "Para" or #blk.content == 0 or blk.content[1].t ~= "Str" then return nil end
+  local m = blk.content[1].text:sub(1, 3)  -- both markers are 3 bytes of UTF-8
+  return MARKERS[m] and m or nil
+end
+
+-- the footnote paragraphs of one slide's blocks, removed from where they stood
+local function take_footnotes(blocks)
+  local found = pandoc.List({})
+  local kept = pandoc.Blocks({})
+  local filter = { Para = function(p) if footnote_marker(p) then found:insert(p); return {} end end }
+  for _, b in ipairs(blocks) do
+    if b.t == "Div" and has_class(b, "notes") then
+      kept:insert(b)
+    elseif footnote_marker(b) then
+      found:insert(b)
+    else
+      kept:insert(pandoc.walk_block(b, filter))
+    end
+  end
+  return kept, found
+end
+
+local function dagger(p)
+  local first, m = p.content[1], footnote_marker(p)
+  local rest = first.text:sub(4)
+  local inl = pandoc.List({ pandoc.RawInline("html", '<span class="ncar-dagger">' .. m .. "</span>") })
+  if rest ~= "" then inl:insert(pandoc.Str(rest)) end
+  for k = 2, #p.content do
+    if not (k == 2 and rest == "" and p.content[k].t == "Space") then inl:insert(p.content[k]) end
+  end
+  return pandoc.Para(inl)
+end
+
+-- raw tags, not a Div (see the feature body); before the notes, after the body
+local function hoist_footnotes(blocks)
+  local out, i = pandoc.Blocks({}), 1
+  while i <= #blocks do
+    local blk = blocks[i]
+    out:insert(blk)
+    i = i + 1
+    if blk.t == "Header" and blk.level == slide_level then
+      local slide = pandoc.Blocks({})
+      while i <= #blocks and not is_slide_break(blocks[i]) do
+        slide:insert(blocks[i])
+        i = i + 1
+      end
+      local kept, notes = take_footnotes(slide)
+      if #notes > 0 then
+        local body, tail = pandoc.Blocks({}), pandoc.Blocks({})
+        for _, b in ipairs(kept) do
+          if b.t == "Div" and has_class(b, "notes") then tail:insert(b) else body:insert(b) end
+        end
+        out:extend(body)
+        out:insert(html('<div class="ncar-footnotes">'))
+        for _, p in ipairs(notes) do out:insert(dagger(p)) end
+        out:insert(html("</div>"))
+        out:extend(tail)
+      else
+        out:extend(kept)
+      end
+    end
+  end
+  return out
 end
 
 -- A percentage height resolves against the whole 900-px slide here, so the
@@ -340,6 +411,6 @@ function Pandoc(doc)
       end
     end
   end
-  doc.blocks = out
+  doc.blocks = hoist_footnotes(out)
   return doc
 end

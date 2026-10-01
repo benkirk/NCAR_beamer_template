@@ -17,14 +17,14 @@
  */
 (function () {
   "use strict";
-  var MIN = 0.65, STEP = 0.04;
+  var MIN = 0.65, STEP = 0.04, GAP = 24;  // GAP: slide px between body and footnotes
   var SKIP = ".ncar-section, .closing, .feature, .scrollable, .no-autofit, .quarto-title-block";
 
   function contentBottom(s) {
     var b = 0;
     for (var i = 0; i < s.children.length; i++) {
       var c = s.children[i];
-      if (c.matches("h2, aside.notes, .ncar-waves, script, style")) continue;
+      if (c.matches("h2, aside.notes, .ncar-waves, .ncar-footnotes, script, style")) continue;
       b = Math.max(b, c.offsetTop + c.offsetHeight);
     }
     return b;
@@ -36,8 +36,11 @@
     s.style.removeProperty("--ncar-fit");  // scales the diagram cap (scss)
     var cs = getComputedStyle(s);
     var base = parseFloat(cs.fontSize);
-    var limit = s.clientHeight - parseFloat(cs.paddingBottom);
-    for (var f = 1; contentBottom(s) > limit && f - STEP >= MIN; ) {
+    // footnotes sit on the floor (scss): the body has to end above them
+    var foot = s.querySelector(":scope > .ncar-footnotes");
+    var floor = s.clientHeight - parseFloat(cs.paddingBottom);
+    var limit = function () { return foot ? floor - foot.offsetHeight - GAP : floor; };
+    for (var f = 1; contentBottom(s) > limit() && f - STEP >= MIN; ) {
       f -= STEP;
       s.style.fontSize = (base * f).toFixed(2) + "px";
       s.style.setProperty("--ncar-fit", f.toFixed(2));

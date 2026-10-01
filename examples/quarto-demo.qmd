@@ -68,8 +68,12 @@ Or `{.alert}` -- keep these rare.
 
 1. First item
 2. Second item
+
+† A footnote written inside a column still lands at the slide's foot.
 :::
 ::::
+
+‡ A second one stacks under the same rule, in the order written.
 
 ## Feature Slide {.feature background="../images/wallpaper/mesa_lab.jpg"}
 

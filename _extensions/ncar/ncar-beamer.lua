@@ -14,6 +14,11 @@ ncar-beamer.lua -- Markdown sugar for the NCAR beamer theme (beamer output only)
       its own (declared in the preamble as \ncarsectionsubtitle{n}{...},
       so no stray block before the section can open an empty frame)
 
+  A paragraph that starts with † (or ‡)
+      a slide footnote: every one on the frame, columns included, moves to
+      the frame's foot under a short rule (\ncarfootnotes; see
+      beamerinnerthemeNCAR.sty)
+
   metadata `fineprint: "..."`
       small print under the title block, e.g. an NSF funding statement
 
@@ -53,6 +58,62 @@ end
 
 local function is_slide_break(blk)
   return (blk.t == "Header" and blk.level <= slide_level) or blk.t == "HorizontalRule"
+end
+
+-- slide footnotes: † / ‡ paragraphs, lifted to the frame's foot
+local MARKERS = { ["†"] = true, ["‡"] = true }
+
+local function footnote_marker(blk)
+  if blk.t ~= "Para" or #blk.content == 0 or blk.content[1].t ~= "Str" then return nil end
+  local m = blk.content[1].text:sub(1, 3)  -- both markers are 3 bytes of UTF-8
+  return MARKERS[m] and m or nil
+end
+
+local function footnote_latex(p)
+  local m, rest = footnote_marker(p), p.content[1].text:sub(4)
+  local inl = pandoc.Inlines({})
+  if rest ~= "" then inl:insert(pandoc.Str(rest)) end
+  for k = 2, #p.content do
+    if not (k == 2 and rest == "" and p.content[k].t == "Space") then inl:insert(p.content[k]) end
+  end
+  return "\\ncarfootnote{" .. m .. "}{" .. inlines_to_latex(inl) .. "}"
+end
+
+local function hoist_footnotes(blocks)
+  local out, i = pandoc.Blocks({}), 1
+  while i <= #blocks do
+    local blk = blocks[i]
+    out:insert(blk)
+    i = i + 1
+    if blk.t == "Header" and blk.level == slide_level
+        and not has_class(blk, "feature") and not has_class(blk, "closing") then
+      local body, notes, tail = pandoc.Blocks({}), pandoc.List({}), pandoc.Blocks({})
+      local filter = { Para = function(p) if footnote_marker(p) then notes:insert(p); return {} end end }
+      while i <= #blocks and not is_slide_break(blocks[i]) do
+        local b = blocks[i]
+        if b.t == "Div" and has_class(b, "notes") then
+          tail:insert(b)
+        elseif footnote_marker(b) then
+          notes:insert(b)
+        else
+          body:insert(pandoc.walk_block(b, filter))
+        end
+        i = i + 1
+      end
+      if #notes > 0 then
+        out:insert(latex("\\ncarfootnotespring"))
+        out:extend(body)
+        local tex = pandoc.List({ "\\ncarfootnotespring", "\\begin{ncarfootnotes}" })
+        for _, p in ipairs(notes) do tex:insert(footnote_latex(p)) end
+        tex:insert("\\end{ncarfootnotes}")
+        out:insert(latex(table.concat(tex, "\n")))
+      else
+        out:extend(body)
+      end
+      out:extend(tail)
+    end
+  end
+  return out
 end
 
 local function header_includes(doc)
@@ -241,7 +302,7 @@ function Pandoc(doc)
       i = i + 1
     end
   end
-  doc.blocks = out
+  doc.blocks = hoist_footnotes(out)
   if #subtitles > 0 then
     local hi = header_includes(doc)
     hi:insert(pandoc.Blocks(subtitles))
