@@ -179,6 +179,30 @@
 \addtobeamertemplate{block alerted begin}{\ncar@blockopacity}{\pgfsetfillopacity{1}}
 
 % ---------------------------------------------------------------------------
+% slide footnotes: asides at the foot of a frame, under a short muted rule,
+% the marker hanging in the accent color
+%   \ncarfootnotespring          % first thing in the frame
+%   ... the frame's content ...
+%   \ncarfootnotespring
+%   \begin{ncarfootnotes}
+%     \ncarfootnote{†}{An aside.}
+%     \ncarfootnote{‡}{Another.}
+%   \end{ncarfootnotes}
+% The two springs (filll) outweigh the frame's own centering (fill): the
+% content stays centered above, the footnotes stand on the floor.  The Quarto
+% filter writes all of this for paragraphs that start with † or ‡.
+% ---------------------------------------------------------------------------
+\newcommand\ncarfootnotespring{\par\vskip 0pt plus 1filll\relax}
+\newenvironment{ncarfootnotes}{%
+  \par\noindent\begin{minipage}[b]{0.6\textwidth}\raggedright
+  \scriptsize\color{CoolGray7}%
+  {\color{CoolGray4}\rule{12mm}{0.6pt}}\par\vskip0.8ex}%
+  {\end{minipage}\par}
+\newcommand\ncarfootnote[2]{%
+  \par\hangindent=1.1em\hangafter=1\noindent
+  \makebox[1.1em][l]{\textcolor{BrandAccent}{\bfseries #1}}#2\par\vskip0.4ex}
+
+% ---------------------------------------------------------------------------
 % misc
 % ---------------------------------------------------------------------------
 \setbeamertemplate{frametitle continuation}{\,(\insertcontinuationcount)}

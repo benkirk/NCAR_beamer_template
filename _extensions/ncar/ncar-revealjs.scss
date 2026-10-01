@@ -307,6 +307,44 @@ html.ncar-brand-ucar .reveal .slides section.ncar-title::after {
 .reveal .slides section .footnotes,
 .reveal .slides section aside { color: $ncar-muted; }
 
+// slide footnotes (paragraphs that start with † or ‡; ncar-revealjs.lua lifts
+// them here): on the floor of the slide, under a short rule, with the marker
+// hanging in the accent color.  The autofit script reserves their height, so
+// the body shrinks above them rather than running underneath.
+.reveal .slides section .ncar-footnotes {
+  position: absolute;
+  left: $ncar-margin;
+  bottom: 70px;
+  max-width: 60%;
+  padding-top: 0.55em;
+  color: $ncar-muted;
+  font-size: 0.7em;
+  line-height: 1.35;
+  text-align: left;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 120px;
+    border-top: 2px solid currentColor;
+    opacity: 0.6;
+  }
+  p {
+    margin: 0.3em 0 0;
+    padding-left: 0.9em;
+    text-indent: -0.9em;
+  }
+  p:first-child { margin-top: 0; }
+  .ncar-dagger {
+    display: inline-block;
+    width: 0.9em;
+    text-indent: 0;
+    color: var(--ncar-accent);
+    font-weight: 700;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // title slide: brand field, waves (or the photo), logo top left
 // ---------------------------------------------------------------------------

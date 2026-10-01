@@ -14,6 +14,11 @@ ncar-beamer.lua -- Markdown sugar for the NCAR beamer theme (beamer output only)
       its own (declared in the preamble as \ncarsectionsubtitle{n}{...},
       so no stray block before the section can open an empty frame)
 
+  A paragraph that starts with † (or ‡)
+      a slide footnote: every one on the frame, columns included, moves to
+      the frame's foot under a short rule (\ncarfootnotes; see
+      beamerinnerthemeNCAR.sty)
+
   metadata `fineprint: "..."`
       small print under the title block, e.g. an NSF funding statement
 
@@ -53,6 +58,81 @@ end
 
 local function is_slide_break(blk)
   return (blk.t == "Header" and blk.level <= slide_level) or blk.t == "HorizontalRule"
+end
+
+-- slide footnotes: † / ‡ paragraphs, lifted to the frame's foot
+local MARKERS = { ["†"] = true, ["‡"] = true }
+
+local function footnote_marker(blk)
+  if blk.t ~= "Para" then return nil end
+  local x = blk.content[1]
+  while x and (x.t == "Emph" or x.t == "Strong" or x.t == "Span") do x = x.content[1] end
+  if not (x and x.t == "Str") then return nil end
+  local m = x.text:sub(1, 3)  -- both markers are 3 bytes of UTF-8
+  return MARKERS[m] and m or nil
+end
+
+-- the inlines without their leading marker (and its space); *† text* keeps
+-- its emphasis on the text
+local function strip_marker(inlines)
+  local x, out = inlines[1], pandoc.Inlines({})
+  if x.t == "Str" then
+    local rest = x.text:sub(4)
+    if rest ~= "" then out:insert(pandoc.Str(rest)) end
+    for k = 2, #inlines do
+      if not (k == 2 and rest == "" and inlines[k].t == "Space") then out:insert(inlines[k]) end
+    end
+  else
+    local c = x:clone()
+    c.content = strip_marker(x.content)
+    out:insert(c)
+    for k = 2, #inlines do out:insert(inlines[k]) end
+  end
+  return out
+end
+
+-- The footnote is a raw block, so pandoc cannot see a Code inline in it when it
+-- decides on [fragile]; fine with \texttt, NOT with `listings: true` (\lstinline).
+local function footnote_latex(p)
+  return "\\ncarfootnote{" .. footnote_marker(p) .. "}{"
+    .. inlines_to_latex(strip_marker(p.content)) .. "}"
+end
+
+local function hoist_footnotes(blocks)
+  local out, i = pandoc.Blocks({}), 1
+  while i <= #blocks do
+    local blk = blocks[i]
+    out:insert(blk)
+    i = i + 1
+    if blk.t == "Header" and blk.level == slide_level
+        and not has_class(blk, "feature") and not has_class(blk, "closing") then
+      local body, notes, tail = pandoc.Blocks({}), pandoc.List({}), pandoc.Blocks({})
+      local filter = { Para = function(p) if footnote_marker(p) then notes:insert(p); return {} end end }
+      while i <= #blocks and not is_slide_break(blocks[i]) do
+        local b = blocks[i]
+        if b.t == "Div" and has_class(b, "notes") then
+          tail:insert(b)
+        elseif footnote_marker(b) then
+          notes:insert(b)
+        else
+          body:insert(pandoc.walk_block(b, filter))
+        end
+        i = i + 1
+      end
+      if #notes > 0 then
+        out:insert(latex("\\ncarfootnotespring"))
+        out:extend(body)
+        local tex = pandoc.List({ "\\ncarfootnotespring", "\\begin{ncarfootnotes}" })
+        for _, p in ipairs(notes) do tex:insert(footnote_latex(p)) end
+        tex:insert("\\end{ncarfootnotes}")
+        out:insert(latex(table.concat(tex, "\n")))
+      else
+        out:extend(body)
+      end
+      out:extend(tail)
+    end
+  end
+  return out
 end
 
 local function header_includes(doc)
@@ -241,7 +321,7 @@ function Pandoc(doc)
       i = i + 1
     end
   end
-  doc.blocks = out
+  doc.blocks = hoist_footnotes(out)
   if #subtitles > 0 then
     local hi = header_includes(doc)
     hi:insert(pandoc.Blocks(subtitles))
