@@ -38,14 +38,15 @@
     return b;
   }
 
-  // a code block or table wider than the body scrolls instead of growing it
-  function tooWide(s) {
-    var wide = false;
-    s.querySelectorAll(":scope > .ncar-body pre, :scope > .ncar-body table").forEach(function (e) {
-      if (e.scrollWidth > e.clientWidth + 1) wide = true;
+  // .fill stops where a code block or table would scroll (code there doesn't
+  // wrap, scss), across or inside its own height cap, or the body gets wider
+  function scrolls(s) {
+    var over = false;
+    s.querySelectorAll(":scope > .ncar-body :is(pre, pre code, table)").forEach(function (e) {
+      if (e.scrollWidth > e.clientWidth + 1 || e.scrollHeight > e.clientHeight + 1) over = true;
     });
     var body = s.querySelector(":scope > .ncar-body");
-    return wide || (body && body.scrollWidth > body.clientWidth + 1);
+    return over || (body && body.scrollWidth > body.clientWidth + 1);
   }
 
   function fit(s, autofit) {
@@ -71,7 +72,7 @@
     var scale = parseFloat(s.getAttribute("data-ncar-scale"));
     if (scale > 0 && scale !== 1) size(scale);
     if (s.classList.contains("ncar-fill")) {
-      var over = function () { return contentBottom(s) > limit() || tooWide(s); };
+      var over = function () { return contentBottom(s) > limit() || scrolls(s); };
       while (f + STEP <= MAXFILL && !over()) size(f + STEP);
       if (over() && f - STEP >= MIN) size(f - STEP);
     }

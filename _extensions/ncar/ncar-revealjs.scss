@@ -309,8 +309,10 @@ html.ncar-brand-ucar .reveal .slides section.ncar-title::after {
 
 // per-slide layout controls (ncar-revealjs.lua wraps the body in .ncar-body):
 // .vcenter's offset is measured by ncar-revealjs.js; .hcenter shrink-wraps the
-// block and centers it, leaving its text left-aligned
+// block and centers it, leaving its text left-aligned; .fill's code never wraps,
+// so a long line stops the growth instead of folding
 .reveal .slides section .ncar-body { margin-top: var(--ncar-shift, 0px); }
+.reveal .slides section.ncar-fill > .ncar-body :is(pre, pre code) { white-space: pre; }
 .reveal .slides section.ncar-hcenter > .ncar-body {
   width: fit-content;
   max-width: 100%;
