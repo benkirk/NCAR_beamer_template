@@ -40,6 +40,11 @@ $$
 \frac{\partial u}{\partial t} + (u\cdot\nabla)u = -\frac{1}{\rho}\nabla p + \nu\nabla^2 u
 $$
 
+## ⚠︎ Arrows and Warnings
+
+- Poppins has neither; the PDF borrows them from DejaVu Sans
+- Logs → jobs → charges, and A ⇒ B
+
 ## Blocks
 
 ### Regular block
