@@ -144,6 +144,25 @@
   \fi
 \fi
 
+% Poppins has no warning sign or arrows: borrow them from DejaVu Sans (TeX
+% Live's copy, by file name), so `## ⚠︎ Title' and `A → B' need no raw LaTeX.
+% U+FE0E (text presentation, which keeps browsers off the emoji) prints nothing.
+\iftutex
+  \IfFontExistsTF{DejaVuSans.ttf}{%
+    \RequirePackage{newunicodechar}%
+    \newfontfamily\ncar@symbols{DejaVuSans}[Extension=.ttf, BoldFont=*-Bold]%
+    % the bookmark gets the character itself (read here, before it turns active)
+    \def\ncar@symbol#1#2{\texorpdfstring{{\ncar@symbols\symbol{#1}}}{#2}}%
+    \AtBeginDocument{\providecommand\texorpdfstring[2]{#1}}%
+    \newunicodechar{^^^^26a0}{\ncar@symbol{"26A0}{^^^^26a0}}%
+    \newunicodechar{^^^^2192}{\ncar@symbol{"2192}{^^^^2192}}%
+    \newunicodechar{^^^^2190}{\ncar@symbol{"2190}{^^^^2190}}%
+    \newunicodechar{^^^^2194}{\ncar@symbol{"2194}{^^^^2194}}%
+    \newunicodechar{^^^^21d2}{\ncar@symbol{"21D2}{^^^^21d2}}%
+    \newunicodechar{^^^^fe0e}{}%
+  }{}
+\fi
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Math font (mathfont=)
 %

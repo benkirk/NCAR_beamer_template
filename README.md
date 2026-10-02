@@ -153,6 +153,13 @@ the body: everything but the title, speaker notes and footnotes.
 Images keep their own sizes. Highlighted code keeps its full-width shading in
 the PDF, so `.hcenter` shows there only on plain code blocks.
 
+**Symbols Poppins lacks.** Poppins has no warning sign or arrows. Under
+XeLaTeX or LuaLaTeX the PDF borrows ⚠ and → ← ↔ ⇒ from TeX Live's DejaVu Sans
+(bold in a bold title), so `## ⚠︎ Check this first` needs no raw LaTeX. The
+invisible U+FE0E written after that ⚠ keeps browsers from drawing an emoji;
+the PDF prints nothing for it. Other missing characters still drop out, with
+a warning in the log.
+
 ## HTML slides (`ncar-revealjs`)
 
 The same Markdown renders as a [revealjs](https://revealjs.com) web deck, in the
