@@ -343,6 +343,38 @@ function Span(el)
   end
 end
 
+-- Tables in the theme's style (beamerinnerthemeNCAR.sty, "tables"): each
+-- header cell in \ncarth, and every second body row starting with \rowcolor,
+-- which colortbl requires to be the first thing in the row
+local function raw(s) return pandoc.RawInline("latex", s) end
+
+function Table(tbl)
+  for _, row in ipairs(tbl.head.rows) do
+    for _, cell in ipairs(row.cells) do
+      for _, blk in ipairs(cell.contents) do
+        if blk.t == "Plain" or blk.t == "Para" then
+          blk.content:insert(1, raw("\\ncarth{"))
+          blk.content:insert(raw("}"))
+        end
+      end
+    end
+  end
+  for _, body in ipairs(tbl.bodies) do
+    for k, row in ipairs(body.body) do
+      local first = row.cells[1]
+      if k % 2 == 0 and first then
+        local blk = first.contents[1]
+        if blk and (blk.t == "Plain" or blk.t == "Para") then
+          blk.content:insert(1, raw("\\rowcolor{ncartableband}"))
+        else
+          first.contents:insert(1, pandoc.Plain({ raw("\\rowcolor{ncartableband}") }))
+        end
+      end
+    end
+  end
+  return tbl
+end
+
 -- Images with an absolute size (e.g. mermaid diagrams, which Quarto includes
 -- at their natural size and so ignore fig-width) can run off the slide or
 -- into the neighboring column.  Wrap them in pandoc's \pandocbounded, which

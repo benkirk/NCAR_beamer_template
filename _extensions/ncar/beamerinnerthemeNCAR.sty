@@ -203,6 +203,30 @@
   \makebox[1.1em][l]{\textcolor{BrandAccent}{\bfseries #1}}#2\par\vskip0.4ex}
 
 % ---------------------------------------------------------------------------
+% tables: pandoc's longtable, drawn as the HTML theme draws them -- no top
+% rule, a heavy rule in the brand color under the header, a light one at the
+% foot, and every second body row on Light Gray.  The Quarto filter wraps
+% each header cell in \ncarth and starts each banded row with
+% \rowcolor{ncartableband}.  Hand-written tabulars are left alone.
+% ---------------------------------------------------------------------------
+\RequirePackage{colortbl}
+\colorlet{ncartableband}{LightGray!60}
+\colorlet{ncartablerule}{BrandText!20!LightGray}
+\newcommand\ncarth[1]{{\usebeamercolor[fg]{normal text}\bfseries
+  \fontsize{\fpeval{0.8*\f@size}pt}{\fpeval{0.8*\strip@pt\dimexpr\f@baselineskip\relax}pt}%
+  \selectfont\ncar@tracking\MakeUppercase{#1}}}
+\def\ncar@tracking{\@ifpackageloaded{fontspec}{\addfontfeatures{LetterSpace=4}}{}}
+% \arrayrulecolor is global, so put it back after each table
+\AddToHook{env/longtable/begin}{%
+  \let\ncar@arc\CT@arc@
+  \setlength\aboverulesep{0pt}\setlength\belowrulesep{0pt}%
+  \setlength\extrarowheight{0pt}%
+  \def\toprule{}%
+  \def\midrule{\arrayrulecolor{BrandPrimaryContrast}\specialrule{1.5pt}{0.3ex}{0pt}}%
+  \def\bottomrule{\arrayrulecolor{ncartablerule}\specialrule{0.6pt}{0pt}{0pt}}}
+\AddToHook{env/longtable/end}{\global\let\CT@arc@\ncar@arc}
+
+% ---------------------------------------------------------------------------
 % misc
 % ---------------------------------------------------------------------------
 \setbeamertemplate{frametitle continuation}{\,(\insertcontinuationcount)}

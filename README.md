@@ -117,6 +117,7 @@ the compiler to XeLaTeX.
 | Closing slide | `\ncarclosingframe{Thank you!}{...}` | `## Thank you! {.closing}` |
 | Center or scale a short slide's body | `\begin{frame}[c]`, `\fontsize` | `## Title {.center scale="1.4"}` (below) |
 | Code | `lstlisting` (styled automatically) | fenced code blocks (brand-colored highlighting) |
+| Table | your own `tabular`, unstyled; `\ncarth{...}` for a header cell and `\rowcolor{ncartableband}` for a band are there to use | a markdown table, drawn as in HTML: a small capitalized header over a heavy rule in the brand color, Light Gray bands, a light closing rule |
 | Callouts | | `::: {.callout-note}` and the other callout types |
 | Extra logo or slide decoration | `\logo{...}`: bottom right, above the footer (space reserved) | `logo: file.png` |
 | Theme options | `\usetheme[<options>]{NCAR}` | `themeoptions: [<options>]` |
