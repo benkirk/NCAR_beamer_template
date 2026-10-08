@@ -108,8 +108,9 @@
 \setbeamertemplate{sidebar right}{}
 \defbeamertemplate*{footline}{NCAR}{%
   \ncar@ifstyle{normal}{\ncar@footline}{%
+    \ncar@ifstyle{full}{\ncar@footline}{%
     \ncar@ifstyle{feature}{{\color{white}\ncar@footline}}{%
-      \vbox to 0.075\paperheight{\vfil}}}}
+      \vbox to 0.075\paperheight{\vfil}}}}}
 \def\ncar@footline{%
   \ncar@userlogorow
   \vbox to 0.075\paperheight{%
@@ -223,6 +224,7 @@
     \ncar@ifstyle{closing}{\ncar@drawclosingbg}{}%
     \ncar@ifstyle{section}{\ncar@drawsectionbg}{}%
     \ncar@ifstyle{feature}{\ncar@drawfeaturebg}{}%
+    \ncar@ifstyle{full}{\ncar@drawfullbg}{}%
   \end{tikzpicture}}
 
 % title page: field + (photo | waves).  With a photo, the brand's cover: the
@@ -250,6 +252,23 @@
     \fill[Space,opacity=0.72] (0,\paperheight) rectangle
       (\paperwidth,\paperheight-\ncar@featuretitle);
   \fi\fi}
+
+% full frame: the image contained (never cropped) between a thin margin and
+% the footline, with the caption line, if any, just above the footline
+\newdimen\ncar@fullpad    \ncar@fullpad=0.025\paperwidth
+\newdimen\ncar@fullfloor
+\def\ncar@drawfullbg{%
+  \ncar@fullfloor=0.075\paperheight
+  \ifx\ncar@fullcaption\@empty\else
+    \node[anchor=south,inner sep=0pt,text width=0.8\paperwidth,align=center,
+      font=\scriptsize,text=CoolGray7] at (0.5\paperwidth,\ncar@fullfloor) {\ncar@fullcaption};
+    \advance\ncar@fullfloor 0.06\paperheight
+  \fi
+  \node[anchor=center,inner sep=0pt]
+    at (0.5\paperwidth,{0.5*(\paperheight-\ncar@fullpad+\ncar@fullfloor)})
+    {\includegraphics[width=\dimexpr\paperwidth-2\ncar@fullpad\relax,
+      height=\dimexpr\paperheight-\ncar@fullpad-\ncar@fullfloor\relax,
+      keepaspectratio]{\ncar@fullimage}};}
 
 % ---------------------------------------------------------------------------
 % frame keys
@@ -295,6 +314,13 @@ block body example,block title alerted,block body alerted}
     \setbeamercolor{frametitle}{fg=white}%
     \setbeamercolor{framesubtitle}{fg=LightBlue}%
     \ncar@featureblocks}}
+% [ncarfull=<image>]: the image fills the frame; no title, logo, rule or
+% waves, the frame number kept.  \ncarfullcaption{...} in the body (global:
+% the background is drawn after the body) adds a caption line.
+\define@key{beamerframe}{ncarfull}{%
+  \def\ncar@framestyle{full}\def\ncar@fullimage{#1}\gdef\ncar@fullcaption{}}
+\def\ncar@fullcaption{}
+\newcommand\ncarfullcaption[1]{\gdef\ncar@fullcaption{#1}}
 % [ncarclosing]: brand field, like the title slide
 \define@key{beamerframe}{ncarclosing}[true]{%
   \def\ncar@framestyle{closing}%

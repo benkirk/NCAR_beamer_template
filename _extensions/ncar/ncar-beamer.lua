@@ -4,6 +4,11 @@ ncar-beamer.lua -- Markdown sugar for the NCAR beamer theme (beamer output only)
   ## Title {.feature background="photo.jpg"}
       full-bleed photo frame (-> \begin{frame}[ncarbg=photo.jpg])
 
+  ## Title {.full}
+      one figure (a diagram cell or an image) fills the frame, with no title,
+      logo, rule or waves (-> \begin{frame}[ncarfull=image]); the paragraphs
+      after it become one caption line (\ncarfullcaption)
+
   ## Thank you! {.closing}
       closing frame on the brand field; the heading becomes the large
       headline and the slide's content sits beneath it
@@ -375,6 +380,86 @@ function Table(tbl)
   return tbl
 end
 
+-- .full: the slide's one figure, its caption paragraphs and its notes, as the
+-- revealjs filter reads them.  Runs before bound_sized_images, which turns
+-- the image into raw LaTeX.
+local function is_figure(blk)
+  if blk.t == "Figure" then return true end
+  if blk.t == "Div" then
+    return has_class(blk, "cell") or has_class(blk, "cell-output-display")
+      or has_class(blk, "quarto-figure") or has_class(blk, "quarto-float")
+  end
+  if blk.t ~= "Para" and blk.t ~= "Plain" then return false end
+  local n = 0
+  for _, il in ipairs(blk.content) do
+    if il.t == "Image" or (il.t == "Link" and #il.content == 1 and il.content[1].t == "Image") then
+      n = n + 1
+    elseif il.t ~= "Space" and il.t ~= "SoftBreak" then
+      return false
+    end
+  end
+  return n == 1
+end
+
+local function split_full(blocks)
+  local fig, caption, rest = nil, pandoc.List({}), pandoc.Blocks({})
+  for _, b in ipairs(blocks) do
+    if b.t == "Div" and (has_class(b, "notes") or has_class(b, "hidden")) then
+      rest:insert(b)
+    elseif not fig and is_figure(b) then
+      fig = b
+    elseif fig and (b.t == "Para" or b.t == "Plain") then
+      caption:insert(b)
+    else
+      return nil
+    end
+  end
+  if not fig then return nil end
+  local src
+  pandoc.walk_block(fig, { Image = function(im) src = src or im.src end })
+  if not src then return nil end
+  return src, caption, rest
+end
+
+local function full_frames(blocks)
+  local out, i = pandoc.Blocks({}), 1
+  while i <= #blocks do
+    local blk = blocks[i]
+    i = i + 1
+    if blk.t == "Header" and blk.level == slide_level and has_class(blk, "full") then
+      local slide = pandoc.Blocks({})
+      while i <= #blocks and not is_slide_break(blocks[i]) do
+        slide:insert(blocks[i])
+        i = i + 1
+      end
+      local src, caption, rest = split_full(slide)
+      if src then
+        add_frameoption(blk, "ncarfull=" .. src)
+        blk.content = pandoc.Inlines({})
+        out:insert(blk)
+        if #caption > 0 then
+          local text = pandoc.List({})
+          for k, p in ipairs(caption) do
+            if k > 1 then text:insert(pandoc.RawInline("latex", "\\par ")) end
+            text:extend(p.content)
+          end
+          out:insert(latex("\\ncarfullcaption{" .. inlines_to_latex(text) .. "}"))
+        end
+        out:extend(rest)
+      else
+        quarto.log.warning("ncar-beamer: {.full} slide \"" .. pandoc.utils.stringify(blk.content)
+          .. "\" needs one figure, then only paragraphs; drawn as an ordinary slide")
+        blk.classes = blk.classes:filter(function(c) return c ~= "full" end)
+        out:insert(blk)
+        out:extend(slide)
+      end
+    else
+      out:insert(blk)
+    end
+  end
+  return out
+end
+
 -- Images with an absolute size (e.g. mermaid diagrams, which Quarto includes
 -- at their natural size and so ignore fig-width) can run off the slide or
 -- into the neighboring column.  Wrap them in pandoc's \pandocbounded, which
@@ -397,6 +482,7 @@ function Pandoc(doc)
     slide_level = PANDOC_WRITER_OPTIONS.slide_level
   end
 
+  doc.blocks = full_frames(doc.blocks)
   doc = bound_sized_images(doc)
   load_theme(doc)
 

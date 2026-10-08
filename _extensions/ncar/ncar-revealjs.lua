@@ -15,6 +15,11 @@ The same Markdown as the beamer theme (ncar-beamer.lua):
       full-bleed photo (pandoc makes it the slide background; the CSS adds
       the translucent title band and drops the logo)
 
+  ## Title {.full}
+      one figure (a diagram cell or an image) fills the slide: no title,
+      logo, rule or waves; the paragraphs after it are a one-line caption.
+      The title stays in the page, hidden, for navigation and tools.
+
   ## Title {.brand-dark}
       content slide on Space, white text, the white-reversed logo (HTML only;
       pptx and beamer draw an ordinary slide)
@@ -48,7 +53,7 @@ if not FORMAT:match("revealjs") then
   return {}
 end
 
-local VERSION = "2.6.0"
+local VERSION = "2.7.0"
 local W, H = 1600, 900
 
 -- Brand Guide pp. 17-19; roles as in ncar_branding.sty
@@ -170,7 +175,8 @@ local function wrap_layout(blocks)
     out:insert(blk)
     i = i + 1
     local lay = blk.t == "Header" and blk.level == slide_level
-      and not has_class(blk, "feature") and not has_class(blk, "closing") and take_layout(blk)
+      and not has_class(blk, "feature") and not has_class(blk, "closing")
+      and not has_class(blk, "full") and take_layout(blk)
     if lay then
       blk.classes:insert("ncar-layout")
       if lay.h then blk.classes:insert("ncar-hcenter") end
@@ -214,7 +220,8 @@ local function hoist_footnotes(blocks)
     out:insert(blk)
     i = i + 1
     if blk.t == "Header" and blk.level == slide_level
-        and not has_class(blk, "feature") and not has_class(blk, "closing") then
+        and not has_class(blk, "feature") and not has_class(blk, "closing")
+        and not has_class(blk, "full") then
       local slide = pandoc.Blocks({})
       while i <= #blocks and not is_slide_break(blocks[i]) do
         slide:insert(blocks[i])
@@ -237,6 +244,43 @@ local function hoist_footnotes(blocks)
     end
   end
   return out
+end
+
+-- .full: the slide's one figure, the caption paragraphs after it, and its
+-- notes; nil when the body is anything else.  A † paragraph is caption too.
+local function is_figure(blk)
+  if blk.t == "Figure" then return true end
+  if blk.t == "Div" then
+    return has_class(blk, "cell") or has_class(blk, "cell-output-display")
+      or has_class(blk, "quarto-figure") or has_class(blk, "quarto-float")
+  end
+  if blk.t ~= "Para" and blk.t ~= "Plain" then return false end
+  local n = 0
+  for _, il in ipairs(blk.content) do
+    if il.t == "Image" or (il.t == "Link" and #il.content == 1 and il.content[1].t == "Image") then
+      n = n + 1
+    elseif il.t ~= "Space" and il.t ~= "SoftBreak" then
+      return false
+    end
+  end
+  return n == 1
+end
+
+local function split_full(blocks)
+  local fig, caption, rest = nil, pandoc.Blocks({}), pandoc.Blocks({})
+  for _, b in ipairs(blocks) do
+    if b.t == "Div" and (has_class(b, "notes") or has_class(b, "hidden")) then
+      rest:insert(b)
+    elseif not fig and is_figure(b) then
+      fig = b
+    elseif fig and (b.t == "Para" or b.t == "Plain") then
+      caption:insert(b)
+    else
+      return nil
+    end
+  end
+  if not fig then return nil end
+  return fig, caption, rest
 end
 
 -- A percentage height resolves against the whole 900-px slide here, so the
@@ -497,6 +541,35 @@ function Pandoc(doc)
         out:insert(html('</div>'))
       end
       out:extend(notes)
+    elseif blk.t == "Header" and blk.level == slide_level and has_class(blk, "full") then
+      i = i + 1
+      local slide = pandoc.Blocks({})
+      while i <= #blocks and not is_slide_break(blocks[i]) do
+        slide:insert(blocks[i])
+        i = i + 1
+      end
+      local fig, caption, rest = split_full(slide)
+      if fig then
+        if #caption > 0 then blk.classes:insert("ncar-captioned") end
+        out:insert(blk)
+        -- raw tags, not a Div (the <section> trap; see the feature body)
+        out:insert(html('<div class="ncar-full-figure">'))
+        out:insert(fig)
+        out:insert(html("</div>"))
+        if #caption > 0 then
+          out:insert(html('<div class="ncar-full-caption">'))
+          out:extend(caption)
+          out:insert(html("</div>"))
+        end
+        out:extend(rest)
+      else
+        quarto.log.warning("ncar-revealjs: {.full} slide \"" .. pandoc.utils.stringify(blk.content)
+          .. "\" needs one figure, then only paragraphs; drawn as an ordinary slide")
+        blk.classes = blk.classes:filter(function(c) return c ~= "full" end)
+        out:insert(blk)
+        if content_art then out:insert(html(content_art)) end
+        out:extend(slide)
+      end
     elseif blk.t == "Header" and blk.level == slide_level and has_class(blk, "brand-dark") then
       blk.attributes["data-background-color"] = SPACE
       blk.classes:insert("ncar-field")

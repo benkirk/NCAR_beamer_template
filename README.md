@@ -114,6 +114,7 @@ the compiler to XeLaTeX.
 | Emphasis | `\alert{...}` | `[text]{.alert}` |
 | Slide footnote (an aside at the foot, under a short rule) | `\ncarfootnotespring` first and before `\begin{ncarfootnotes}\ncarfootnote{†}{...}\end{ncarfootnotes}` | a paragraph that starts with `†` or `‡`, anywhere on a content slide |
 | Photo "feature" slide | `\begin{frame}[ncarbg=photo.jpg]` | `## Title {.feature background="photo.jpg"}` |
+| Full-slide figure (no title, logo or rule; optional caption) | `\begin{frame}[ncarfull=diagram.pdf]`, `\ncarfullcaption{...}` in the body | `## Title {.full}`, one figure, then an optional caption paragraph (below) |
 | Closing slide | `\ncarclosingframe{Thank you!}{...}` | `## Thank you! {.closing}` |
 | Center or scale a short slide's body | `\begin{frame}[c]`, `\fontsize` | `## Title {.center scale="1.4"}` (below) |
 | Code | `lstlisting` (styled automatically) | fenced code blocks (brand-colored highlighting) |
@@ -153,6 +154,24 @@ the body: everything but the title, speaker notes and footnotes.
 
 Images keep their own sizes. Highlighted code keeps its full-width shading in
 the PDF, so `.hcenter` shows there only on plain code blocks.
+
+**A full-slide figure.** `{.full}` gives one figure the whole slide: a
+diagram too detailed for the space under a title. The body is a mermaid or
+`{dot}` cell, or an image, then optionally a paragraph, which becomes one
+muted caption line under it (more paragraphs stack). The title, logo, rule
+and waves are not drawn; the frame number stays. The title stays in the
+HTML page, hidden, so navigation and tools still find the slide. The figure
+is scaled to fit, keeping its shape, so a diagram near 16:9 uses the most of
+it. A body that is anything else (a list, a second figure) draws as an
+ordinary slide, with a warning.
+
+```markdown
+## Pipeline, end to end {.full}
+
+![](images/pipeline.png)
+
+From commit to production in one picture.
+```
 
 **Symbols Poppins lacks.** Poppins has no warning sign or arrows. Under
 XeLaTeX or LuaLaTeX the PDF borrows ⚠ and → ← ↔ ⇒ from TeX Live's DejaVu Sans

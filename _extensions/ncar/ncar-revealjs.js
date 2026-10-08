@@ -25,7 +25,7 @@
   "use strict";
   var MIN = 0.65, STEP = 0.04, GAP = 24;  // GAP: slide px between body and footnotes
   var MAXFILL = 3.0;
-  var NEVER = ".ncar-section, .closing, .feature, .quarto-title-block";
+  var NEVER = ".ncar-section, .closing, .feature, .full, .quarto-title-block";
   var NOSHRINK = ".scrollable, .no-autofit";
 
   function contentBottom(s) {

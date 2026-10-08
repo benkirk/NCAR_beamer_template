@@ -181,6 +181,15 @@ Rendered from the same sources as the LaTeX example: live in HTML, images in the
 %%| fig-width: 9
 ```
 
+## Mermaid, the whole slide {.full}
+
+```{mermaid}
+%%| file: diagrams/render.mmd
+%%| fig-width: 10
+```
+
+`{.full}` on the heading: one figure fills the slide, and the paragraph after it is its caption.
+
 ## Thank you! {.closing}
 
 Questions?

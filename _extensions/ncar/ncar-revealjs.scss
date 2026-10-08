@@ -582,6 +582,74 @@ html.ncar-title-light .reveal .slides section.slide.level2.closing {
 }
 
 // ---------------------------------------------------------------------------
+// .full: one figure fills the slide, an optional caption line under it
+// ---------------------------------------------------------------------------
+// Absolutely placed, so reveal's inline display and the print padding cannot
+// move it; the title stays in the page (navigation, tools), clipped to nothing.
+$ncar-full-pad: 40px;
+$ncar-full-caption: 56px;
+.reveal .slides section.slide.level2.full {
+  &::before, &::after { content: none; }  // no rule, no logo
+  > h2 {
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    min-height: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    &::before { content: none; }
+  }
+}
+.reveal .slides section.slide.full .ncar-full-figure {
+  position: absolute;
+  inset: $ncar-full-pad $ncar-full-pad ($ncar-full-pad + 8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reveal .slides section.slide.full.ncar-captioned .ncar-full-figure {
+  bottom: $ncar-full-pad + $ncar-full-caption;
+}
+// every wrapper Quarto puts round a figure hands the box down to it; the
+// empty paragraphs it leaves beside one would take a share of the width
+// (not inside the svg: mermaid's labels are divs too)
+.reveal .slides section.slide.full .ncar-full-figure :is(div, figure, p):not(svg *):not(:has(svg, img)) {
+  display: none;
+}
+.reveal .slides section.slide.full .ncar-full-figure :is(div, figure, p):not(svg *):has(svg, img) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+.reveal .slides section.slide.full .ncar-full-figure :is(svg, img):not(svg *) {
+  width: 100%;
+  height: 100%;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain;
+}
+.reveal .slides section.slide.full .ncar-full-caption {
+  position: absolute;
+  left: $ncar-full-pad;
+  right: $ncar-full-pad;
+  bottom: $ncar-full-pad;
+  height: $ncar-full-caption;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: $ncar-muted;
+  font-size: 0.7em;
+  line-height: 1.3;
+  text-align: center;
+  p { margin: 0; }
+}
+
+// ---------------------------------------------------------------------------
 // reveal chrome: progress bar, slide number, controls, footer
 // ---------------------------------------------------------------------------
 .reveal .progress { height: 4px; color: var(--ncar-accent); }
