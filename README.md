@@ -136,7 +136,7 @@ centered above and stand the footnotes on the floor. (pptx output can't move
 content, so a post-render step only mutes them in place; see
 quarto-docs-framework's `style_footnotes.py`.)
 
-**Layout of a short slide.** Five per-slide controls, each independent, act on
+**Layout of a short slide.** Six per-slide controls, each independent, act on
 the body: everything but the title, speaker notes and footnotes.
 
 | Control | Effect | HTML | PDF |
@@ -146,6 +146,7 @@ the body: everything but the title, speaker notes and footnotes.
 | `.center` | both (not Quarto's `.center`, which moves the title too) | yes | as above |
 | `scale="S"` | sizes text, tables and code by S (0.8 shrinks) | yes; autofit still shrinks an overshoot | a `\fontsize` group; no autofit, so check the page |
 | `.fill` | grows the body until it just fits, up to 3× | yes | nothing (LaTeX can't measure it); add `scale=` for the PDF |
+| `.caution` | sets the body on a soft yellow field with a brand-yellow bar at its left, for warning slides; footnotes stay below | yes | the `ncarcaution` box |
 
 ```markdown
 ## Who's still on legacy {.center scale="1.4"}

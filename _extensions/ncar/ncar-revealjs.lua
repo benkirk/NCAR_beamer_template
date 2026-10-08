@@ -37,6 +37,8 @@ Overflowing content slides shrink their body text to fit (ncar-revealjs.js);
       title rule and the floor, .center does both (NOT Quarto's .center,
       which moves the title too), scale="S" sizes its text, tables and code
       by S, and .fill grows it until it just fits (HTML only)
+      .caution sets the body on a soft yellow field with a brand-yellow bar
+      at its left: the warning slides (footnotes stay below it)
 
 Colors, type and layout live in ncar-revealjs.scss; the fonts and logos,
 which need url()s relative to their files, in ncar-revealjs.css, attached
@@ -53,7 +55,7 @@ if not FORMAT:match("revealjs") then
   return {}
 end
 
-local VERSION = "2.7.0"
+local VERSION = "2.8.0"
 local W, H = 1600, 900
 
 -- Brand Guide pp. 17-19; roles as in ncar_branding.sty
@@ -139,10 +141,11 @@ end
 -- footnote hoist (which reaches into it), and becomes raw tags afterwards
 -- (unwrap_layout), since pandoc turns a Div that starts with a heading into a
 -- <section>.  The classes go on the slide; the script and the scss act on them.
-local LAYOUT_CLASSES = { hcenter = true, vcenter = true, center = true, fill = true }
+local LAYOUT_CLASSES = { hcenter = true, vcenter = true, center = true, fill = true,
+                         caution = true }
 
 local function take_layout(blk)
-  local h, v, fill, found = false, false, false, false
+  local h, v, fill, caution, found = false, false, false, false, false
   local kept = pandoc.List({})
   for _, c in ipairs(blk.classes) do
     if LAYOUT_CLASSES[c] then
@@ -150,6 +153,7 @@ local function take_layout(blk)
       h = h or c == "hcenter" or c == "center"
       v = v or c == "vcenter" or c == "center"
       fill = fill or c == "fill"
+      caution = caution or c == "caution"
     else
       kept:insert(c)
     end
@@ -165,7 +169,7 @@ local function take_layout(blk)
   end
   if not found then return nil end
   blk.classes = kept
-  return { h = h, v = v, fill = fill, scale = scale }
+  return { h = h, v = v, fill = fill, caution = caution, scale = scale }
 end
 
 local function wrap_layout(blocks)
@@ -182,6 +186,7 @@ local function wrap_layout(blocks)
       if lay.h then blk.classes:insert("ncar-hcenter") end
       if lay.v then blk.classes:insert("ncar-vcenter") end
       if lay.fill then blk.classes:insert("ncar-fill") end
+      if lay.caution then blk.classes:insert("ncar-caution") end
       if lay.scale then blk.attributes["data-ncar-scale"] = lay.scale end
       local body, notes = pandoc.Blocks({}), pandoc.Blocks({})
       while i <= #blocks and not is_slide_break(blocks[i]) do

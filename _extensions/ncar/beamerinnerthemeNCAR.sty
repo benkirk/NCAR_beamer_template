@@ -203,6 +203,19 @@
   \makebox[1.1em][l]{\textcolor{BrandAccent}{\bfseries #1}}#2\par\vskip0.4ex}
 
 % ---------------------------------------------------------------------------
+% caution box: a warning slide's body on a soft yellow field, a brand-yellow
+% bar at its left (the Quarto filter writes it for {.caution})
+% ---------------------------------------------------------------------------
+\colorlet{ncarcautionfill}{BrandYellow!18!white}
+\newsavebox\ncar@cautionbox
+\newenvironment{ncarcaution}{%
+  \par\noindent\begin{lrbox}{\ncar@cautionbox}%
+  \begin{minipage}{\dimexpr\linewidth-3pt-1.1em\relax}}%
+  {\end{minipage}\end{lrbox}%
+  \hbox{{\color{BrandYellow}\vrule width 3pt}%
+    {\setlength\fboxsep{0.55em}\colorbox{ncarcautionfill}{\usebox\ncar@cautionbox}}}\par}
+
+% ---------------------------------------------------------------------------
 % tables: pandoc's longtable, drawn as the HTML theme draws them -- no top
 % rule, a heavy rule in the brand color under the header, a light one at the
 % foot, and every second body row on Light Gray.  The Quarto filter wraps
