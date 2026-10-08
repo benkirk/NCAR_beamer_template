@@ -157,6 +157,13 @@ Short slides: center the body, and scale it, per slide.
 mpiexec ./a.out
 ```
 
+## ⚠︎ A Warning Slide {.caution .vcenter}
+
+- `{.caution}` sets the body on a soft yellow field, with a brand-yellow bar.
+- Keep it for warnings: the brand asks for accents in small amounts.
+
+*† Footnotes stay below the box.*
+
 ## Centered Down {.vcenter}
 
 - `.hcenter` centers the body across; its text stays left-aligned

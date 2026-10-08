@@ -30,7 +30,8 @@ ncar-beamer.lua -- Markdown sugar for the NCAR beamer theme (beamer output only)
       (a \fontsize group: no autofit here, so check the PDF), .vcenter is
       frame option c, .hcenter centers prose and lists as a block (tables
       and captioned figures center on their own; with one of those or
-      columns it does nothing), .center is both, and .fill does nothing
+      columns it does nothing), .center is both, and .fill does nothing;
+      .caution boxes the body on a soft yellow field (ncarcaution)
 
   metadata `fineprint: "..."`
       small print under the title block, e.g. an NSF funding statement
@@ -150,17 +151,19 @@ end
 
 -- Per-slide layout controls: the body goes in a Div before the footnote hoist
 -- (which reaches into it) and becomes raw LaTeX afterwards (unwrap_layout).
-local LAYOUT_CLASSES = { hcenter = true, vcenter = true, center = true, fill = true }
+local LAYOUT_CLASSES = { hcenter = true, vcenter = true, center = true, fill = true,
+                         caution = true }
 local used = { scale = false, hcenter = false }
 
 local function take_layout(blk)
-  local h, v, found = false, false, false
+  local h, v, caution, found = false, false, false, false
   local kept = pandoc.List({})
   for _, c in ipairs(blk.classes) do
     if LAYOUT_CLASSES[c] then
       found = true
       h = h or c == "hcenter" or c == "center"
       v = v or c == "vcenter" or c == "center"
+      caution = caution or c == "caution"
     else
       kept:insert(c)
     end
@@ -176,7 +179,7 @@ local function take_layout(blk)
   end
   if not found then return nil end
   blk.classes = kept
-  return { h = h, v = v, scale = scale }
+  return { h = h, v = v, caution = caution, scale = scale }
 end
 
 local function wrap_layout(blocks)
@@ -198,6 +201,7 @@ local function wrap_layout(blocks)
       local attr = {}
       if lay.scale then attr["scale"] = lay.scale end
       if lay.h then attr["hcenter"] = "1" end
+      if lay.caution then attr["caution"] = "1" end
       out:insert(pandoc.Div(body, pandoc.Attr("", { "ncar-body" }, attr)))
       out:extend(notes)
     end
@@ -231,6 +235,10 @@ local function unwrap_layout(blocks)
       if scale then
         used.scale = true
         open, close = "\\ncarscalebegin{" .. scale .. "}", "\\ncarscaleend"
+      end
+      if b.attributes["caution"] then
+        open = open .. "\\begin{ncarcaution}"
+        close = "\\end{ncarcaution}" .. close
       end
       if b.attributes["hcenter"] and boxable(b.content) then
         used.hcenter = true

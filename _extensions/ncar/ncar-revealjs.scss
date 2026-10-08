@@ -313,6 +313,13 @@ html.ncar-brand-ucar .reveal .slides section.ncar-title::after {
 // so a long line stops the growth instead of folding
 .reveal .slides section .ncar-body { margin-top: var(--ncar-shift, 0px); }
 .reveal .slides section.ncar-fill > .ncar-body :is(pre, pre code) { white-space: pre; }
+// .caution: the warning slides' body on a soft yellow field, a brand-yellow bar at its left
+.reveal .slides section.ncar-caution > .ncar-body {
+  box-sizing: border-box;
+  padding: 0.55em 0.9em;
+  background: mix($ncar-yellow, #fff, 18%);
+  border-left: 8px solid $ncar-yellow;
+}
 .reveal .slides section.ncar-hcenter > .ncar-body {
   width: fit-content;
   max-width: 100%;
